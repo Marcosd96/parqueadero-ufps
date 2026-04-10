@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* ── Design System Tokens (Tailwind v4 @theme) ──────────── */
+@theme inline {
+  /* Colors */
+  --color-primary:                    #005bbf;
+  --color-on-primary:                 #ffffff;
+  --color-primary-container:          #1a73e8;
+  --color-on-primary-container:       #ffffff;
+  --color-primary-fixed:              #d8e2ff;
+  --color-primary-fixed-dim:          #adc7ff;
+  --color-on-primary-fixed:           #001a41;
+  --color-on-primary-fixed-variant:   #004493;
+  --color-inverse-primary:            #adc7ff;
+  --color-surface-tint:               #005bc0;
+
+  --color-secondary:                  #5b5f64;
+  --color-on-secondary:               #ffffff;
+  --color-secondary-container:        #dde0e6;
+  --color-on-secondary-container:     #5f6368;
+  --color-secondary-fixed:            #dfe3e8;
+  --color-secondary-fixed-dim:        #c3c7cc;
+  --color-on-secondary-fixed:         #181c20;
+  --color-on-secondary-fixed-variant: #43474c;
+
+  --color-tertiary:                   #9e4300;
+  --color-on-tertiary:                #ffffff;
+  --color-tertiary-container:         #c55500;
+  --color-on-tertiary-container:      #0e0200;
+  --color-tertiary-fixed:             #ffdbcb;
+  --color-tertiary-fixed-dim:         #ffb691;
+  --color-on-tertiary-fixed:          #341100;
+  --color-on-tertiary-fixed-variant:  #783100;
+
+  --color-error:                      #ba1a1a;
+  --color-on-error:                   #ffffff;
+  --color-error-container:            #ffdad6;
+  --color-on-error-container:         #93000a;
+
+  --color-background:                 #f8fafb;
+  --color-on-background:              #191c1d;
+  --color-surface:                    #f8fafb;
+  --color-on-surface:                 #191c1d;
+  --color-surface-variant:            #e1e3e4;
+  --color-on-surface-variant:         #414754;
+  --color-surface-bright:             #f8fafb;
+  --color-surface-dim:                #d8dadb;
+  --color-surface-container-lowest:   #ffffff;
+  --color-surface-container-low:      #f2f4f5;
+  --color-surface-container:          #eceeef;
+  --color-surface-container-high:     #e6e8e9;
+  --color-surface-container-highest:  #e1e3e4;
+  --color-inverse-surface:            #2e3132;
+  --color-inverse-on-surface:         #eff1f2;
+
+  --color-outline:                    #727785;
+  --color-outline-variant:            #c1c6d6;
+
+  /* Border radius */
+  --radius-DEFAULT: 0.125rem;
+  --radius-lg:      0.25rem;
+  --radius-xl:      0.5rem;
+  --radius-full:    0.75rem;
+
+  /* Fonts — loaded via <link> in layout.tsx */
+  --font-headline: "Inter", sans-serif;
+  --font-body:     "Inter", sans-serif;
+  --font-label:    "Public Sans", sans-serif;
+}
+
+/* ── Material Symbols ────────────────────────────────────── */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* ── Base ────────────────────────────────────────────────── */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+/* ── Utilities ───────────────────────────────────────────── */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.custom-glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.sidebar-mask {
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
