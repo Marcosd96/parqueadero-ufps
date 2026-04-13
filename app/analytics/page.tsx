@@ -5,7 +5,27 @@ export const metadata: Metadata = {
   description: "Real-time throughput and capacity metrics for campus parking",
 };
 
-export default function AnalyticsPage() {
+import prisma from "@/lib/prisma";
+
+export default async function AnalyticsPage() {
+  const totalVehicles = await prisma.vehicle.count();
+  const pendingRequests = await prisma.accessRequest.count({
+    where: { status: "PENDING" },
+  });
+
+  const logs = await prisma.accessLog.findMany();
+  const userTypeDistribution = logs.reduce((acc: any, log) => {
+    acc[log.userType] = (acc[log.userType] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalLogs = logs.length || 1;
+  const distribution = Object.entries(userTypeDistribution).map(([label, count]: [string, any]) => ({
+    label,
+    pct: Math.round((count / totalLogs) * 100),
+    color: label === "Student" ? "bg-[var(--color-primary)]" : "bg-[var(--color-primary-container)]",
+  }));
+
   return (
     <>
 
@@ -46,9 +66,9 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { label: "Total Capacity", value: "4,850", sub: "Slots", bar: 100, extraColor: "" },
-            { label: "Current Occupancy", value: "82%", sub: "High Density", bar: 82, extraColor: "text-[var(--color-primary)] font-bold" },
-            { label: "Daily Revenue", value: "$12.4k", sub: "+14% vs avg", bar: null, extraColor: "text-green-600 font-bold" },
-            { label: "Pending Requests", value: "127", sub: null, badge: "Action Needed", bar: null },
+            { label: "Current Occupancy", value: `${Math.round((totalVehicles / 4850) * 100)}%`, sub: `${totalVehicles} Vehicles`, bar: Math.round((totalVehicles / 4850) * 100), extraColor: "text-[var(--color-primary)] font-bold" },
+            { label: "Daily Revenue", value: "$0.00", sub: "Integration Pending", bar: null, extraColor: "text-green-600 font-bold" },
+            { label: "Pending Requests", value: pendingRequests.toString(), sub: null, badge: "Action Needed", bar: null },
           ].map((card) => (
             <div key={card.label} className="p-6 bg-[var(--color-surface-container-lowest)] rounded-xl border border-slate-200/30 flex flex-col gap-1">
               <span className="font-[var(--font-label)] text-xs font-semibold text-slate-500 uppercase tracking-wider">{card.label}</span>
@@ -92,12 +112,7 @@ export default function AnalyticsPage() {
               <span className="material-symbols-outlined text-slate-400">more_vert</span>
             </div>
             <div className="space-y-6">
-              {[
-                { label: "Student", pct: 42, color: "bg-[var(--color-primary)]" },
-                { label: "Faculty", pct: 28, color: "bg-[var(--color-primary-container)]" },
-                { label: "Staff", pct: 15, color: "bg-slate-400" },
-                { label: "Visitors", pct: 15, color: "bg-[var(--color-tertiary-container)]" },
-              ].map((item) => (
+              {distribution.map((item) => (
                 <div key={item.label} className="space-y-2">
                   <div className="flex justify-between font-[var(--font-label)] text-xs font-bold text-slate-700">
                     <span>{item.label}</span>

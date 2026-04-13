@@ -5,14 +5,31 @@ export const metadata: Metadata = {
   description: "Manage campus permits and vehicle access logs",
 };
 
-const vehicles = [
-  { model: "Tesla Model 3", color: "Midnight Silver", icon: "directions_car", plate: "PRK-8821", owner: "Dr. Sarah Jenkins", dept: "Biomedical Engineering", status: "Active Permit", statusCls: "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]", date: "Oct 12, 2023" },
-  { model: "Ford F-150", color: "Oxford White", icon: "fire_truck", plate: "FLX-0092", owner: "Facilities Services", dept: "Campus Operations", status: "Renewal Due", statusCls: "bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)]", date: "Jan 05, 2024" },
-  { model: "Honda Accord", color: "Champagne Gold", icon: "directions_car", plate: "STU-1120", owner: "Michael Ross", dept: "School of Law", status: "Suspended", statusCls: "bg-[var(--color-error-container)] text-[var(--color-on-error-container)]", date: "Nov 18, 2023" },
-  { model: "Yamaha MT-07", color: "Racing Blue", icon: "motorcycle", plate: "MTC-4401", owner: "Elena Rodriguez", dept: "Physical Education", status: "Active Permit", statusCls: "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]", date: "Feb 21, 2024" },
-];
+import prisma from "@/lib/prisma";
 
-export default function VehiclesPage() {
+export default async function VehiclesPage() {
+  const vehicles = await prisma.vehicle.findMany({
+    include: {
+      owner: true,
+    },
+    orderBy: {
+      registeredAt: "desc",
+    },
+  });
+
+  const getStatusCls = (status: string) => {
+    switch (status) {
+      case "Active Permit":
+        return "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]";
+      case "Renewal Due":
+        return "bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)]";
+      case "Suspended":
+        return "bg-[var(--color-error-container)] text-[var(--color-on-error-container)]";
+      default:
+        return "bg-slate-100 text-slate-800";
+    }
+  };
+
   return (
     <>
 
@@ -92,14 +109,16 @@ export default function VehiclesPage() {
                     <span className="bg-slate-900 text-white px-3 py-1 rounded font-mono text-xs font-bold tracking-widest">{v.plate}</span>
                   </td>
                   <td className="px-6 py-5">
-                    <p className="text-sm font-semibold text-slate-900">{v.owner}</p>
-                    <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-primary)]">{v.dept}</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {v.owner ? `${v.owner.firstname} ${v.owner.surname}` : "Generic Owner"}
+                    </p>
+                    <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-primary)]">{v.department}</p>
                   </td>
                   <td className="px-6 py-5">
-                    <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-tighter ${v.statusCls}`}>{v.status}</span>
+                    <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-tighter ${getStatusCls(v.status)}`}>{v.status}</span>
                   </td>
                   <td className="px-6 py-5">
-                    <span className="font-[var(--font-label)] text-sm text-slate-500">{v.date}</span>
+                    <span className="font-[var(--font-label)] text-sm text-slate-500">{new Date(v.registeredAt).toLocaleDateString()}</span>
                   </td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex justify-end gap-2">
@@ -119,19 +138,14 @@ export default function VehiclesPage() {
           {/* Pagination */}
           <div className="bg-[var(--color-surface-container-low)] px-6 py-4 flex items-center justify-between">
             <p className="font-[var(--font-label)] text-[0.75rem] text-slate-500 font-medium">
-              Showing <span className="font-bold text-slate-900">1 to 4</span> of <span className="font-bold text-slate-900">128</span> entries
+              Showing <span className="font-bold text-slate-900">1 to {vehicles.length}</span> of <span className="font-bold text-slate-900">{vehicles.length}</span> entries
             </p>
             <div className="flex items-center gap-1">
               <button className="p-2 rounded hover:bg-slate-200 text-slate-400 disabled:opacity-30" disabled>
                 <span className="material-symbols-outlined">chevron_left</span>
               </button>
               <button className="w-8 h-8 rounded bg-[var(--color-primary)] text-white font-bold text-xs flex items-center justify-center">1</button>
-              {[2, 3].map(n => (
-                <button key={n} className="w-8 h-8 rounded hover:bg-slate-200 text-slate-600 font-bold text-xs flex items-center justify-center">{n}</button>
-              ))}
-              <span className="px-2 text-slate-400">...</span>
-              <button className="w-8 h-8 rounded hover:bg-slate-200 text-slate-600 font-bold text-xs flex items-center justify-center">32</button>
-              <button className="p-2 rounded hover:bg-slate-200 text-slate-600">
+              <button className="p-2 rounded hover:bg-slate-200 text-slate-600 disabled:opacity-30" disabled>
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
@@ -141,9 +155,9 @@ export default function VehiclesPage() {
         {/* System Usage Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {[
-            { icon: "directions_car", bg: "bg-[var(--color-primary)]/10", iconColor: "text-[var(--color-primary)]", value: "128", label: "Total Registered", sub: "Active in system" },
-            { icon: "verified", bg: "bg-green-50", iconColor: "text-green-600", value: "94", label: "Active Permits", sub: "Valid and current" },
-            { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: "34", label: "Pending / Expired", sub: "Require attention" },
+            { icon: "directions_car", bg: "bg-[var(--color-primary)]/10", iconColor: "text-[var(--color-primary)]", value: vehicles.length.toString(), label: "Total Registered", sub: "Active in system" },
+            { icon: "verified", bg: "bg-green-50", iconColor: "text-green-600", value: vehicles.filter(v => v.status === "Active Permit").length.toString(), label: "Active Permits", sub: "Valid and current" },
+            { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: vehicles.filter(v => v.status !== "Active Permit").length.toString(), label: "Pending / Expired", sub: "Require attention" },
           ].map((card) => (
             <div key={card.label} className="bg-[var(--color-surface-container-highest)] p-6 rounded-lg flex items-center gap-6">
               <div className={`w-14 h-14 ${card.bg} rounded-full flex items-center justify-center ${card.iconColor}`}>

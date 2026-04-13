@@ -5,22 +5,37 @@ export const metadata: Metadata = {
   description: "Detailed operational log for the 24-hour cycle",
 };
 
-const activityLog = [
-  { time: "14:22:15", date: "Oct 24, 2023", plate: "TX-882-PLT", plateCls: "bg-slate-100 text-slate-700", userType: "Faculty", userTypeCls: "bg-[var(--color-primary-fixed)] text-[var(--color-on-primary-fixed-variant)]", zone: "North Faculty (B-4)", granted: true },
-  { time: "14:18:42", date: "Oct 24, 2023", plate: "CA-019-XKJ", plateCls: "bg-slate-100 text-slate-700", userType: "Student", userTypeCls: "bg-[var(--color-secondary-fixed)] text-[var(--color-on-secondary-fixed-variant)]", zone: "Central Student (C-1)", granted: true },
-  { time: "14:15:09", date: "Oct 24, 2023", plate: "NY-911-ERR", plateCls: "bg-[var(--color-error-container)]/20 text-[var(--color-error)]", userType: "Visitor", userTypeCls: "bg-[var(--color-tertiary-fixed)] text-[var(--color-on-tertiary-fixed-variant)]", zone: "Main Gate", granted: false },
-  { time: "14:05:33", date: "Oct 24, 2023", plate: "FL-330-MM9", plateCls: "bg-slate-100 text-slate-700", userType: "Admin", userTypeCls: "bg-[var(--color-inverse-surface)] text-[var(--color-inverse-on-surface)]", zone: "Service Deck", granted: true },
-  { time: "13:58:21", date: "Oct 24, 2023", plate: "TX-551-DOG", plateCls: "bg-slate-100 text-slate-700", userType: "Student", userTypeCls: "bg-[var(--color-secondary-fixed)] text-[var(--color-on-secondary-fixed-variant)]", zone: "South Overflow", granted: true },
-];
+import prisma from "@/lib/prisma";
 
-const complianceStats = [
-  { label: "Authorized Access", value: "98.2%", pct: 98.2, barColor: "bg-[var(--color-primary)]" },
-  { label: "Plate Recognition Accuracy", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
-];
+export default async function ReportsPage() {
+  const activityLogs = await prisma.accessLog.findMany({
+    orderBy: {
+      timestamp: "desc",
+    },
+    take: 50,
+  });
 
-const peakBars = [30, 45, 65, 100, 80, 50, 40];
+  const getUserTypeCls = (type: string) => {
+    switch (type) {
+      case "Faculty":
+        return "bg-[var(--color-primary-fixed)] text-[var(--color-on-primary-fixed-variant)]";
+      case "Student":
+        return "bg-[var(--color-secondary-fixed)] text-[var(--color-on-secondary-fixed-variant)]";
+      case "Visitor":
+        return "bg-[var(--color-tertiary-fixed)] text-[var(--color-on-tertiary-fixed-variant)]";
+      case "Admin":
+        return "bg-[var(--color-inverse-surface)] text-[var(--color-inverse-on-surface)]";
+      default:
+        return "bg-slate-100 text-slate-700";
+    }
+  };
 
-export default function ReportsPage() {
+  const peakBars = [30, 45, 65, 100, 80, 50, 40];
+  const complianceStats = [
+    { label: "Authorized Access", value: "98.2%", pct: 98.2, barColor: "bg-[var(--color-primary)]" },
+    { label: "Plate Recognition Accuracy", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
+  ];
+
   return (
     <>
       <main className="min-h-screen">
@@ -114,19 +129,19 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {activityLog.map((row) => (
-                    <tr key={row.plate + row.time} className="hover:bg-[var(--color-surface-container-low)] transition-colors group">
+                  {activityLogs.map((row) => (
+                    <tr key={row.id} className="hover:bg-[var(--color-surface-container-low)] transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-[var(--color-on-surface)]">{row.time}</span>
-                          <span className="text-[10px] text-slate-400 font-[var(--font-label)]">{row.date}</span>
+                          <span className="text-sm font-semibold text-[var(--color-on-surface)]">{new Date(row.timestamp).toLocaleTimeString()}</span>
+                          <span className="text-[10px] text-slate-400 font-[var(--font-label)]">{new Date(row.timestamp).toLocaleDateString()}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`text-sm font-mono font-bold px-2 py-1 rounded ${row.plateCls}`}>{row.plate}</span>
+                        <span className={`text-sm font-mono font-bold px-2 py-1 rounded bg-slate-100 text-slate-700`}>{row.plate}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight ${row.userTypeCls}`}>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight ${getUserTypeCls(row.userType)}`}>
                           {row.userType}
                         </span>
                       </td>
@@ -135,16 +150,16 @@ export default function ReportsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
-                          <div className={`w-1.5 h-1.5 rounded-full ${row.granted ? "bg-[var(--color-primary)]" : "bg-[var(--color-error)]"}`} />
-                          <span className={`text-xs font-bold ${row.granted ? "text-[var(--color-primary)]" : "text-[var(--color-error)]"}`}>
-                            {row.granted ? "Granted" : "Rejected"}
+                          <div className={`w-1.5 h-1.5 rounded-full ${row.status ? "bg-[var(--color-primary)]" : "bg-[var(--color-error)]"}`} />
+                          <span className={`text-xs font-bold ${row.status ? "text-[var(--color-primary)]" : "text-[var(--color-error)]"}`}>
+                            {row.status ? "Granted" : "Rejected"}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button className="text-slate-300 group-hover:text-[var(--color-primary)] transition-colors">
                           <span className="material-symbols-outlined text-sm">
-                            {row.granted ? "visibility" : "warning"}
+                            {row.status ? "visibility" : "warning"}
                           </span>
                         </button>
                       </td>
@@ -156,7 +171,7 @@ export default function ReportsPage() {
 
             {/* Pagination Footer */}
             <div className="px-6 py-4 bg-slate-50/50 flex items-center justify-between border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-500 font-[var(--font-label)]">Showing 1 to 5 of 1,284 entries</p>
+              <p className="text-xs font-medium text-slate-500 font-[var(--font-label)]">Showing 1 to {activityLogs.length} of {activityLogs.length} entries</p>
               <div className="flex items-center gap-2">
                 <button className="w-8 h-8 flex items-center justify-center rounded bg-white border border-slate-200 text-slate-400 hover:text-[var(--color-on-surface)] disabled:opacity-50" disabled>
                   <span className="material-symbols-outlined text-sm">chevron_left</span>

@@ -5,14 +5,24 @@ export const metadata: Metadata = {
   description: "Review and manage temporary parking access for campus guests",
 };
 
-const requests = [
-  { initials: "JS", bg: "bg-[var(--color-primary-fixed)]", color: "text-[var(--color-primary)]", name: "Julianne Smith", plate: "ABC-1234", date: "Oct 24, 2023", time: "08:00 AM - 05:00 PM", reason: "Guest Lecturer - Dept. of Physics" },
-  { initials: "MR", bg: "bg-[var(--color-secondary-fixed)]", color: "text-[var(--color-secondary)]", name: "Marcus Reed", plate: "XYZ-9876", date: "Oct 24, 2023", time: "10:00 AM - 12:00 PM", reason: "Contractor - HVAC Maintenance" },
-  { initials: "LB", bg: "bg-[var(--color-primary-fixed)]", color: "text-[var(--color-primary)]", name: "Linda Bennett", plate: "CAL-4421", date: "Oct 25, 2023", time: "All Day", reason: "Alumni Relations Meeting" },
-  { initials: "TH", bg: "bg-[var(--color-secondary-fixed)]", color: "text-[var(--color-secondary)]", name: "Thomas Hinds", plate: "G-992211", date: "Oct 25, 2023", time: "01:00 PM - 03:00 PM", reason: "Prospective Faculty Interview" },
-];
+import prisma from "@/lib/prisma";
 
-export default function RequestsPage() {
+export default async function RequestsPage() {
+  const requests = await prisma.accessRequest.findMany({
+    orderBy: {
+      visitDate: "desc",
+    },
+  });
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+  };
+
   return (
     <>
 
@@ -56,7 +66,7 @@ export default function RequestsPage() {
               Filter
             </button>
             <div className="h-6 w-px bg-slate-200 hidden md:block" />
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">12 Pending Requests</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{requests.length} Total Requests</p>
           </div>
 
           {/* Data Table */}
@@ -76,29 +86,27 @@ export default function RequestsPage() {
               </thead>
               <tbody>
                 {requests.map((r) => (
-                  <tr key={r.plate} className="group hover:bg-[var(--color-surface-container-low)] transition-colors">
+                  <tr key={r.id} className="group hover:bg-[var(--color-surface-container-low)] transition-colors">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full ${r.bg} flex items-center justify-center ${r.color} font-bold text-xs`}>
-                          {r.initials}
+                        <div className={`w-8 h-8 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-primary)] font-bold text-xs`}>
+                          {getInitials(r.requesterName)}
                         </div>
-                        <span className="font-bold text-slate-800 font-[var(--font-label)]">{r.name}</span>
+                        <span className="font-bold text-slate-800 font-[var(--font-label)]">{r.requesterName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <span className="px-2 py-1 bg-slate-100 text-slate-700 font-mono text-sm rounded border border-slate-200">
-                        {r.plate}
+                        {r.plateNumber}
                       </span>
                     </td>
                     <td className="px-6 py-5 text-sm text-slate-600 font-[var(--font-label)]">
-                      {r.date}
-                      <br />
-                      <span className="text-[0.7rem] text-slate-400">{r.time}</span>
+                      {new Date(r.visitDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-5 text-sm text-slate-600 font-[var(--font-label)]">{r.reason}</td>
                     <td className="px-6 py-5">
                       <span className="px-3 py-1 bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-fixed-variant)] text-[0.7rem] font-bold uppercase tracking-tight rounded-full">
-                        Pending
+                        {r.status}
                       </span>
                     </td>
                     <td className="px-6 py-5 text-right">

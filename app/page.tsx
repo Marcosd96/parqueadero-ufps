@@ -5,7 +5,24 @@ export const metadata: Metadata = {
   description: "Real-time security monitoring for campus parking zones",
 };
 
-export default function MonitoringPage() {
+import prisma from "@/lib/prisma";
+
+export default async function MonitoringPage() {
+  const recentActivity = await prisma.accessLog.findMany({
+    orderBy: {
+      timestamp: "desc",
+    },
+    take: 3,
+  });
+
+  const lastLog = recentActivity[0];
+  
+  // Try to find the vehicle and owner for the last detection
+  const vehicle = lastLog ? await prisma.vehicle.findUnique({
+    where: { plate: lastLog.plate },
+    include: { owner: true }
+  }) : null;
+
   return (
     <>
       <main className="p-8 min-h-screen">
@@ -62,7 +79,7 @@ export default function MonitoringPage() {
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[var(--color-primary)]" />
                       <div className="absolute inset-x-0 -bottom-8 flex justify-center">
                         <div className="bg-[var(--color-primary)] text-white font-mono text-lg px-4 py-1 rounded-sm tracking-[0.2em] shadow-xl">
-                          CAL-7782-X
+                          {lastLog?.plate || "SCANNING..."}
                         </div>
                       </div>
                     </div>
@@ -91,27 +108,21 @@ export default function MonitoringPage() {
                       <tr>
                         <th className="pb-3 px-2">Timestamp</th>
                         <th className="pb-3 px-2">Identification</th>
-                        <th className="pb-3 px-2">Method</th>
                         <th className="pb-3 px-2">Zone</th>
                         <th className="pb-3 px-2">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-outline-variant)]/10">
-                      {[
-                        { time: "14:21:44", id: "ABC-1234", method: "OCR", zone: "Faculty North", status: "GRANTED", granted: true },
-                        { time: "14:19:02", id: "UID: 992811", method: "TAG", zone: "Main Deck", status: "GRANTED", granted: true },
-                        { time: "14:15:30", id: "GUEST-X-11", method: "OCR", zone: "Gate B Entrance", status: "REJECTED", granted: false },
-                      ].map((row, i) => (
-                        <tr key={i} className="hover:bg-[var(--color-surface-container-low)] transition-colors">
-                          <td className="py-4 px-2 font-mono text-[var(--color-on-surface-variant)]">{row.time}</td>
-                          <td className="py-4 px-2 font-bold text-[var(--color-on-surface)]">{row.id}</td>
-                          <td className="py-4 px-2">
-                            <span className="bg-slate-100 px-2 py-0.5 rounded text-[0.65rem] font-bold">{row.method}</span>
+                      {recentActivity.map((row) => (
+                        <tr key={row.id} className="hover:bg-[var(--color-surface-container-low)] transition-colors">
+                          <td className="py-4 px-2 font-mono text-[var(--color-on-surface-variant)]">
+                            {new Date(row.timestamp).toLocaleTimeString()}
                           </td>
+                          <td className="py-4 px-2 font-bold text-[var(--color-on-surface)]">{row.plate}</td>
                           <td className="py-4 px-2">{row.zone}</td>
                           <td className="py-4 px-2">
-                            <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold ${row.granted ? "bg-[var(--color-primary-container)]/20 text-[var(--color-on-primary-fixed-variant)]" : "bg-[var(--color-error-container)]/40 text-[var(--color-on-error-container)]"}`}>
-                              {row.status}
+                            <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold ${row.status ? "bg-[var(--color-primary-container)]/20 text-[var(--color-on-primary-fixed-variant)]" : "bg-[var(--color-error-container)]/40 text-[var(--color-on-error-container)]"}`}>
+                              {row.status ? "GRANTED" : "REJECTED"}
                             </span>
                           </td>
                         </tr>
@@ -130,33 +141,42 @@ export default function MonitoringPage() {
                   <h3 className="text-white text-xs font-black tracking-widest uppercase">Last Vehicle Detected</h3>
                 </div>
                 <div className="p-6">
-                  <div className="flex items-start gap-4 mb-6">
-                    <img
-                      alt="Detected Vehicle"
-                      className="w-24 h-24 rounded-lg object-cover bg-slate-100 border border-slate-200"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8wMXzmUAzYlAZTWMmzzlhMc-uT-aTWYpc8EzXtmJhhu2mKDjiCfTUFp4IE3Y3xlTJz5wRalPdbFp18pqYlQKT8DPXZkkb4do02acXey4fkG5YehjiXzhB9xMcwmbz5lKKdPI-67k-l18tef2a9zwaAJmcdlQSSyb-bZMwDCwWrYosH47wjGQb0AxdTGNxv088v8EX9vUZ_fveZXprlpxP7H_dPkc5m_LhRUQQHP3IuHoRA9nUEH1I-qMMTn7vId--s_70nmfaib_7"
-                    />
-                    <div>
-                      <div className="text-[0.65rem] font-[var(--font-label)] font-bold text-[var(--color-primary)] tracking-widest uppercase">PLATE NUMBER</div>
-                      <div className="text-2xl font-black text-[var(--color-on-surface)] mb-2">CAL-7782-X</div>
-                      <div className="inline-block bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] px-3 py-1 rounded-full text-[0.7rem] font-black tracking-wider">
-                        ACCESS GRANTED
+                  {lastLog ? (
+                    <>
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className="w-24 h-24 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-4xl text-slate-400">
+                            {vehicle?.icon || "directions_car"}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-[0.65rem] font-[var(--font-label)] font-bold text-[var(--color-primary)] tracking-widest uppercase">PLATE NUMBER</div>
+                          <div className="text-2xl font-black text-[var(--color-on-surface)] mb-2">{lastLog.plate}</div>
+                          <div className={`inline-block px-3 py-1 rounded-full text-[0.7rem] font-black tracking-wider ${lastLog.status ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                            {lastLog.status ? "ACCESS GRANTED" : "ACCESS REJECTED"}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4 pt-4 border-t border-[var(--color-outline-variant)]/15">
-                    {[
-                      { label: "User Name", value: "Dr. Marcus Vance" },
-                      { label: "Department", value: "Bio-Tech Faculty" },
-                      { label: "Role", value: "Full-Time Staff" },
-                      { label: "Vehicle Model", value: "Tesla Model 3" },
-                    ].map((item) => (
-                      <div key={item.label} className="flex justify-between items-center">
-                        <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">{item.label}</span>
-                        <span className="text-sm font-bold text-[var(--color-on-surface)]">{item.value}</span>
+                      <div className="space-y-4 pt-4 border-t border-[var(--color-outline-variant)]/15">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">User Name</span>
+                          <span className="text-sm font-bold text-[var(--color-on-surface)]">
+                            {vehicle?.owner ? `${vehicle.owner.firstname} ${vehicle.owner.surname}` : "Unknown / Visitor"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Vehicle Model</span>
+                          <span className="text-sm font-bold text-[var(--color-on-surface)]">{vehicle?.model || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Zone</span>
+                          <span className="text-sm font-bold text-[var(--color-on-surface)]">{lastLog.zone}</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    </>
+                  ) : (
+                    <p className="text-center text-slate-400 py-8">No recent activity detected.</p>
+                  )}
                 </div>
               </div>
 
