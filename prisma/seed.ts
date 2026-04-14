@@ -30,7 +30,7 @@ async function main() {
 
     console.log(`Found ${records.length} student records. Seeding...`);
 
-    for (const record of records as any[]) {
+    for (const record of records as Record<string, string>[]) {
       // Mapping based on user request: cardnumber, firstname, surname
       await prisma.student.upsert({
         where: { cardnumber: record.cardnumber },

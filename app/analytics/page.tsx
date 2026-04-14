@@ -14,13 +14,13 @@ export default async function AnalyticsPage() {
   });
 
   const logs = await prisma.accessLog.findMany();
-  const userTypeDistribution = logs.reduce((acc: any, log) => {
+  const userTypeDistribution = logs.reduce((acc: Record<string, number>, log) => {
     acc[log.userType] = (acc[log.userType] || 0) + 1;
     return acc;
   }, {});
 
   const totalLogs = logs.length || 1;
-  const distribution = Object.entries(userTypeDistribution).map(([label, count]: [string, any]) => ({
+  const distribution = Object.entries(userTypeDistribution).map(([label, count]: [string, number]) => ({
     label,
     pct: Math.round((count / totalLogs) * 100),
     color: label === "Student" ? "bg-[var(--color-primary)]" : "bg-[var(--color-primary-container)]",
