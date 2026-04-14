@@ -8,6 +8,7 @@ const navItems = [
   { href: "/analytics", label: "Analytics", icon: "analytics" },
   { href: "/vehicles", label: "Vehicle Registry", icon: "directions_car" },
   { href: "/requests", label: "Requests", icon: "pending_actions" },
+  { href: "/students", label: "Students Directory", icon: "school" },
   { href: "/reports", label: "Reports", icon: "assessment" },
 ];
 

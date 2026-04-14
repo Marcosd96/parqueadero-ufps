@@ -21,7 +21,7 @@ async function main() {
   // 2. Load Students from CSV
   const csvPath = path.join(process.cwd(), "estudiantes.csv");
   if (fs.existsSync(csvPath)) {
-    const fileContent = fs.readFileSync(csvPath, "utf-8");
+    const fileContent = fs.readFileSync(csvPath, "latin1");
     const records = parse(fileContent, {
       delimiter: ";",
       columns: true,
@@ -32,8 +32,8 @@ async function main() {
 
     const studentsData = (records as Record<string, string>[]).map(record => ({
       cardnumber: record.cardnumber,
-      firstname: record.firstname,
-      surname: record.surname,
+      firstname: record.firstname?.trim().toUpperCase() || "",
+      surname: record.surname?.trim().toUpperCase() || "",
     }));
 
     const BATCH_SIZE = 5000;
