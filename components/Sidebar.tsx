@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Monitoring", icon: "monitor_heart" },
-  { href: "/analytics", label: "Analytics", icon: "analytics" },
-  { href: "/vehicles", label: "Vehicle Registry", icon: "directions_car" },
-  { href: "/requests", label: "Requests", icon: "pending_actions" },
-  { href: "/students", label: "Students Directory", icon: "school" },
-  { href: "/reports", label: "Reports", icon: "assessment" },
+  { href: "/", label: "Monitoreo", icon: "monitor_heart" },
+  { href: "/analytics", label: "Analíticas", icon: "analytics" },
+  { href: "/vehicles", label: "Registro de Vehículos", icon: "directions_car" },
+  { href: "/requests", label: "Solicitudes", icon: "pending_actions" },
+  { href: "/students", label: "Directorio de Estudiantes", icon: "school" },
+  { href: "/reports", label: "Reportes", icon: "assessment" },
 ];
 
 export default function Sidebar() {
@@ -20,10 +20,10 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-6 py-8">
         <h1 className="text-lg font-black tracking-tighter text-blue-800 dark:text-blue-200 uppercase">
-          Parking Admin
+          Adm. Estacionamiento
         </h1>
         <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-on-surface-variant)] mt-1">
-          Security Operations
+          Operaciones de Seguridad
         </p>
       </div>
 
@@ -51,21 +51,21 @@ export default function Sidebar() {
       {/* Bottom */}
       <div className="mt-auto px-4 pb-8 space-y-2">
         <button className="w-full bg-[var(--color-primary)] text-white py-3 rounded-lg font-bold text-sm tracking-tight active:scale-95 transition-transform mb-6">
-          Emergency Lockout
+          Bloqueo de Emergencia
         </button>
         <Link
           href="#"
           className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors"
         >
           <span className="material-symbols-outlined">settings</span>
-          <span className="font-[var(--font-label)]">Settings</span>
+          <span className="font-[var(--font-label)]">Configuración</span>
         </Link>
         <Link
           href="#"
           className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors"
         >
           <span className="material-symbols-outlined">help</span>
-          <span className="font-[var(--font-label)]">Support</span>
+          <span className="font-[var(--font-label)]">Soporte</span>
         </Link>
       </div>
     </aside>

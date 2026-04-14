@@ -7,23 +7,23 @@ export default function TopBar() {
         <div className="flex items-center gap-4 text-blue-700">
           <span className="material-symbols-outlined">local_parking</span>
           <span className="font-[var(--font-headline)] font-bold text-slate-900 tracking-tight">
-            Zone Map
+            Mapa de Zonas
           </span>
         </div>
         <div className="flex items-center gap-4 text-slate-500 font-[var(--font-label)] text-[0.875rem] hover:text-slate-800 cursor-pointer transition-all">
           <span className="material-symbols-outlined">gate</span>
-          <span>Gate Control</span>
+          <span>Control de Portón</span>
         </div>
       </div>
 
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-error-container)] text-[var(--color-on-error-container)] rounded-full text-[0.75rem] font-bold">
           <span className="w-2 h-2 bg-[var(--color-error)] rounded-full" />
-          New Alert
+          Nueva Alerta
         </div>
         <div className="text-[0.75rem] font-[var(--font-label)] text-slate-400">
-          System Status:{" "}
-          <span className="text-[var(--color-primary)] font-bold">Operational</span>
+          Estado del Sistema:{" "}
+          <span className="text-[var(--color-primary)] font-bold">Operativo</span>
         </div>
         <div className="flex items-center gap-4 border-l border-slate-200 pl-6">
           <button className="text-slate-500 hover:text-[var(--color-primary)] transition-all">

@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Analytics Dashboard",
-  description: "Real-time throughput and capacity metrics for campus parking",
+  title: "Campus ParkGuard - Panel de Analíticas",
+  description: "Métricas de flujo y capacidad en tiempo real para el estacionamiento del campus",
 };
 
 import prisma from "@/lib/prisma";
@@ -37,28 +37,28 @@ export default async function AnalyticsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-[var(--font-headline)] font-extrabold tracking-tight text-slate-900">
-              Operations Analytics
+              Analíticas de Operaciones
             </h1>
             <p className="text-slate-500 font-[var(--font-label)] text-sm mt-1">
-              Real-time throughput and capacity metrics
+              Métricas de capacidad y tráfico en tiempo real
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex bg-[var(--color-surface-container)] rounded-lg p-1">
-              <button className="px-4 py-1.5 text-xs font-bold bg-white shadow-sm rounded-md text-[var(--color-primary)]">Today</button>
-              <button className="px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700">Week</button>
-              <button className="px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700">Month</button>
+              <button className="px-4 py-1.5 text-xs font-bold bg-white shadow-sm rounded-md text-[var(--color-primary)]">Hoy</button>
+              <button className="px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700">Semana</button>
+              <button className="px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700">Mes</button>
             </div>
             <select className="bg-[var(--color-surface-container-low)] border-none rounded-lg text-xs font-bold py-2 pr-8 pl-4 focus:ring-[var(--color-primary)]/20">
-              <option>All User Types</option>
-              <option>Student</option>
-              <option>Faculty</option>
-              <option>Staff</option>
-              <option>Visitor</option>
+              <option>Todos los Tipos de Usuario</option>
+              <option>Estudiante</option>
+              <option>Facultad</option>
+              <option>Personal</option>
+              <option>Visitante</option>
             </select>
             <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-bold text-xs hover:bg-slate-800 transition-all">
               <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
-              Generate PDF Report
+              Generar Reporte PDF
             </button>
           </div>
         </div>
@@ -66,10 +66,10 @@ export default async function AnalyticsPage() {
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: "Total Capacity", value: "4,850", sub: "Slots", bar: 100, extraColor: "" },
-            { label: "Current Occupancy", value: `${Math.round((totalVehicles / 4850) * 100)}%`, sub: `${totalVehicles} Vehicles`, bar: Math.round((totalVehicles / 4850) * 100), extraColor: "text-[var(--color-primary)] font-bold" },
-            { label: "Daily Revenue", value: "$0.00", sub: "Integration Pending", bar: null, extraColor: "text-green-600 font-bold" },
-            { label: "Pending Requests", value: pendingRequests.toString(), sub: null, badge: "Action Needed", bar: null },
+            { label: "Capacidad Total", value: "4,850", sub: "Espacios", bar: 100, extraColor: "" },
+            { label: "Ocupación Actual", value: `${Math.round((totalVehicles / 4850) * 100)}%`, sub: `${totalVehicles} Vehículos`, bar: Math.round((totalVehicles / 4850) * 100), extraColor: "text-[var(--color-primary)] font-bold" },
+            { label: "Ingresos Diarios", value: "$0.00", sub: "Integración Pendiente", bar: null, extraColor: "text-green-600 font-bold" },
+            { label: "Solicitudes Pendientes", value: pendingRequests.toString(), sub: null, badge: "Acción Necesaria", bar: null },
           ].map((card) => (
             <div key={card.label} className="p-6 bg-[var(--color-surface-container-lowest)] rounded-xl border border-slate-200/30 flex flex-col gap-1">
               <span className="font-[var(--font-label)] text-xs font-semibold text-slate-500 uppercase tracking-wider">{card.label}</span>
@@ -85,16 +85,16 @@ export default async function AnalyticsPage() {
                   <div className="bg-[var(--color-primary)] h-full" style={{ width: `${card.bar}%` }} />
                 </div>
               )}
-              {card.label === "Daily Revenue" && (
+              {card.label === "Ingresos Diarios" && (
                 <div className="mt-4 flex items-center gap-1">
                   <span className="material-symbols-outlined text-green-600 text-sm">trending_up</span>
-                  <span className="text-xs font-[var(--font-label)] text-slate-500">Peak hour surge pricing active</span>
+                  <span className="text-xs font-[var(--font-label)] text-slate-500">Precio por hora pico activo</span>
                 </div>
               )}
-              {card.label === "Pending Requests" && (
+              {card.label === "Solicitudes Pendientes" && (
                 <div className="mt-4 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[var(--color-tertiary)] text-sm">history</span>
-                  <span className="text-xs font-[var(--font-label)] text-slate-500">Avg response: 12 min</span>
+                  <span className="text-xs font-[var(--font-label)] text-slate-500">Respuesta prom.: 12 min</span>
                 </div>
               )}
             </div>
@@ -107,8 +107,8 @@ export default async function AnalyticsPage() {
           <div className="col-span-12 lg:col-span-5 p-8 bg-[var(--color-surface-container-lowest)] rounded-xl border border-slate-200/30">
             <div className="flex justify-between items-start mb-10">
               <div>
-                <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900">Usage by User Type</h3>
-                <p className="font-[var(--font-label)] text-xs text-slate-500">Categorized active sessions</p>
+                <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900">Uso por Tipo de Usuario</h3>
+                <p className="font-[var(--font-label)] text-xs text-slate-500">Sesiones activas categorizadas</p>
               </div>
               <span className="material-symbols-outlined text-slate-400">more_vert</span>
             </div>
@@ -128,9 +128,9 @@ export default async function AnalyticsPage() {
             <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-[var(--color-primary)] rounded-full" />
-                <span className="font-[var(--font-label)] text-[0.7rem] text-slate-500">Primary Resident</span>
+                <span className="font-[var(--font-label)] text-[0.7rem] text-slate-500">Residente Primario</span>
               </div>
-              <button className="text-xs font-bold text-[var(--color-primary)] hover:underline">View details</button>
+              <button className="text-xs font-bold text-[var(--color-primary)] hover:underline">Ver detalles</button>
             </div>
           </div>
 
@@ -138,17 +138,17 @@ export default async function AnalyticsPage() {
           <div className="col-span-12 lg:col-span-7 p-8 bg-[var(--color-surface-container-lowest)] rounded-xl border border-slate-200/30">
             <div className="flex justify-between items-start mb-8">
               <div>
-                <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900">Parking Traffic</h3>
-                <p className="font-[var(--font-label)] text-xs text-slate-500">Hourly entries vs exits</p>
+                <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900">Tráfico de Estacionamiento</h3>
+                <p className="font-[var(--font-label)] text-xs text-slate-500">Entradas vs salidas por hora</p>
               </div>
               <div className="flex gap-4">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-[var(--color-primary)] rounded-full" />
-                  <span className="text-[0.65rem] font-bold font-[var(--font-label)] text-slate-600">ENTRIES</span>
+                  <span className="text-[0.65rem] font-bold font-[var(--font-label)] text-slate-600">ENTRADAS</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-slate-300 rounded-full" />
-                  <span className="text-[0.65rem] font-bold font-[var(--font-label)] text-slate-600">EXITS</span>
+                  <span className="text-[0.65rem] font-bold font-[var(--font-label)] text-slate-600">SALIDAS</span>
                 </div>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default async function AnalyticsPage() {
             <div className="mt-6 p-4 bg-[var(--color-surface-container-low)] rounded-lg flex items-center gap-4">
               <span className="material-symbols-outlined text-[var(--color-primary)]">info</span>
               <p className="text-xs font-[var(--font-label)] text-[var(--color-on-surface-variant)]">
-                Peak volume detected at <span className="font-bold">14:22</span> with 420 vehicles entering per hour. Recommendation: Open Auxiliary Gate 4.
+                Volumen pico detectado a las <span className="font-bold">14:22</span> con 420 vehículos ingresando por hora. Recomendación: Abrir Portón Auxiliar 4.
               </p>
             </div>
           </div>
@@ -190,12 +190,12 @@ export default async function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Critical Audit Log */}
           <div className="col-span-1 md:col-span-2 p-6 bg-[var(--color-surface-container-lowest)] rounded-xl border border-slate-200/30">
-            <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900 mb-6">Critical Audit Log</h3>
+            <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900 mb-6">Log de Auditoría Crítica</h3>
             <div className="space-y-4">
               {[
-                { icon: "login", bg: "bg-[var(--color-primary-container)]/20", iconColor: "text-[var(--color-primary)]", title: "Plate ABC-1234 Entered", sub: "Zone B • Staff Permit", time: "14:52:10" },
-                { icon: "warning", bg: "bg-[var(--color-error-container)]/20", iconColor: "text-[var(--color-error)]", title: "Unauthorized Entry Attempt", sub: "Gate 2 • Plate HIDDEN", time: "14:51:04" },
-                { icon: "pending", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", title: "Guest Access Requested", sub: "Visitor Kiosk 1", time: "14:50:55" },
+                { icon: "login", bg: "bg-[var(--color-primary-container)]/20", iconColor: "text-[var(--color-primary)]", title: "Placa ABC-1234 Ingresó", sub: "Zona B • Permiso de Personal", time: "14:52:10" },
+                { icon: "warning", bg: "bg-[var(--color-error-container)]/20", iconColor: "text-[var(--color-error)]", title: "Intento de Entrada no Autorizado", sub: "Portón 2 • Placa OCULTA", time: "14:51:04" },
+                { icon: "pending", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", title: "Acceso de Invitado Solicitado", sub: "Kiosco de Visitantes 1", time: "14:50:55" },
               ].map((log) => (
                 <div key={log.title} className="flex items-center justify-between py-3 hover:bg-[var(--color-surface-container-low)] px-3 rounded-lg transition-colors">
                   <div className="flex items-center gap-4">
@@ -221,23 +221,23 @@ export default async function AnalyticsPage() {
               alt="Campus map"
             />
             <div className="relative z-10">
-              <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900 mb-1">Zone Distribution</h3>
-              <p className="font-[var(--font-label)] text-[0.65rem] text-slate-500 mb-6">Live heatmap across campus</p>
+              <h3 className="font-[var(--font-headline)] font-extrabold text-slate-900 mb-1">Distribución por Zonas</h3>
+              <p className="font-[var(--font-label)] text-[0.65rem] text-slate-500 mb-6">Mapa de calor en vivo del campus</p>
               <div className="space-y-3">
                 {[
-                  { label: "North Faculty (Lot A)", pct: "95%", color: "bg-blue-100 text-blue-700" },
-                  { label: "Central Student (Lot B)", pct: "78%", color: "bg-blue-100 text-blue-700" },
-                  { label: "Visitor Commons (Lot C)", pct: "42%", color: "bg-green-100 text-green-700" },
-                  { label: "South Stadium (Lot D)", pct: "12%", color: "bg-green-100 text-green-700" },
+                  { label: "Facultad Norte (Lote A)", pct: "95%", color: "bg-blue-100 text-blue-700" },
+                  { label: "Estudiantes Central (Lote B)", pct: "78%", color: "bg-blue-100 text-blue-700" },
+                  { label: "Comunes Visitantes (Lote C)", pct: "42%", color: "bg-green-100 text-green-700" },
+                  { label: "Estadio Sur (Lote D)", pct: "12%", color: "bg-green-100 text-green-700" },
                 ].map((zone) => (
                   <div key={zone.label} className="flex justify-between items-center text-[0.65rem] font-[var(--font-label)]">
                     <span className="font-bold text-slate-700">{zone.label}</span>
-                    <span className={`px-2 py-0.5 ${zone.color} rounded-full font-bold`}>{zone.pct} Full</span>
+                    <span className={`px-2 py-0.5 ${zone.color} rounded-full font-bold`}>{zone.pct} Lleno</span>
                   </div>
                 ))}
               </div>
               <button className="mt-8 w-full py-2 bg-white/60 backdrop-blur-sm border border-slate-200 rounded-lg text-xs font-bold text-slate-900 hover:bg-white transition-colors">
-                Expand Live Map
+                Expandir Mapa en Vivo
               </button>
             </div>
           </div>

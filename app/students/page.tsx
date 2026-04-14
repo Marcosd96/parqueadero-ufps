@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Students Directory - Campus ParkGuard",
-  description: "Manage registered students for campus parking",
+  title: "Directorio de Estudiantes - Campus ParkGuard",
+  description: "Gestionar estudiantes registrados para el estacionamiento del campus",
 };
 
 import prisma from "@/lib/prisma";
@@ -43,17 +43,17 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         <div className="mb-8 flex justify-between items-end">
           <div>
             <h2 className="font-black text-2xl tracking-tight text-[var(--color-on-surface)]">
-              Students Directory
+              Directorio de Estudiantes
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <span className="font-[var(--font-label)] text-xs font-medium text-[var(--color-on-secondary-container)]">
-                {query ? `Found ${totalFilteredStudents.toLocaleString()} matches for "${query}"` : `${totalFilteredStudents.toLocaleString()} total registered students securely synced`}
+                {query ? `Se encontraron ${totalFilteredStudents.toLocaleString()} coincidencias para "${query}"` : `${totalFilteredStudents.toLocaleString()} estudiantes totales registrados sincronizados de forma segura`}
               </span>
             </div>
           </div>
           <button className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white px-4 py-2 rounded font-bold text-sm transition-colors flex items-center gap-2 shadow-md">
             <span className="material-symbols-outlined text-sm">person_add</span>
-            Register Student
+            Registrar Estudiante
           </button>
         </div>
 
@@ -65,13 +65,13 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
               type="text"
               name="query"
               defaultValue={query}
-              placeholder="Search by ID, Firstname or Surname..." 
+              placeholder="Buscar por ID, Nombre o Apellido..." 
               className="w-full bg-[var(--color-surface-container-highest)] border-none rounded-lg py-3 pl-10 pr-4 text-sm font-medium text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)]/50 outline-none placeholder:text-[var(--color-on-surface-variant)]/50"
             />
           </form>
           <button className="bg-[var(--color-surface-container-highest)] px-4 rounded-lg font-bold text-sm flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-colors">
             <span className="material-symbols-outlined text-sm">filter_list</span>
-            Filters
+            Filtros
           </button>
         </div>
 
@@ -81,11 +81,11 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
             <table className="w-full text-left font-[var(--font-label)] text-[0.8rem]">
               <thead className="bg-[var(--color-surface-container-low)] text-[var(--color-on-secondary-container)] uppercase tracking-wider font-semibold border-b border-[var(--color-outline-variant)]/15">
                 <tr>
-                  <th className="py-4 px-6">ID (Card Number)</th>
-                  <th className="py-4 px-6">First Name</th>
-                  <th className="py-4 px-6">Surname</th>
-                  <th className="py-4 px-6">Vehicles Linked</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
+                  <th className="py-4 px-6">ID (Número de Carnet)</th>
+                  <th className="py-4 px-6">Nombre</th>
+                  <th className="py-4 px-6">Apellido</th>
+                  <th className="py-4 px-6">Vehículos Vinculados</th>
+                  <th className="py-4 px-6 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-outline-variant)]/10">
@@ -102,7 +102,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
                     </td>
                     <td className="py-4 px-6">
                       <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold ${student.vehicles.length > 0 ? "bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)]" : "bg-slate-100 text-slate-500"}`}>
-                        {student.vehicles.length > 0 ? `${student.vehicles.length} Vehicle(s)` : "None"}
+                        {student.vehicles.length > 0 ? `${student.vehicles.length} Vehículo(s)` : "Ninguno"}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right">
@@ -116,17 +116,17 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
             </table>
           </div>
           <div className="p-4 border-t border-[var(--color-outline-variant)]/15 flex justify-between items-center text-xs text-[var(--color-on-surface-variant)] font-bold">
-            <span>Showing pages {currentPage} of {Math.ceil(totalFilteredStudents / ITEMS_PER_PAGE) || 1}</span>
+            <span>Mostrando páginas {currentPage} de {Math.ceil(totalFilteredStudents / ITEMS_PER_PAGE) || 1}</span>
             <div className="flex gap-2">
               {currentPage > 1 ? (
-                <Link href={`/students?page=${currentPage - 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Prev</Link>
+                <Link href={`/students?page=${currentPage - 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Ant</Link>
               ) : (
-                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Prev</button>
+                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Ant</button>
               )}
               {currentPage * ITEMS_PER_PAGE < totalFilteredStudents ? (
-                <Link href={`/students?page=${currentPage + 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Next</Link>
+                <Link href={`/students?page=${currentPage + 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Sig</Link>
               ) : (
-                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Next</button>
+                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Sig</button>
               )}
             </div>
           </div>

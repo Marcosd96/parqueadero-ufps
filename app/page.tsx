@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Security Monitoring",
-  description: "Real-time security monitoring for campus parking zones",
+  title: "Campus ParkGuard - Monitoreo de Seguridad",
+  description: "Monitoreo de seguridad en tiempo real para las zonas de estacionamiento del campus",
 };
 
 import prisma from "@/lib/prisma";
@@ -31,12 +31,12 @@ export default async function MonitoringPage() {
           {/* Page Header */}
           <div className="mb-8">
             <h2 className="font-black text-2xl tracking-tight text-[var(--color-on-surface)]">
-              Security Monitoring Center
+              Centro de Monitoreo de Seguridad
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               <span className="font-[var(--font-label)] text-xs font-medium text-[var(--color-on-secondary-container)]">
-                LIVE FEED: ENTRANCE GATE ALPHA-4
+                TRANSMISIÓN EN VIVO: PORTÓN DE ENTRADA ALPHA-4
               </span>
             </div>
           </div>
@@ -66,7 +66,7 @@ export default async function MonitoringPage() {
                     </div>
                     <div className="text-right">
                       <div className="bg-[var(--color-primary)]/90 text-white text-[0.65rem] px-2 py-0.5 rounded font-bold tracking-widest mb-1">
-                        OCR ACTIVE
+                        OCR ACTIVO
                       </div>
                       <div className="text-white font-mono text-xl">14:22:08:41</div>
                     </div>
@@ -80,7 +80,7 @@ export default async function MonitoringPage() {
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[var(--color-primary)]" />
                       <div className="absolute inset-x-0 -bottom-8 flex justify-center">
                         <div className="bg-[var(--color-primary)] text-white font-mono text-lg px-4 py-1 rounded-sm tracking-[0.2em] shadow-xl">
-                          {lastLog?.plate || "SCANNING..."}
+                          {lastLog?.plate || "ESCANEANDO..."}
                         </div>
                       </div>
                     </div>
@@ -100,17 +100,17 @@ export default async function MonitoringPage() {
               {/* Recent Activity Table */}
               <div className="bg-[var(--color-surface-container-lowest)] rounded-lg p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="font-bold text-[var(--color-on-surface)]">Recent Activity Log</h3>
-                  <button className="text-[var(--color-primary)] text-xs font-bold hover:underline">Export CSV</button>
+                  <h3 className="font-bold text-[var(--color-on-surface)]">Log de Actividad Reciente</h3>
+                  <button className="text-[var(--color-primary)] text-xs font-bold hover:underline">Exportar CSV</button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-[var(--font-label)] text-[0.8rem]">
                     <thead className="text-[var(--color-on-secondary-container)] uppercase tracking-wider font-semibold border-b border-[var(--color-outline-variant)]/15">
                       <tr>
-                        <th className="pb-3 px-2">Timestamp</th>
-                        <th className="pb-3 px-2">Identification</th>
-                        <th className="pb-3 px-2">Zone</th>
-                        <th className="pb-3 px-2">Status</th>
+                        <th className="pb-3 px-2">Marca de Tiempo</th>
+                        <th className="pb-3 px-2">Identificación</th>
+                        <th className="pb-3 px-2">Zona</th>
+                        <th className="pb-3 px-2">Estado</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-outline-variant)]/10">
@@ -123,7 +123,7 @@ export default async function MonitoringPage() {
                           <td className="py-4 px-2">{row.zone}</td>
                           <td className="py-4 px-2">
                             <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold ${row.status ? "bg-[var(--color-primary-container)]/20 text-[var(--color-on-primary-fixed-variant)]" : "bg-[var(--color-error-container)]/40 text-[var(--color-on-error-container)]"}`}>
-                              {row.status ? "GRANTED" : "REJECTED"}
+                              {row.status ? "PERMITIDO" : "RECHAZADO"}
                             </span>
                           </td>
                         </tr>
@@ -139,7 +139,7 @@ export default async function MonitoringPage() {
               {/* Last Vehicle Detected */}
               <div className="bg-[var(--color-surface-container-lowest)] rounded-lg shadow-sm overflow-hidden border border-[var(--color-primary)]/10">
                 <div className="bg-[var(--color-primary)] px-6 py-4">
-                  <h3 className="text-white text-xs font-black tracking-widest uppercase">Last Vehicle Detected</h3>
+                  <h3 className="text-white text-xs font-black tracking-widest uppercase">Último Vehículo Detectado</h3>
                 </div>
                 <div className="p-6">
                   {lastLog ? (
@@ -151,32 +151,32 @@ export default async function MonitoringPage() {
                           </span>
                         </div>
                         <div>
-                          <div className="text-[0.65rem] font-[var(--font-label)] font-bold text-[var(--color-primary)] tracking-widest uppercase">PLATE NUMBER</div>
+                          <div className="text-[0.65rem] font-[var(--font-label)] font-bold text-[var(--color-primary)] tracking-widest uppercase">NÚMERO DE PLACA</div>
                           <div className="text-2xl font-black text-[var(--color-on-surface)] mb-2">{lastLog.plate}</div>
                           <div className={`inline-block px-3 py-1 rounded-full text-[0.7rem] font-black tracking-wider ${lastLog.status ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                            {lastLog.status ? "ACCESS GRANTED" : "ACCESS REJECTED"}
+                            {lastLog.status ? "ACCESO PERMITIDO" : "ACCESO DENEGADO"}
                           </div>
                         </div>
                       </div>
                       <div className="space-y-4 pt-4 border-t border-[var(--color-outline-variant)]/15">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">User Name</span>
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Nombre de Usuario</span>
                           <span className="text-sm font-bold text-[var(--color-on-surface)]">
-                            {vehicle?.owner ? `${vehicle.owner.firstname} ${vehicle.owner.surname}` : "Unknown / Visitor"}
+                            {vehicle?.owner ? `${vehicle.owner.firstname} ${vehicle.owner.surname}` : "Desconocido / Visitante"}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Vehicle Model</span>
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Modelo de Vehículo</span>
                           <span className="text-sm font-bold text-[var(--color-on-surface)]">{vehicle?.model || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Zone</span>
+                          <span className="text-xs font-[var(--font-label)] text-[var(--color-on-secondary-container)]">Zona</span>
                           <span className="text-sm font-bold text-[var(--color-on-surface)]">{lastLog.zone}</span>
                         </div>
                       </div>
                     </>
                   ) : (
-                    <p className="text-center text-slate-400 py-8">No recent activity detected.</p>
+                    <p className="text-center text-slate-400 py-8">No se detectó actividad reciente.</p>
                   )}
                 </div>
               </div>
@@ -184,9 +184,9 @@ export default async function MonitoringPage() {
               {/* Quick Actions */}
               <div className="grid grid-cols-1 gap-3">
                 {[
-                  { icon: "door_open", label: "Manually Register", color: "text-[var(--color-primary)]" },
-                  { icon: "report", label: "Register Incident", color: "text-[var(--color-error)]" },
-                  { icon: "support_agent", label: "Communicate with Admin", color: "text-[var(--color-tertiary)]" },
+                  { icon: "door_open", label: "Registro Manual", color: "text-[var(--color-primary)]" },
+                  { icon: "report", label: "Registrar Incidente", color: "text-[var(--color-error)]" },
+                  { icon: "support_agent", label: "Contactar Administrador", color: "text-[var(--color-tertiary)]" },
                 ].map((action) => (
                   <button
                     key={action.label}
@@ -201,12 +201,12 @@ export default async function MonitoringPage() {
               {/* Zone Occupancy */}
               <div className="bg-[var(--color-surface-container-low)] p-6 rounded-lg">
                 <h4 className="text-[0.7rem] font-black text-[var(--color-on-secondary-container)] tracking-widest uppercase mb-4">
-                  Live Zone Occupancy
+                  Ocupación de Zonas en Vivo
                 </h4>
                 <div className="space-y-4">
                   {[
-                    { label: "Zone A - Faculty", pct: 82 },
-                    { label: "Zone B - Visitor", pct: 45 },
+                    { label: "Zona A - Facultad", pct: 82 },
+                    { label: "Zona B - Visitante", pct: 45 },
                   ].map((zone) => (
                     <div key={zone.label}>
                       <div className="flex justify-between text-[0.65rem] font-bold mb-1">

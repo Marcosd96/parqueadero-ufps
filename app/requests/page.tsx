@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Visitor TAG Requests | Campus ParkGuard",
-  description: "Review and manage temporary parking access for campus guests",
+  title: "Solicitudes de TAG de Visitante | Campus ParkGuard",
+  description: "Revisar y gestionar el acceso temporal al estacionamiento para invitados del campus",
 };
 
 import prisma from "@/lib/prisma";
@@ -34,20 +34,20 @@ export default async function RequestsPage() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">Visitor TAG Requests</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">Solicitudes de TAG de Visitante</h2>
               <p className="text-slate-500 font-[var(--font-label)] mt-1">
-                Review and manage temporary parking access for campus guests.
+                Revisar y gestionar el acceso temporal al estacionamiento para invitados del campus.
               </p>
             </div>
             <div className="flex items-center gap-2 bg-[var(--color-surface-container-low)] p-1 rounded-lg">
               <button className="px-6 py-2 bg-[var(--color-surface-container-lowest)] text-[var(--color-primary)] font-bold shadow-sm rounded-md font-[var(--font-label)] text-sm">
-                Pending
+                Pendientes
               </button>
               <button className="px-6 py-2 text-slate-500 font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-sm transition-all">
-                Approved
+                Aprobados
               </button>
               <button className="px-6 py-2 text-slate-500 font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-sm transition-all">
-                Expired
+                Expirados
               </button>
             </div>
           </div>
@@ -58,16 +58,16 @@ export default async function RequestsPage() {
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
               <input
                 className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-surface-container-low)] border-none focus:ring-2 focus:ring-[var(--color-primary)]/20 rounded-lg text-sm font-[var(--font-label)]"
-                placeholder="Search by name, plate, or reason..."
+                placeholder="Buscar por nombre, placa o motivo..."
                 type="text"
               />
             </div>
             <button className="flex items-center gap-2 px-4 py-2.5 text-slate-600 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-all font-[var(--font-label)] text-sm font-medium">
               <span className="material-symbols-outlined text-lg">filter_list</span>
-              Filter
+              Filtrar
             </button>
             <div className="h-6 w-px bg-slate-200 hidden md:block" />
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{requests.length} Total Requests</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{requests.length} Solicitudes Totales</p>
           </div>
 
           {/* Data Table */}
@@ -75,7 +75,7 @@ export default async function RequestsPage() {
             <table className="w-full text-left border-collapse">
               <thead className="bg-[var(--color-surface-container-low)] border-b border-slate-200/30">
                 <tr>
-                  {["Requester Name", "Plate Number", "Visit Date", "Reason", "Status", "Actions"].map((h, i) => (
+                  {["Nombre del Solicitante", "Número de Placa", "Fecha de Visita", "Motivo", "Estado", "Acciones"].map((h, i) => (
                     <th
                       key={h}
                       className={`px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest font-[var(--font-label)] ${i === 5 ? "text-right" : ""}`}
@@ -127,7 +127,7 @@ export default async function RequestsPage() {
 
             {/* Pagination bar */}
             <div className="px-6 py-4 bg-[var(--color-surface-container-low)] border-t border-slate-200/20 flex justify-between items-center">
-              <span className="text-xs text-slate-400 font-[var(--font-label)]">Showing 1 to 4 of 12 requests</span>
+              <span className="text-xs text-slate-400 font-[var(--font-label)]">Mostrando 1 a 4 de 12 solicitudes</span>
               <div className="flex gap-1">
                 <button className="p-1 hover:bg-slate-200 rounded transition-all">
                   <span className="material-symbols-outlined text-sm">chevron_left</span>

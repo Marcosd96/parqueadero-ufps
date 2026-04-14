@@ -4,8 +4,8 @@ import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Parking Admin",
-  description: "University campus parking management and security monitoring system",
+  title: "Campus ParkGuard - Administración de Estacionamiento",
+  description: "Sistema de gestión de estacionamiento y monitoreo de seguridad del campus universitario",
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="light">
+    <html lang="es" className="light">
       <head>
         {/* Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

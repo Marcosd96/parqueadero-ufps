@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Entry & Exit Reports - Campus ParkGuard",
-  description: "Detailed operational log for the 24-hour cycle",
+  title: "Reportes de Entrada y Salida - Campus ParkGuard",
+  description: "Log operacional detallado para el ciclo de 24 horas",
 };
 
 import prisma from "@/lib/prisma";
@@ -18,13 +18,13 @@ export default async function ReportsPage() {
 
   const getUserTypeCls = (type: string) => {
     switch (type) {
-      case "Faculty":
+      case "Facultad":
         return "bg-[var(--color-primary-fixed)] text-[var(--color-on-primary-fixed-variant)]";
-      case "Student":
+      case "Estudiante":
         return "bg-[var(--color-secondary-fixed)] text-[var(--color-on-secondary-fixed-variant)]";
-      case "Visitor":
+      case "Visitante":
         return "bg-[var(--color-tertiary-fixed)] text-[var(--color-on-tertiary-fixed-variant)]";
-      case "Admin":
+      case "Administrador":
         return "bg-[var(--color-inverse-surface)] text-[var(--color-inverse-on-surface)]";
       default:
         return "bg-slate-100 text-slate-700";
@@ -33,8 +33,8 @@ export default async function ReportsPage() {
 
   const peakBars = [30, 45, 65, 100, 80, 50, 40];
   const complianceStats = [
-    { label: "Authorized Access", value: "98.2%", pct: 98.2, barColor: "bg-[var(--color-primary)]" },
-    { label: "Plate Recognition Accuracy", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
+    { label: "Acceso Autorizado", value: "98.2%", pct: 98.2, barColor: "bg-[var(--color-primary)]" },
+    { label: "Precisión de Reconocimiento de Placa", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
   ];
 
   return (
@@ -44,26 +44,26 @@ export default async function ReportsPage() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-[var(--color-on-surface)]">Vehicle Entry/Exit Reports</h2>
-              <p className="text-slate-500 font-[var(--font-label)] text-sm mt-1">Detailed operational log for the 24-hour cycle.</p>
+              <h2 className="text-2xl font-bold tracking-tight text-[var(--color-on-surface)]">Reportes de Entrada/Salida de Vehículos</h2>
+              <p className="text-slate-500 font-[var(--font-label)] text-sm mt-1">Log operacional detallado para el ciclo de 24 horas.</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1">
                 <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] rounded transition-all">
-                  Last 24h
+                  Últimas 24h
                 </button>
                 <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-white shadow-sm rounded transition-all">
-                  Select Date
+                  Seleccionar Fecha
                 </button>
               </div>
               <div className="flex gap-2">
                 <button className="flex items-center gap-2 bg-white text-[var(--color-on-surface)] px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
                   <span className="material-symbols-outlined text-sm">download</span>
-                  EXPORT CSV
+                  EXPORTAR CSV
                 </button>
                 <button className="flex items-center gap-2 bg-[var(--color-primary-container)] text-white px-4 py-2 text-xs font-bold rounded-lg hover:bg-[var(--color-primary)] transition-colors">
                   <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
-                  EXPORT PDF
+                  EXPORTAR PDF
                 </button>
               </div>
             </div>
@@ -72,9 +72,9 @@ export default async function ReportsPage() {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {[
-              { icon: "login", border: "border-[var(--color-primary)]", label: "Total Entries", value: "1,284", trend: "12%", trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]" },
-              { icon: "logout", border: "border-slate-300", label: "Total Exits", value: "942", trend: "4%", trendIcon: "trending_down", trendColor: "text-slate-600" },
-              { icon: "swap_horiz", border: "border-[var(--color-tertiary)]", label: "Net Traffic", value: "+342", badge: "CURRENT PEAK" },
+              { icon: "login", border: "border-[var(--color-primary)]", label: "Entradas Totales", value: "1,284", trend: "12%", trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]" },
+              { icon: "logout", border: "border-slate-300", label: "Salidas Totales", value: "942", trend: "4%", trendIcon: "trending_down", trendColor: "text-slate-600" },
+              { icon: "swap_horiz", border: "border-[var(--color-tertiary)]", label: "Tráfico Neto", value: "+342", badge: "PICO ACTUAL" },
             ].map((card) => (
               <div key={card.label} className={`bg-[var(--color-surface-container-lowest)] p-6 rounded-xl border-b-2 ${card.border} relative overflow-hidden group`}>
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -89,7 +89,7 @@ export default async function ReportsPage() {
                         <span className="material-symbols-outlined text-xs">{card.trendIcon}</span>
                         {card.trend}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-medium font-[var(--font-label)]">vs yesterday</span>
+                      <span className="text-[10px] text-slate-400 font-medium font-[var(--font-label)]">vs ayer</span>
                     </>
                   )}
                   {card.badge && (
@@ -105,7 +105,7 @@ export default async function ReportsPage() {
           {/* Data Table */}
           <div className="bg-[var(--color-surface-container-lowest)] rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between">
-              <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Real-time Activity Log</h4>
+              <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Log de Actividad en Tiempo Real</h4>
               <div className="flex items-center gap-4">
                 <button className="text-slate-400 hover:text-[var(--color-on-surface)] transition-colors">
                   <span className="material-symbols-outlined">filter_list</span>
@@ -119,7 +119,7 @@ export default async function ReportsPage() {
               <table className="w-full text-left border-collapse">
                 <thead className="bg-slate-50/50">
                   <tr>
-                    {["Timestamp", "Plate", "User Type", "Zone", "Status", "Action"].map((h, i) => (
+                    {["Marca de Tiempo", "Placa", "Tipo de Usuario", "Zona", "Estado", "Acción"].map((h, i) => (
                       <th
                         key={h}
                         className={`px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-[var(--font-label)] ${i === 5 ? "text-right" : ""}`}
@@ -153,7 +153,7 @@ export default async function ReportsPage() {
                         <div className="flex items-center gap-1.5">
                           <div className={`w-1.5 h-1.5 rounded-full ${row.status ? "bg-[var(--color-primary)]" : "bg-[var(--color-error)]"}`} />
                           <span className={`text-xs font-bold ${row.status ? "text-[var(--color-primary)]" : "text-[var(--color-error)]"}`}>
-                            {row.status ? "Granted" : "Rejected"}
+                            {row.status ? "Permitido" : "Rechazado"}
                           </span>
                         </div>
                       </td>
@@ -172,7 +172,7 @@ export default async function ReportsPage() {
 
             {/* Pagination Footer */}
             <div className="px-6 py-4 bg-slate-50/50 flex items-center justify-between border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-500 font-[var(--font-label)]">Showing 1 to {activityLogs.length} of {activityLogs.length} entries</p>
+              <p className="text-xs font-medium text-slate-500 font-[var(--font-label)]">Mostrando 1 a {activityLogs.length} de {activityLogs.length} entradas</p>
               <div className="flex items-center gap-2">
                 <button className="w-8 h-8 flex items-center justify-center rounded bg-white border border-slate-200 text-slate-400 hover:text-[var(--color-on-surface)] disabled:opacity-50" disabled>
                   <span className="material-symbols-outlined text-sm">chevron_left</span>
@@ -196,7 +196,7 @@ export default async function ReportsPage() {
                 <div className="p-2 bg-[var(--color-primary)]/10 rounded-lg">
                   <span className="material-symbols-outlined text-[var(--color-primary)]">insights</span>
                 </div>
-                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Peak Traffic Window</h5>
+                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Ventana de Tráfico Pico</h5>
               </div>
               <div className="flex items-end gap-2 h-24 mb-6">
                 {peakBars.map((h, i) => (
@@ -214,8 +214,8 @@ export default async function ReportsPage() {
                 ))}
               </div>
               <p className="text-xs text-slate-600 font-[var(--font-label)] leading-relaxed">
-                Traffic density is currently{" "}
-                <span className="font-bold text-[var(--color-on-surface)]">14% higher</span> than the rolling 7-day average for this time slot. Suggest monitoring Zone B-4 for overflow potential.
+                La densidad de tráfico es actualmente un{" "}
+                <span className="font-bold text-[var(--color-on-surface)]">14% mayor</span> que el promedio móvil de 7 días para este intervalo de tiempo. Se sugiere monitorear la Zona B-4 para un posible desbordamiento.
               </p>
             </div>
 
@@ -225,7 +225,7 @@ export default async function ReportsPage() {
                 <div className="p-2 bg-[var(--color-tertiary)]/10 rounded-lg">
                   <span className="material-symbols-outlined text-[var(--color-tertiary)]">gavel</span>
                 </div>
-                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Compliance Summary</h5>
+                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Resumen de Cumplimiento</h5>
               </div>
               <div className="space-y-4">
                 {complianceStats.map((stat) => (
@@ -240,7 +240,7 @@ export default async function ReportsPage() {
                   </div>
                 ))}
                 <p className="text-[10px] text-slate-400 mt-4 font-[var(--font-label)] italic">
-                  All systems operating within defined safety margins.
+                  Todos los sistemas operando dentro de los márgenes de seguridad definidos.
                 </p>
               </div>
             </div>

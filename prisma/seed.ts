@@ -10,7 +10,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log("Starting seed...");
+  console.log("Iniciando seed...");
 
   // 1. Clear existing data
   await prisma.accessLog.deleteMany();
@@ -28,7 +28,7 @@ async function main() {
       skip_empty_lines: true,
     });
 
-    console.log(`Found ${records.length} student records. Seeding...`);
+    console.log(`Se encontraron ${records.length} registros de estudiantes. Sembrando...`);
 
     const studentsData = (records as Record<string, string>[]).map(record => ({
       cardnumber: record.cardnumber,
@@ -43,51 +43,51 @@ async function main() {
         data: batch,
         skipDuplicates: true, // Ignore duplicates instead of slow upserts
       });
-      console.log(`Pushed records ${i} to ${i + batch.length} of ${studentsData.length}`);
+      console.log(`Cargados registros ${i} a ${i + batch.length} de ${studentsData.length}`);
     }
-    console.log("Students seeded successfully.");
+    console.log("Estudiantes sembrados con éxito.");
   } else {
-    console.warn("estudiantes.csv not found, skipping student seed.");
+    console.warn("estudiantes.csv no encontrado, omitiendo siembra de estudiantes.");
   }
 
-  // 3. Seed Vehicles
+  // 3. Sembrar Vehículos
   const vehicles = [
-    { plate: "PRK-8821", model: "Tesla Model 3", color: "Midnight Silver", icon: "directions_car", department: "Biomedical Engineering", status: "Active Permit" },
-    { plate: "FLX-0092", model: "Ford F-150", color: "Oxford White", icon: "fire_truck", department: "Campus Operations", status: "Renewal Due" },
-    { plate: "STU-1120", model: "Honda Accord", color: "Champagne Gold", icon: "directions_car", department: "School of Law", status: "Suspended" },
-    { plate: "MTC-4401", model: "Yamaha MT-07", color: "Racing Blue", icon: "motorcycle", department: "Physical Education", status: "Active Permit" },
+    { plate: "PRK-8821", model: "Tesla Model 3", color: "Gris Medianoche", icon: "directions_car", department: "Ingeniería Biomédica", status: "Permiso Activo" },
+    { plate: "FLX-0092", model: "Ford F-150", color: "Blanco Oxford", icon: "fire_truck", department: "Operaciones de Campus", status: "Renovación Pendiente" },
+    { plate: "STU-1120", model: "Honda Accord", color: "Dorado Champagne", icon: "directions_car", department: "Facultad de Derecho", status: "Suspendido" },
+    { plate: "MTC-4401", model: "Yamaha MT-07", color: "Azul Racing", icon: "motorcycle", department: "Educación Física", status: "Permiso Activo" },
   ];
 
   for (const v of vehicles) {
     await prisma.vehicle.create({ data: v });
   }
 
-  // 4. Seed Access Requests
+  // 4. Sembrar Solicitudes de Acceso
   const requests = [
-    { requesterName: "Julianne Smith", plateNumber: "ABC-1234", visitDate: new Date("2023-10-24T08:00:00"), reason: "Guest Lecturer - Dept. of Physics", status: "PENDING" },
-    { requesterName: "Marcus Reed", plateNumber: "XYZ-9876", visitDate: new Date("2023-10-24T10:00:00"), reason: "Contractor - HVAC Maintenance", status: "PENDING" },
-    { requesterName: "Linda Bennett", plateNumber: "CAL-4421", visitDate: new Date("2023-10-25T09:00:00"), reason: "Alumni Relations Meeting", status: "PENDING" },
-    { requesterName: "Thomas Hinds", plateNumber: "G-992211", visitDate: new Date("2023-10-25T13:00:00"), reason: "Prospective Faculty Interview", status: "PENDING" },
+    { requesterName: "Julianne Smith", plateNumber: "ABC-1234", visitDate: new Date("2023-10-24T08:00:00"), reason: "Conferenciante Invitado - Depto. de Física", status: "PENDIENTE" },
+    { requesterName: "Marcus Reed", plateNumber: "XYZ-9876", visitDate: new Date("2023-10-24T10:00:00"), reason: "Contratista - Mantenimiento HVAC", status: "PENDIENTE" },
+    { requesterName: "Linda Bennett", plateNumber: "CAL-4421", visitDate: new Date("2023-10-25T09:00:00"), reason: "Reunión de Relaciones con Exalumnos", status: "PENDIENTE" },
+    { requesterName: "Thomas Hinds", plateNumber: "G-992211", visitDate: new Date("2023-10-25T13:00:00"), reason: "Entrevista de Facultad Prospectiva", status: "PENDIENTE" },
   ];
 
   for (const r of requests) {
     await prisma.accessRequest.create({ data: r });
   }
 
-  // 5. Seed Access Logs
+  // 5. Sembrar Logs de Acceso
   const logs = [
-    { timestamp: new Date("2023-10-24T14:22:15"), plate: "TX-882-PLT", userType: "Faculty", zone: "North Faculty (B-4)", status: true },
-    { timestamp: new Date("2023-10-24T14:18:42"), plate: "CA-019-XKJ", userType: "Student", zone: "Central Student (C-1)", status: true },
-    { timestamp: new Date("2023-10-24T14:15:09"), plate: "NY-911-ERR", userType: "Visitor", zone: "Main Gate", status: false },
-    { timestamp: new Date("2023-10-24T14:05:33"), plate: "FL-330-MM9", userType: "Admin", zone: "Service Deck", status: true },
-    { timestamp: new Date("2023-10-24T13:58:21"), plate: "TX-551-DOG", userType: "Student", zone: "South Overflow", status: true },
+    { timestamp: new Date("2023-10-24T14:22:15"), plate: "TX-882-PLT", userType: "Facultad", zone: "Facultad Norte (B-4)", status: true },
+    { timestamp: new Date("2023-10-24T14:18:42"), plate: "CA-019-XKJ", userType: "Estudiante", zone: "Estudiante Central (C-1)", status: true },
+    { timestamp: new Date("2023-10-24T14:15:09"), plate: "NY-911-ERR", userType: "Visitante", zone: "Portón Principal", status: false },
+    { timestamp: new Date("2023-10-24T14:05:33"), plate: "FL-330-MM9", userType: "Administrador", zone: "Área de Servicio", status: true },
+    { timestamp: new Date("2023-10-24T13:58:21"), plate: "TX-551-DOG", userType: "Estudiante", zone: "Desbordamiento Sur", status: true },
   ];
 
   for (const l of logs) {
     await prisma.accessLog.create({ data: l });
   }
 
-  console.log("Seed completed successfully.");
+  console.log("Seed completado con éxito.");
 }
 
 main()
