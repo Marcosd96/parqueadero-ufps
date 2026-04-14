@@ -113,7 +113,7 @@ export default async function MonitoringPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-outline-variant)]/10">
-                      {recentActivity.map((row) => (
+                      {recentActivity.map((row: { id: number; timestamp: Date; plate: string; zone: string; status: boolean }) => (
                         <tr key={row.id} className="hover:bg-[var(--color-surface-container-low)] transition-colors">
                           <td className="py-4 px-2 font-mono text-[var(--color-on-surface-variant)]">
                             {new Date(row.timestamp).toLocaleTimeString()}
