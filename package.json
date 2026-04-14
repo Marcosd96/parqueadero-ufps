@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "check": "tsc --noEmit && npm run lint"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
