@@ -92,7 +92,7 @@ export default async function VehiclesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {vehicles.map((v) => (
+              {vehicles.map((v: { id: number; plate: string; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
                 <tr key={v.plate} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">

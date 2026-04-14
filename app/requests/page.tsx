@@ -85,7 +85,7 @@ export default async function RequestsPage() {
                 </tr>
               </thead>
               <tbody>
-                {requests.map((r) => (
+                {requests.map((r: { id: number; requesterName: string; visitDate: Date; reason: string; plateNumber: string; status: string }) => (
                   <tr key={r.id} className="group hover:bg-[var(--color-surface-container-low)] transition-colors">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">

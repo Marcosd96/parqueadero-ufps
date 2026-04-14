@@ -129,7 +129,7 @@ export default async function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {activityLogs.map((row) => (
+                  {activityLogs.map((row: { id: number; plate: string; timestamp: Date; zone: string; status: boolean; userType: string }) => (
                     <tr key={row.id} className="hover:bg-[var(--color-surface-container-low)] transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
