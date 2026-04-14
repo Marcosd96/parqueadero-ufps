@@ -20,7 +20,7 @@ export default async function AnalyticsPage() {
   }, {});
 
   const totalLogs = logs.length || 1;
-  const distribution = Object.entries(userTypeDistribution).map(([label, count]: [string, number]) => ({
+  const distribution = (Object.entries(userTypeDistribution) as [string, number][]).map(([label, count]) => ({
     label,
     pct: Math.round((count / totalLogs) * 100),
     color: label === "Student" ? "bg-[var(--color-primary)]" : "bg-[var(--color-primary-container)]",
