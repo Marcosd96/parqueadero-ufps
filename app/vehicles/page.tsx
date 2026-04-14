@@ -156,8 +156,8 @@ export default async function VehiclesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {[
             { icon: "directions_car", bg: "bg-[var(--color-primary)]/10", iconColor: "text-[var(--color-primary)]", value: vehicles.length.toString(), label: "Total Registered", sub: "Active in system" },
-            { icon: "verified", bg: "bg-green-50", iconColor: "text-green-600", value: vehicles.filter(v => v.status === "Active Permit").length.toString(), label: "Active Permits", sub: "Valid and current" },
-            { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: vehicles.filter(v => v.status !== "Active Permit").length.toString(), label: "Pending / Expired", sub: "Require attention" },
+            { icon: "verified", bg: "bg-green-50", iconColor: "text-green-600", value: vehicles.filter((v: { status: string }) => v.status === "Active Permit").length.toString(), label: "Active Permits", sub: "Valid and current" },
+            { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: vehicles.filter((v: { status: string }) => v.status !== "Active Permit").length.toString(), label: "Pending / Expired", sub: "Require attention" },
           ].map((card) => (
             <div key={card.label} className="bg-[var(--color-surface-container-highest)] p-6 rounded-lg flex items-center gap-6">
               <div className={`w-14 h-14 ${card.bg} rounded-full flex items-center justify-center ${card.iconColor}`}>
