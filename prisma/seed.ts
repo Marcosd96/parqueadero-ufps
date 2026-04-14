@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client/index.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import fs from "fs";
@@ -30,17 +30,20 @@ async function main() {
 
     console.log(`Found ${records.length} student records. Seeding...`);
 
-    for (const record of records as Record<string, string>[]) {
-      // Mapping based on user request: cardnumber, firstname, surname
-      await prisma.student.upsert({
-        where: { cardnumber: record.cardnumber },
-        update: {},
-        create: {
-          cardnumber: record.cardnumber,
-          firstname: record.firstname,
-          surname: record.surname,
-        },
+    const studentsData = (records as Record<string, string>[]).map(record => ({
+      cardnumber: record.cardnumber,
+      firstname: record.firstname,
+      surname: record.surname,
+    }));
+
+    const BATCH_SIZE = 5000;
+    for (let i = 0; i < studentsData.length; i += BATCH_SIZE) {
+      const batch = studentsData.slice(i, i + BATCH_SIZE);
+      await prisma.student.createMany({
+        data: batch,
+        skipDuplicates: true, // Ignore duplicates instead of slow upserts
       });
+      console.log(`Pushed records ${i} to ${i + batch.length} of ${studentsData.length}`);
     }
     console.log("Students seeded successfully.");
   } else {
