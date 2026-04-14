@@ -125,6 +125,8 @@ exports.Prisma.StudentScalarFieldEnum = {
   cardnumber: 'cardnumber',
   firstname: 'firstname',
   surname: 'surname',
+  email: 'email',
+  emailpro: 'emailpro',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

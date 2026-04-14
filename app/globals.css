@@ -265,6 +265,14 @@ body {
   color: var(--color-on-secondary-fixed-variant);
 }
 
+.badge-info {
+  background-color: var(--color-primary-fixed);
+  color: var(--color-on-primary-fixed-variant);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
 /* ── Buttons ─────────────────────────────────────────────── */
 
 .btn {

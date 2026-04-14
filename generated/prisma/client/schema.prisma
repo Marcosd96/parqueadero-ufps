@@ -15,6 +15,8 @@ model Student {
   cardnumber String    @unique
   firstname  String
   surname    String
+  email      String?
+  emailpro   String?
   vehicles   Vehicle[]
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

@@ -30,10 +30,15 @@ async function main() {
 
     console.log(`Se encontraron ${records.length} registros de estudiantes. Sembrando...`);
 
+    const isUfpsEmail = (val: string | undefined) =>
+      val && val.toLowerCase().includes("@ufps.edu.co") ? val.trim() : null;
+
     const studentsData = (records as Record<string, string>[]).map(record => ({
       cardnumber: record.cardnumber,
       firstname: record.firstname?.trim().toUpperCase() || "",
       surname: record.surname?.trim().toUpperCase() || "",
+      email: isUfpsEmail(record.email),
+      emailpro: isUfpsEmail(record.emailpro),
     }));
 
     const BATCH_SIZE = 5000;
