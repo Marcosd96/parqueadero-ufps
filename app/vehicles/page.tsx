@@ -21,158 +21,156 @@ export default async function VehiclesPage() {
   const getStatusCls = (status: string) => {
     switch (status) {
       case "Permiso Activo":
-        return "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]";
+        return "badge-success";
       case "Renovación Pendiente":
-        return "bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)]";
+        return "badge-warning";
       case "Suspendido":
-        return "bg-[var(--color-error-container)] text-[var(--color-on-error-container)]";
+        return "badge-error";
       default:
-        return "bg-slate-100 text-slate-800";
+        return "badge-neutral";
     }
   };
 
   return (
-    <>
-
-
-      <main className="p-8 min-h-screen">
-        {/* Header */}
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h2 className="font-[var(--font-headline)] text-[2rem] font-extrabold tracking-tight text-slate-900">Registro de Vehículos</h2>
-            <p className="font-[var(--font-label)] text-slate-500 mt-1">Gestionar permisos del campus y logs de acceso de vehículos</p>
-          </div>
-          <button className="bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:opacity-90 shadow-lg shadow-[var(--color-primary)]/10 transition-all active:scale-95">
-            <span className="material-symbols-outlined">add</span>
-            Registrar Nuevo Vehículo
-          </button>
+    <div className="page-wrapper space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-0">
+        <div>
+          <h2 className="page-title">Registro de Vehículos</h2>
+          <p className="page-subtitle">Gestionar permisos del campus y logs de acceso de vehículos</p>
         </div>
+        <button className="btn btn-primary self-start md:self-auto">
+          <span className="material-symbols-outlined">add</span>
+          Registrar Nuevo Vehículo
+        </button>
+      </div>
 
-        {/* Search & Filter Bar */}
-        <div className="bg-[var(--color-surface-container-lowest)] p-6 rounded-xl border-b-2 border-[var(--color-primary)] mb-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="space-y-2">
-              <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-slate-500 uppercase tracking-wider">Placa</label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-                <input className="w-full bg-[var(--color-surface-container-low)] border-0 rounded py-2.5 pl-10 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)]" placeholder="ej. ABC-1234" type="text" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-slate-500 uppercase tracking-wider">Nombre de Usuario</label>
-              <input className="w-full bg-[var(--color-surface-container-low)] border-0 rounded py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)]" placeholder="Buscar propietarios registrados..." type="text" />
-            </div>
-            <div className="space-y-2">
-              <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-slate-500 uppercase tracking-wider">Departamento</label>
-              <select className="w-full bg-[var(--color-surface-container-low)] border-0 rounded py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)] appearance-none">
-                <option>Todos los Departamentos</option>
-                <option>Administración</option>
-                <option>Ingeniería</option>
-                <option>Ciencias Médicas</option>
-                <option>Artes y Humanidades</option>
-              </select>
-            </div>
-            <div className="flex items-end gap-3">
-              <button className="bg-slate-100 text-slate-600 px-4 py-2.5 rounded-lg font-bold text-sm flex-1 hover:bg-slate-200 transition-colors">Limpiar Filtros</button>
-              <button className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-4 py-2.5 rounded-lg font-bold text-sm flex-1 hover:bg-[var(--color-primary)]/20 transition-colors">Aplicar Búsqueda</button>
+
+      {/* Search & Filter Bar */}
+      <div className="card-padded border-b-2 border-[var(--color-primary)]">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="space-y-2">
+            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Placa</label>
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] text-sm opacity-50">search</span>
+              <input className="search-input" placeholder="ej. ABC-1234" type="text" />
             </div>
           </div>
+          <div className="space-y-2">
+            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Nombre de Usuario</label>
+            <input className="w-full bg-[var(--color-surface-container-high)] border-0 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] outline-none" placeholder="Buscar propietarios registrados..." type="text" />
+          </div>
+          <div className="space-y-2">
+            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Departamento</label>
+            <select className="w-full bg-[var(--color-surface-container-high)] border-0 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] appearance-none outline-none">
+              <option>Todos los Departamentos</option>
+              <option>Administración</option>
+              <option>Ingeniería</option>
+              <option>Ciencias Médicas</option>
+              <option>Artes y Humanidades</option>
+            </select>
+          </div>
+          <div className="flex items-end gap-3">
+            <button className="btn btn-ghost flex-1">Limpiar Filtros</button>
+            <button className="btn btn-outline-primary flex-1">Aplicar Búsqueda</button>
+          </div>
         </div>
+      </div>
 
-        {/* Data Table */}
-        <div className="bg-[var(--color-surface-container-lowest)] rounded-xl overflow-hidden shadow-sm border border-slate-200/30">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-[var(--color-surface-container-low)] text-slate-500 font-[var(--font-label)] text-[0.75rem] font-bold uppercase tracking-widest border-b border-slate-200/50">
-                <th className="px-6 py-4">Detalles del Vehículo</th>
-                <th className="px-6 py-4">ID de Placa</th>
-                <th className="px-6 py-4">Propietario / Departamento</th>
-                <th className="px-6 py-4">Estado del Permiso</th>
-                <th className="px-6 py-4">Fecha de Registro</th>
-                <th className="px-6 py-4 text-right">Acciones</th>
+      {/* Data Table */}
+      <div className="table-wrapper">
+        <table className="table-base">
+          <thead className="table-thead">
+            <tr>
+              <th>Detalles del Vehículo</th>
+              <th>ID de Placa</th>
+              <th>Propietario / Departamento</th>
+              <th>Estado del Permiso</th>
+              <th>Fecha de Registro</th>
+              <th className="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vehicles.map((v: { id: number; plate: string; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
+              <tr key={v.plate} className="table-row">
+                <td className="table-cell">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 bg-[var(--color-surface-container-low)] rounded-lg flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">{v.icon}</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-[var(--color-on-surface)]">{v.model}</p>
+                      <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-on-surface-variant)]">{v.color}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="table-cell">
+                  <span className="bg-[var(--color-on-surface)] text-[var(--color-surface)] px-3 py-1 rounded font-mono text-xs font-bold tracking-widest">{v.plate}</span>
+                </td>
+                <td className="table-cell">
+                  <p className="text-sm font-semibold text-[var(--color-on-surface)]">
+                    {v.owner ? `${v.owner.firstname} ${v.owner.surname}` : "Propietario Genérico"}
+                  </p>
+                  <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-primary)]">{v.department}</p>
+                </td>
+                <td className="table-cell">
+                  <span className={`badge ${getStatusCls(v.status)}`}>{v.status}</span>
+                </td>
+                <td className="table-cell">
+                  <span className="font-[var(--font-label)] text-sm text-[var(--color-on-surface-variant)]">{new Date(v.registeredAt).toLocaleDateString()}</span>
+                </td>
+                <td className="table-cell text-right">
+                  <div className="flex justify-end gap-1">
+                    <button className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]">
+                      <span className="material-symbols-outlined text-lg">history</span>
+                    </button>
+                    <button className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors text-[var(--color-on-surface-variant)]">
+                      <span className="material-symbols-outlined text-lg">more_vert</span>
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {vehicles.map((v: { id: number; plate: string; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
-                <tr key={v.plate} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
-                        <span className="material-symbols-outlined text-slate-400">{v.icon}</span>
-                      </div>
-                      <div>
-                        <p className="font-bold text-sm text-slate-900">{v.model}</p>
-                        <p className="font-[var(--font-label)] text-[0.75rem] text-slate-400">{v.color}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className="bg-slate-900 text-white px-3 py-1 rounded font-mono text-xs font-bold tracking-widest">{v.plate}</span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <p className="text-sm font-semibold text-slate-900">
-                      {v.owner ? `${v.owner.firstname} ${v.owner.surname}` : "Propietario Genérico"}
-                    </p>
-                    <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-primary)]">{v.department}</p>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-tighter ${getStatusCls(v.status)}`}>{v.status}</span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className="font-[var(--font-label)] text-sm text-slate-500">{new Date(v.registeredAt).toLocaleDateString()}</span>
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button className="p-2 hover:bg-slate-200 rounded transition-colors text-slate-400 hover:text-[var(--color-primary)]">
-                        <span className="material-symbols-outlined text-lg">history</span>
-                      </button>
-                      <button className="p-2 hover:bg-slate-200 rounded transition-colors text-slate-400">
-                        <span className="material-symbols-outlined text-lg">more_vert</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
 
-          {/* Pagination */}
-          <div className="bg-[var(--color-surface-container-low)] px-6 py-4 flex items-center justify-between">
-            <p className="font-[var(--font-label)] text-[0.75rem] text-slate-500 font-medium">
-              Mostrando <span className="font-bold text-slate-900">1 a {vehicles.length}</span> de <span className="font-bold text-slate-900">{vehicles.length}</span> entradas
-            </p>
-            <div className="flex items-center gap-1">
-              <button className="p-2 rounded hover:bg-slate-200 text-slate-400 disabled:opacity-30" disabled>
-                <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button className="w-8 h-8 rounded bg-[var(--color-primary)] text-white font-bold text-xs flex items-center justify-center">1</button>
-              <button className="p-2 rounded hover:bg-slate-200 text-slate-600 disabled:opacity-30" disabled>
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
+        {/* Pagination */}
+        <div className="table-footer">
+          <p className="table-footer-text">
+            Mostrando <span className="font-bold text-[var(--color-on-surface)]">1 a {vehicles.length}</span> de{" "}
+            <span className="font-bold text-[var(--color-on-surface)]">{vehicles.length}</span> entradas
+          </p>
+          <div className="flex items-center gap-1">
+            <button className="pagination-btn" disabled>
+              <span className="material-symbols-outlined text-sm">chevron_left</span>
+            </button>
+            <button className="pagination-btn active">1</button>
+            <button className="pagination-btn" disabled>
+              <span className="material-symbols-outlined text-sm">chevron_right</span>
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* System Usage Info Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          {[
-            { icon: "directions_car", bg: "bg-[var(--color-primary)]/10", iconColor: "text-[var(--color-primary)]", value: vehicles.length.toString(), label: "Total Registrados", sub: "Activos en el sistema" },
-            { icon: "verified", bg: "bg-green-50", iconColor: "text-green-600", value: vehicles.filter((v: { status: string }) => v.status === "Permiso Activo").length.toString(), label: "Permisos Activos", sub: "Válidos y vigentes" },
-            { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: vehicles.filter((v: { status: string }) => v.status !== "Permiso Activo").length.toString(), label: "Pendientes / Expirados", sub: "Requieren atención" },
-          ].map((card) => (
-            <div key={card.label} className="bg-[var(--color-surface-container-highest)] p-6 rounded-lg flex items-center gap-6">
-              <div className={`w-14 h-14 ${card.bg} rounded-full flex items-center justify-center ${card.iconColor}`}>
-                <span className="material-symbols-outlined">{card.icon}</span>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-slate-900">{card.value}</p>
-                <p className="font-bold text-sm text-slate-700">{card.label}</p>
-                <p className="font-[var(--font-label)] text-[0.7rem] text-slate-400 mt-0.5">{card.sub}</p>
-              </div>
+      {/* System Usage Info Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { icon: "directions_car", bg: "bg-[var(--color-primary)]/10", iconColor: "text-[var(--color-primary)]", value: vehicles.length.toString(), label: "Total Registrados", sub: "Activos en el sistema" },
+          { icon: "verified", bg: "bg-[var(--color-primary-container)]/20", iconColor: "text-[var(--color-primary)]", value: vehicles.filter((v: { status: string }) => v.status === "Permiso Activo").length.toString(), label: "Permisos Activos", sub: "Válidos y vigentes" },
+          { icon: "pending_actions", bg: "bg-[var(--color-tertiary-container)]/20", iconColor: "text-[var(--color-tertiary)]", value: vehicles.filter((v: { status: string }) => v.status !== "Permiso Activo").length.toString(), label: "Pendientes / Expirados", sub: "Requieren atención" },
+        ].map((card) => (
+          <div key={card.label} className="card-padded flex items-center gap-6">
+            <div className={`w-14 h-14 ${card.bg} rounded-full flex items-center justify-center ${card.iconColor}`}>
+              <span className="material-symbols-outlined">{card.icon}</span>
             </div>
-          ))}
-        </div>
-      </main>
-    </>
+            <div>
+              <p className="text-2xl font-black text-[var(--color-on-surface)]">{card.value}</p>
+              <p className="font-bold text-sm text-[var(--color-on-surface)]">{card.label}</p>
+              <p className="font-[var(--font-label)] text-[0.7rem] text-[var(--color-on-surface-variant)] mt-0.5">{card.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

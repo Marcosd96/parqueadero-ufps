@@ -19,15 +19,15 @@ export default async function ReportsPage() {
   const getUserTypeCls = (type: string) => {
     switch (type) {
       case "Facultad":
-        return "bg-[var(--color-primary-fixed)] text-[var(--color-on-primary-fixed-variant)]";
+        return "badge-primary";
       case "Estudiante":
-        return "bg-[var(--color-secondary-fixed)] text-[var(--color-on-secondary-fixed-variant)]";
+        return "badge-secondary";
       case "Visitante":
-        return "bg-[var(--color-tertiary-fixed)] text-[var(--color-on-tertiary-fixed-variant)]";
+        return "badge-warning";
       case "Administrador":
-        return "bg-[var(--color-inverse-surface)] text-[var(--color-inverse-on-surface)]";
+        return "badge-neutral";
       default:
-        return "bg-slate-100 text-slate-700";
+        return "badge-neutral";
     }
   };
 
@@ -38,220 +38,207 @@ export default async function ReportsPage() {
   ];
 
   return (
-    <>
-      <main className="min-h-screen">
-        <div className="p-8 max-w-[1600px] mx-auto">
-          {/* Page Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-[var(--color-on-surface)]">Reportes de Entrada/Salida de Vehículos</h2>
-              <p className="text-slate-500 font-[var(--font-label)] text-sm mt-1">Log operacional detallado para el ciclo de 24 horas.</p>
+    <div className="page-wrapper space-y-8">
+      {/* Page Header */}
+      <div className="page-header">
+        <div>
+          <h2 className="page-title">Reportes de Entrada/Salida de Vehículos</h2>
+          <p className="page-subtitle">Log operacional detallado para el ciclo de 24 horas.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1">
+            <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] rounded transition-all">
+              Últimas 24h
+            </button>
+            <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-[var(--color-surface-container-lowest)] shadow-sm rounded transition-all">
+              Seleccionar Fecha
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <button className="btn btn-ghost">
+              <span className="material-symbols-outlined text-sm">download</span>
+              EXPORTAR CSV
+            </button>
+            <button className="btn btn-primary">
+              <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+              EXPORTAR PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { icon: "login", border: "border-[var(--color-primary)]", label: "Entradas Totales", value: "1,284", trend: "12%", trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]" },
+          { icon: "logout", border: "border-[var(--color-outline-variant)]", label: "Salidas Totales", value: "942", trend: "4%", trendIcon: "trending_down", trendColor: "text-[var(--color-on-surface-variant)]" },
+          { icon: "swap_horiz", border: "border-[var(--color-tertiary)]", label: "Tráfico Neto", value: "+342", badge: "PICO ACTUAL" },
+        ].map((card) => (
+          <div key={card.label} className={`card-padded border-b-2 ${card.border} relative overflow-hidden group`}>
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <span className="material-symbols-outlined text-6xl text-[var(--color-on-surface)]">{card.icon}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1">
-                <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] rounded transition-all">
-                  Últimas 24h
-                </button>
-                <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-white shadow-sm rounded transition-all">
-                  Seleccionar Fecha
-                </button>
-              </div>
-              <div className="flex gap-2">
-                <button className="flex items-center gap-2 bg-white text-[var(--color-on-surface)] px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
-                  <span className="material-symbols-outlined text-sm">download</span>
-                  EXPORTAR CSV
-                </button>
-                <button className="flex items-center gap-2 bg-[var(--color-primary-container)] text-white px-4 py-2 text-xs font-bold rounded-lg hover:bg-[var(--color-primary)] transition-colors">
-                  <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
-                  EXPORTAR PDF
-                </button>
-              </div>
+            <p className="text-[10px] font-black text-[var(--color-on-surface-variant)] uppercase tracking-widest font-[var(--font-label)]">{card.label}</p>
+            <h3 className="text-4xl font-black text-[var(--color-on-surface)] mt-2 tracking-tighter">{card.value}</h3>
+            <div className="flex items-center gap-2 mt-4">
+              {card.trend && (
+                <>
+                  <span className={`text-xs font-bold ${card.trendColor} flex items-center`}>
+                    <span className="material-symbols-outlined text-xs">{card.trendIcon}</span>
+                    {card.trend}
+                  </span>
+                  <span className="text-[10px] text-[var(--color-on-surface-variant)] font-medium font-[var(--font-label)]">vs ayer</span>
+                </>
+              )}
+              {card.badge && (
+                <span className="badge badge-warning">{card.badge}</span>
+              )}
             </div>
           </div>
+        ))}
+      </div>
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {[
-              { icon: "login", border: "border-[var(--color-primary)]", label: "Entradas Totales", value: "1,284", trend: "12%", trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]" },
-              { icon: "logout", border: "border-slate-300", label: "Salidas Totales", value: "942", trend: "4%", trendIcon: "trending_down", trendColor: "text-slate-600" },
-              { icon: "swap_horiz", border: "border-[var(--color-tertiary)]", label: "Tráfico Neto", value: "+342", badge: "PICO ACTUAL" },
-            ].map((card) => (
-              <div key={card.label} className={`bg-[var(--color-surface-container-lowest)] p-6 rounded-xl border-b-2 ${card.border} relative overflow-hidden group`}>
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <span className="material-symbols-outlined text-6xl">{card.icon}</span>
-                </div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-[var(--font-label)]">{card.label}</p>
-                <h3 className="text-4xl font-black text-[var(--color-on-surface)] mt-2 tracking-tighter">{card.value}</h3>
-                <div className="flex items-center gap-2 mt-4">
-                  {card.trend && (
-                    <>
-                      <span className={`text-xs font-bold ${card.trendColor} flex items-center`}>
-                        <span className="material-symbols-outlined text-xs">{card.trendIcon}</span>
-                        {card.trend}
+      {/* Data Table */}
+      <div className="table-wrapper">
+        <div className="px-6 py-4 border-b border-[var(--color-outline-variant)]/15 flex items-center justify-between">
+          <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Log de Actividad en Tiempo Real</h4>
+          <div className="flex items-center gap-4">
+            <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
+            <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
+              <span className="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table-base">
+            <thead className="table-thead">
+              <tr>
+                {["Marca de Tiempo", "Placa", "Tipo de Usuario", "Zona", "Estado", "Acción"].map((h, i) => (
+                  <th key={h} className={i === 5 ? "text-right" : ""}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {activityLogs.map((row: { id: number; plate: string; timestamp: Date; zone: string; status: boolean; userType: string }) => (
+                <tr key={row.id} className="table-row group">
+                  <td className="table-cell">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-[var(--color-on-surface)]">{new Date(row.timestamp).toLocaleTimeString()}</span>
+                      <span className="text-[10px] text-[var(--color-on-surface-variant)] font-[var(--font-label)]">{new Date(row.timestamp).toLocaleDateString()}</span>
+                    </div>
+                  </td>
+                  <td className="table-cell">
+                    <span className="text-sm font-mono font-bold px-2 py-1 rounded bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)]">{row.plate}</span>
+                  </td>
+                  <td className="table-cell">
+                    <span className={`badge ${getUserTypeCls(row.userType)}`}>{row.userType}</span>
+                  </td>
+                  <td className="table-cell">
+                    <span className="text-xs text-[var(--color-on-surface-variant)] font-medium font-[var(--font-label)]">{row.zone}</span>
+                  </td>
+                  <td className="table-cell">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-1.5 h-1.5 rounded-full ${row.status ? "bg-[var(--color-primary)]" : "bg-[var(--color-error)]"}`} />
+                      <span className={`text-xs font-bold ${row.status ? "text-[var(--color-primary)]" : "text-[var(--color-error)]"}`}>
+                        {row.status ? "Permitido" : "Rechazado"}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-medium font-[var(--font-label)]">vs ayer</span>
-                    </>
-                  )}
-                  {card.badge && (
-                    <span className="bg-[var(--color-tertiary-fixed)] text-[var(--color-on-tertiary-fixed-variant)] px-2 py-0.5 rounded-full text-[10px] font-bold">
-                      {card.badge}
-                    </span>
-                  )}
-                </div>
+                    </div>
+                  </td>
+                  <td className="table-cell text-right">
+                    <button className="text-[var(--color-outline-variant)] group-hover:text-[var(--color-primary)] transition-colors">
+                      <span className="material-symbols-outlined text-sm">
+                        {row.status ? "visibility" : "warning"}
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="table-footer">
+          <p className="table-footer-text">Mostrando 1 a {activityLogs.length} de {activityLogs.length} entradas</p>
+          <div className="flex items-center gap-1">
+            <button className="pagination-btn" disabled>
+              <span className="material-symbols-outlined text-sm">chevron_left</span>
+            </button>
+            <button className="pagination-btn active">1</button>
+            {[2, 3].map((n) => (
+              <button key={n} className="pagination-btn">{n}</button>
+            ))}
+            <button className="pagination-btn">
+              <span className="material-symbols-outlined text-sm">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Analytical Insight Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Peak Traffic Window */}
+        <div className="card-padded !p-8 relative">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-[var(--color-primary)]/10 rounded-lg">
+              <span className="material-symbols-outlined text-[var(--color-primary)]">insights</span>
+            </div>
+            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Ventana de Tráfico Pico</h5>
+          </div>
+          <div className="flex items-end gap-2 h-24 mb-6">
+            {peakBars.map((h, i) => (
+              <div
+                key={i}
+                className={`flex-1 rounded-t-sm ${i === 3 ? "bg-[var(--color-primary)] relative" : i === 4 ? "bg-[var(--color-primary)]/60" : i === 2 ? "bg-[var(--color-primary)]/40" : i === 5 ? "bg-[var(--color-primary)]/30" : "bg-[var(--color-primary)]/20"}`}
+                style={{ height: `${h}%` }}
+              >
+                {i === 3 && (
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[var(--color-on-surface)] text-[var(--color-surface)] text-[8px] px-1.5 py-0.5 rounded font-bold">
+                    08:30
+                  </div>
+                )}
               </div>
             ))}
           </div>
+          <p className="text-xs text-[var(--color-on-surface-variant)] font-[var(--font-label)] leading-relaxed">
+            La densidad de tráfico es actualmente un{" "}
+            <span className="font-bold text-[var(--color-on-surface)]">14% mayor</span> que el promedio móvil de 7 días para este intervalo de tiempo. Se sugiere monitorear la Zona B-4 para un posible desbordamiento.
+          </p>
+        </div>
 
-          {/* Data Table */}
-          <div className="bg-[var(--color-surface-container-lowest)] rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between">
-              <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Log de Actividad en Tiempo Real</h4>
-              <div className="flex items-center gap-4">
-                <button className="text-slate-400 hover:text-[var(--color-on-surface)] transition-colors">
-                  <span className="material-symbols-outlined">filter_list</span>
-                </button>
-                <button className="text-slate-400 hover:text-[var(--color-on-surface)] transition-colors">
-                  <span className="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
+        {/* Compliance Summary */}
+        <div className="card-padded !p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-[var(--color-tertiary)]/10 rounded-lg">
+              <span className="material-symbols-outlined text-[var(--color-tertiary)]">gavel</span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50/50">
-                  <tr>
-                    {["Marca de Tiempo", "Placa", "Tipo de Usuario", "Zona", "Estado", "Acción"].map((h, i) => (
-                      <th
-                        key={h}
-                        className={`px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-[var(--font-label)] ${i === 5 ? "text-right" : ""}`}
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {activityLogs.map((row: { id: number; plate: string; timestamp: Date; zone: string; status: boolean; userType: string }) => (
-                    <tr key={row.id} className="hover:bg-[var(--color-surface-container-low)] transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-[var(--color-on-surface)]">{new Date(row.timestamp).toLocaleTimeString()}</span>
-                          <span className="text-[10px] text-slate-400 font-[var(--font-label)]">{new Date(row.timestamp).toLocaleDateString()}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-sm font-mono font-bold px-2 py-1 rounded bg-slate-100 text-slate-700`}>{row.plate}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight ${getUserTypeCls(row.userType)}`}>
-                          {row.userType}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs text-[var(--color-on-surface)] font-medium font-[var(--font-label)]">{row.zone}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5">
-                          <div className={`w-1.5 h-1.5 rounded-full ${row.status ? "bg-[var(--color-primary)]" : "bg-[var(--color-error)]"}`} />
-                          <span className={`text-xs font-bold ${row.status ? "text-[var(--color-primary)]" : "text-[var(--color-error)]"}`}>
-                            {row.status ? "Permitido" : "Rechazado"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-slate-300 group-hover:text-[var(--color-primary)] transition-colors">
-                          <span className="material-symbols-outlined text-sm">
-                            {row.status ? "visibility" : "warning"}
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Footer */}
-            <div className="px-6 py-4 bg-slate-50/50 flex items-center justify-between border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-500 font-[var(--font-label)]">Mostrando 1 a {activityLogs.length} de {activityLogs.length} entradas</p>
-              <div className="flex items-center gap-2">
-                <button className="w-8 h-8 flex items-center justify-center rounded bg-white border border-slate-200 text-slate-400 hover:text-[var(--color-on-surface)] disabled:opacity-50" disabled>
-                  <span className="material-symbols-outlined text-sm">chevron_left</span>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded bg-[var(--color-primary)] text-white text-xs font-bold">1</button>
-                {[2, 3].map((n) => (
-                  <button key={n} className="w-8 h-8 flex items-center justify-center rounded bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold">{n}</button>
-                ))}
-                <button className="w-8 h-8 flex items-center justify-center rounded bg-white border border-slate-200 text-slate-400 hover:text-[var(--color-on-surface)]">
-                  <span className="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-              </div>
-            </div>
+            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Resumen de Cumplimiento</h5>
           </div>
-
-          {/* Analytical Insight Section */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Peak Traffic Window */}
-            <div className="bg-[var(--color-surface-container-low)] p-8 rounded-xl relative">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[var(--color-primary)]/10 rounded-lg">
-                  <span className="material-symbols-outlined text-[var(--color-primary)]">insights</span>
+          <div className="space-y-4">
+            {complianceStats.map((stat) => (
+              <div key={stat.label}>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-medium text-[var(--color-on-surface-variant)] font-[var(--font-label)]">{stat.label}</span>
+                  <span className="text-xs font-bold text-[var(--color-on-surface)]">{stat.value}</span>
                 </div>
-                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Ventana de Tráfico Pico</h5>
-              </div>
-              <div className="flex items-end gap-2 h-24 mb-6">
-                {peakBars.map((h, i) => (
-                  <div
-                    key={i}
-                    className={`flex-1 rounded-t-sm ${i === 3 ? "bg-[var(--color-primary)] relative" : i === 4 ? "bg-[var(--color-primary)]/60" : i === 2 ? "bg-[var(--color-primary)]/40" : i === 5 ? "bg-[var(--color-primary)]/30" : "bg-[var(--color-primary)]/20"}`}
-                    style={{ height: `${h}%` }}
-                  >
-                    {i === 3 && (
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[var(--color-on-surface)] text-white text-[8px] px-1.5 py-0.5 rounded font-bold">
-                        08:30
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-slate-600 font-[var(--font-label)] leading-relaxed">
-                La densidad de tráfico es actualmente un{" "}
-                <span className="font-bold text-[var(--color-on-surface)]">14% mayor</span> que el promedio móvil de 7 días para este intervalo de tiempo. Se sugiere monitorear la Zona B-4 para un posible desbordamiento.
-              </p>
-            </div>
-
-            {/* Compliance Summary */}
-            <div className="bg-[var(--color-surface-container-low)] p-8 rounded-xl">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[var(--color-tertiary)]/10 rounded-lg">
-                  <span className="material-symbols-outlined text-[var(--color-tertiary)]">gavel</span>
+                <div className="w-full bg-[var(--color-surface-container-high)] h-1.5 rounded-full overflow-hidden mt-1">
+                  <div className={`${stat.barColor} h-full`} style={{ width: `${stat.pct}%` }} />
                 </div>
-                <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Resumen de Cumplimiento</h5>
               </div>
-              <div className="space-y-4">
-                {complianceStats.map((stat) => (
-                  <div key={stat.label}>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-medium text-slate-600 font-[var(--font-label)]">{stat.label}</span>
-                      <span className="text-xs font-bold text-[var(--color-on-surface)]">{stat.value}</span>
-                    </div>
-                    <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1">
-                      <div className={`${stat.barColor} h-full`} style={{ width: `${stat.pct}%` }} />
-                    </div>
-                  </div>
-                ))}
-                <p className="text-[10px] text-slate-400 mt-4 font-[var(--font-label)] italic">
-                  Todos los sistemas operando dentro de los márgenes de seguridad definidos.
-                </p>
-              </div>
-            </div>
+            ))}
+            <p className="text-[10px] text-[var(--color-on-surface-variant)] mt-4 font-[var(--font-label)] italic">
+              Todos los sistemas operando dentro de los márgenes de seguridad definidos.
+            </p>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Floating Action Button */}
-      <button className="fixed bottom-8 right-8 w-14 h-14 bg-[var(--color-primary)] text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+      <button className="fixed bottom-8 right-8 w-14 h-14 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
         <span className="material-symbols-outlined">add</span>
       </button>
-    </>
+    </div>
   );
 }

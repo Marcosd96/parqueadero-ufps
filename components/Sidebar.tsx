@@ -16,19 +16,19 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-full flex flex-col bg-slate-50 dark:bg-slate-900 w-64 z-50">
+    <aside className="fixed left-0 top-0 h-full flex flex-col bg-[var(--color-surface-container-lowest)] border-r border-[var(--color-outline-variant)]/20 w-64 z-50">
       {/* Logo */}
-      <div className="px-6 py-8">
-        <h1 className="text-lg font-black tracking-tighter text-blue-800 dark:text-blue-200 uppercase">
+      <div className="px-6 py-8 border-b border-[var(--color-outline-variant)]/15">
+        <h1 className="text-base font-black tracking-tight text-[var(--color-primary)] uppercase leading-tight">
           Adm. Estacionamiento
         </h1>
-        <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-on-surface-variant)] mt-1">
+        <p className="font-[var(--font-label)] text-[0.725rem] text-[var(--color-on-surface-variant)] mt-1">
           Operaciones de Seguridad
         </p>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+      <nav className="flex-1 px-3 pt-4 space-y-0.5">
         {navItems.map(({ href, label, icon }) => {
           const isActive = pathname === href;
           return (
@@ -37,35 +37,38 @@ export default function Sidebar() {
               href={href}
               className={
                 isActive
-                  ? "flex items-center gap-3 px-4 py-3 text-blue-700 dark:text-blue-400 font-bold border-r-4 border-blue-700 dark:border-blue-400 bg-slate-200/50 dark:bg-slate-800/50 transition-all duration-150 rounded"
-                  : "flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-150 rounded"
+                  ? "flex items-center gap-3 px-3 py-2.5 text-[var(--color-primary)] font-bold bg-[var(--color-primary-fixed)]/60 rounded-lg transition-all duration-150"
+                  : "flex items-center gap-3 px-3 py-2.5 text-[var(--color-on-surface-variant)] font-medium hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-all duration-150"
               }
             >
-              <span className="material-symbols-outlined">{icon}</span>
-              <span className="font-[var(--font-label)]">{label}</span>
+              <span className={`material-symbols-outlined text-[1.2rem] ${isActive ? "text-[var(--color-primary)]" : "text-[var(--color-on-surface-variant)]"}`}>
+                {icon}
+              </span>
+              <span className="font-[var(--font-label)] text-sm">{label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom */}
-      <div className="mt-auto px-4 pb-8 space-y-2">
-        <button className="w-full bg-[var(--color-primary)] text-white py-3 rounded-lg font-bold text-sm tracking-tight active:scale-95 transition-transform mb-6">
+      <div className="mt-auto px-3 pb-6 pt-4 space-y-0.5 border-t border-[var(--color-outline-variant)]/15">
+        <button className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] py-2.5 rounded-lg font-bold text-sm tracking-tight active:scale-95 transition-transform mb-3 flex items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-sm">lock</span>
           Bloqueo de Emergencia
         </button>
         <Link
           href="#"
-          className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 text-[var(--color-on-surface-variant)] font-medium hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors"
         >
-          <span className="material-symbols-outlined">settings</span>
-          <span className="font-[var(--font-label)]">Configuración</span>
+          <span className="material-symbols-outlined text-[1.2rem]">settings</span>
+          <span className="font-[var(--font-label)] text-sm">Configuración</span>
         </Link>
         <Link
           href="#"
-          className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 text-[var(--color-on-surface-variant)] font-medium hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors"
         >
-          <span className="material-symbols-outlined">help</span>
-          <span className="font-[var(--font-label)]">Soporte</span>
+          <span className="material-symbols-outlined text-[1.2rem]">help</span>
+          <span className="font-[var(--font-label)] text-sm">Soporte</span>
         </Link>
       </div>
     </aside>

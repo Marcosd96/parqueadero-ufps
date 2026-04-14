@@ -24,7 +24,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
   } : {};
 
   const totalFilteredStudents = await prisma.student.count({ where: filters });
-  
+
   const students = await prisma.student.findMany({
     where: filters,
     take: ITEMS_PER_PAGE,
@@ -38,100 +38,114 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
   });
 
   return (
-    <main className="p-8 min-h-screen">
-      <div className="max-w-[1400px] mx-auto">
-        <div className="mb-8 flex justify-between items-end">
-          <div>
-            <h2 className="font-black text-2xl tracking-tight text-[var(--color-on-surface)]">
-              Directorio de Estudiantes
-            </h2>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="font-[var(--font-label)] text-xs font-medium text-[var(--color-on-secondary-container)]">
-                {query ? `Se encontraron ${totalFilteredStudents.toLocaleString()} coincidencias para "${query}"` : `${totalFilteredStudents.toLocaleString()} estudiantes totales registrados sincronizados de forma segura`}
-              </span>
-            </div>
-          </div>
-          <button className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white px-4 py-2 rounded font-bold text-sm transition-colors flex items-center gap-2 shadow-md">
-            <span className="material-symbols-outlined text-sm">person_add</span>
-            Registrar Estudiante
-          </button>
+    <div className="page-wrapper space-y-6">
+      {/* Page Header */}
+      <div className="page-header">
+        <div>
+          <h2 className="page-title">Directorio de Estudiantes</h2>
+          <p className="page-subtitle">
+            {query
+              ? `Se encontraron ${totalFilteredStudents.toLocaleString()} coincidencias para "${query}"`
+              : `${totalFilteredStudents.toLocaleString()} estudiantes totales registrados sincronizados de forma segura`}
+          </p>
         </div>
+        <button className="btn btn-primary">
+          <span className="material-symbols-outlined text-sm">person_add</span>
+          Registrar Estudiante
+        </button>
+      </div>
 
-        {/* Action Bar */}
-        <div className="flex gap-4 mb-6">
-          <form method="GET" action="/students" className="flex-1 max-w-md relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]/50">search</span>
-            <input 
-              type="text"
-              name="query"
-              defaultValue={query}
-              placeholder="Buscar por ID, Nombre o Apellido..." 
-              className="w-full bg-[var(--color-surface-container-highest)] border-none rounded-lg py-3 pl-10 pr-4 text-sm font-medium text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)]/50 outline-none placeholder:text-[var(--color-on-surface-variant)]/50"
-            />
-          </form>
-          <button className="bg-[var(--color-surface-container-highest)] px-4 rounded-lg font-bold text-sm flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-colors">
-            <span className="material-symbols-outlined text-sm">filter_list</span>
-            Filtros
-          </button>
-        </div>
+      {/* Action Bar */}
+      <div className="filter-bar">
+        <form method="GET" action="/students" className="search-input-wrapper max-w-md">
+          <span className="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            name="query"
+            defaultValue={query}
+            placeholder="Buscar por ID, Nombre o Apellido..."
+            className="search-input"
+          />
+        </form>
+        <button className="btn btn-ghost">
+          <span className="material-symbols-outlined text-sm">filter_list</span>
+          Filtros
+        </button>
+      </div>
 
-        {/* Data Table */}
-        <div className="bg-[var(--color-surface-container-lowest)] rounded-lg shadow-sm border border-[var(--color-outline-variant)]/20 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left font-[var(--font-label)] text-[0.8rem]">
-              <thead className="bg-[var(--color-surface-container-low)] text-[var(--color-on-secondary-container)] uppercase tracking-wider font-semibold border-b border-[var(--color-outline-variant)]/15">
-                <tr>
-                  <th className="py-4 px-6">ID (Número de Carnet)</th>
-                  <th className="py-4 px-6">Nombre</th>
-                  <th className="py-4 px-6">Apellido</th>
-                  <th className="py-4 px-6">Vehículos Vinculados</th>
-                  <th className="py-4 px-6 text-right">Acciones</th>
+      {/* Data Table */}
+      <div className="table-wrapper">
+        <div className="overflow-x-auto">
+          <table className="table-base">
+            <thead className="table-thead">
+              <tr>
+                <th>ID (Número de Carnet)</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Vehículos Vinculados</th>
+                <th className="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student: { id: number; cardnumber: string; firstname: string; surname: string; vehicles: Record<string, unknown>[] }) => (
+                <tr key={student.id} className="table-row group">
+                  <td className="table-cell font-mono font-bold text-[var(--color-primary)]">
+                    {student.cardnumber}
+                  </td>
+                  <td className="table-cell font-bold text-[var(--color-on-surface)]">
+                    {student.firstname}
+                  </td>
+                  <td className="table-cell text-[var(--color-on-surface-variant)]">
+                    {student.surname}
+                  </td>
+                  <td className="table-cell">
+                    <span className={`badge ${student.vehicles.length > 0 ? "badge-warning" : "badge-neutral"}`}>
+                      {student.vehicles.length > 0 ? `${student.vehicles.length} Vehículo(s)` : "Ninguno"}
+                    </span>
+                  </td>
+                  <td className="table-cell text-right">
+                    <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors opacity-0 group-hover:opacity-100">
+                      <span className="material-symbols-outlined text-lg">edit</span>
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-outline-variant)]/10">
-                {students.map((student: { id: number; cardnumber: string; firstname: string; surname: string; vehicles: Record<string, unknown>[] }) => (
-                  <tr key={student.id} className="hover:bg-[var(--color-surface-container-lowest)]/50 transition-colors group">
-                    <td className="py-4 px-6 font-mono font-bold text-[var(--color-primary)]">
-                      {student.cardnumber}
-                    </td>
-                    <td className="py-4 px-6 text-[var(--color-on-surface)] font-bold">
-                      {student.firstname}
-                    </td>
-                    <td className="py-4 px-6 text-[var(--color-on-surface)]">
-                      {student.surname}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`px-3 py-1 rounded-full text-[0.65rem] font-bold ${student.vehicles.length > 0 ? "bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)]" : "bg-slate-100 text-slate-500"}`}>
-                        {student.vehicles.length > 0 ? `${student.vehicles.length} Vehículo(s)` : "Ninguno"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors opacity-0 group-hover:opacity-100">
-                        <span className="material-symbols-outlined text-lg">edit</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-4 border-t border-[var(--color-outline-variant)]/15 flex justify-between items-center text-xs text-[var(--color-on-surface-variant)] font-bold">
-            <span>Mostrando páginas {currentPage} de {Math.ceil(totalFilteredStudents / ITEMS_PER_PAGE) || 1}</span>
-            <div className="flex gap-2">
-              {currentPage > 1 ? (
-                <Link href={`/students?page=${currentPage - 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Ant</Link>
-              ) : (
-                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Ant</button>
-              )}
-              {currentPage * ITEMS_PER_PAGE < totalFilteredStudents ? (
-                <Link href={`/students?page=${currentPage + 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`} className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/30 hover:bg-[var(--color-surface-container-low)] transition-colors">Sig</Link>
-              ) : (
-                <button disabled className="px-3 py-1 rounded border border-[var(--color-outline-variant)]/10 text-slate-300 opacity-50 cursor-not-allowed">Sig</button>
-              )}
-            </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="table-footer">
+          <span className="table-footer-text">
+            Página {currentPage} de {Math.ceil(totalFilteredStudents / ITEMS_PER_PAGE) || 1}
+          </span>
+          <div className="flex gap-2">
+            {currentPage > 1 ? (
+              <Link
+                href={`/students?page=${currentPage - 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`}
+                className="pagination-btn"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+              </Link>
+            ) : (
+              <button disabled className="pagination-btn">
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+              </button>
+            )}
+            <button className="pagination-btn active">{currentPage}</button>
+            {currentPage * ITEMS_PER_PAGE < totalFilteredStudents ? (
+              <Link
+                href={`/students?page=${currentPage + 1}${query ? `&query=${encodeURIComponent(query)}` : ""}`}
+                className="pagination-btn"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+              </Link>
+            ) : (
+              <button disabled className="pagination-btn">
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

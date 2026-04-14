@@ -2,43 +2,44 @@ import Link from "next/link";
 
 export default function TopBar() {
   return (
-    <header className="flex justify-between items-center w-full px-6 py-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200/15 dark:border-slate-800/15 shadow-sm">
+    <header className="flex justify-between items-center w-full px-6 py-3 bg-[var(--color-surface-container-lowest)]/90 backdrop-blur-xl sticky top-0 z-40 border-b border-[var(--color-outline-variant)]/20 shadow-sm">
       <div className="flex items-center gap-8">
-        <div className="flex items-center gap-4 text-blue-700">
+        <div className="flex items-center gap-3 text-[var(--color-primary)]">
           <span className="material-symbols-outlined">local_parking</span>
-          <span className="font-[var(--font-headline)] font-bold text-slate-900 tracking-tight">
+          <span className="font-[var(--font-headline)] font-bold text-[var(--color-on-surface)] tracking-tight">
             Mapa de Zonas
           </span>
         </div>
-        <div className="flex items-center gap-4 text-slate-500 font-[var(--font-label)] text-[0.875rem] hover:text-slate-800 cursor-pointer transition-all">
+        <div className="flex items-center gap-3 text-[var(--color-on-surface-variant)] font-[var(--font-label)] text-[0.875rem] hover:text-[var(--color-on-surface)] cursor-pointer transition-all">
           <span className="material-symbols-outlined">gate</span>
           <span>Control de Portón</span>
         </div>
       </div>
 
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-error-container)] text-[var(--color-on-error-container)] rounded-full text-[0.75rem] font-bold">
-          <span className="w-2 h-2 bg-[var(--color-error)] rounded-full" />
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-error-container)]/40 text-[var(--color-on-error-container)] rounded-full text-[0.75rem] font-bold">
+          <span className="w-2 h-2 bg-[var(--color-error)] rounded-full animate-pulse" />
           Nueva Alerta
         </div>
-        <div className="text-[0.75rem] font-[var(--font-label)] text-slate-400">
+        <div className="text-[0.75rem] font-[var(--font-label)] text-[var(--color-on-surface-variant)]">
           Estado del Sistema:{" "}
           <span className="text-[var(--color-primary)] font-bold">Operativo</span>
         </div>
-        <div className="flex items-center gap-4 border-l border-slate-200 pl-6">
-          <button className="text-slate-500 hover:text-[var(--color-primary)] transition-all">
+        <div className="flex items-center gap-4 border-l border-[var(--color-outline-variant)]/30 pl-6">
+          <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all">
             <span className="material-symbols-outlined">notifications</span>
           </button>
           <div className="flex items-center gap-2">
             <img
               alt="Administrator Avatar"
-              className="w-8 h-8 rounded-full object-cover border border-slate-200"
+              className="w-8 h-8 rounded-full object-cover border border-[var(--color-outline-variant)]/30"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqrra-PZI-FS2wPTUcB6vHdFkHftRCe4_ms0RaEe5FeLEyWkDZtnvnukYX6jn9CjcRJPOGcITiouOE6eKUvV6L8gRv3rO6sfN4Vr09rVtwj0_eiaklVPtrbjA-7pFmAYXlbgND7zs8FdHJ7tPdEFRR1VXBNq7KiBMMdMkaTSpyprwbwOCCaTiEYvYlShGUMRT390Ylh-waG4TSGa6CNw7scZbtnS-FQVUzl-69o43Jdu7sdjWyens8blol-JGOrT7tAk5vj5m0hyL-"
             />
-            <span className="material-symbols-outlined text-slate-400">account_circle</span>
+            <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">account_circle</span>
           </div>
         </div>
       </div>
     </header>
   );
 }
+
