@@ -14,7 +14,7 @@ export default async function AnalyticsPage() {
   });
 
   const logs = await prisma.accessLog.findMany();
-  const userTypeDistribution = logs.reduce((acc: Record<string, number>, log) => {
+  const userTypeDistribution = logs.reduce((acc: Record<string, number>, log: { userType: string }) => {
     acc[log.userType] = (acc[log.userType] || 0) + 1;
     return acc;
   }, {});
