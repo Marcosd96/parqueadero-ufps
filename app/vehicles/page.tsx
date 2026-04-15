@@ -7,9 +7,41 @@ export const metadata: Metadata = {
 };
 
 import prisma from "@/lib/prisma";
+import VehicleRowActions from "./VehicleRowActions";
+import VehicleFilters from "./VehicleFilters";
 
-export default async function VehiclesPage() {
+interface PageProps {
+  searchParams: Promise<{
+    plate?: string;
+    owner?: string;
+    department?: string;
+  }>;
+}
+
+export default async function VehiclesPage({ searchParams }: PageProps) {
+  const query = await searchParams;
+  
+  const where: any = {};
+  
+  if (query.plate) {
+    where.plate = { contains: query.plate, mode: 'insensitive' };
+  }
+  
+  if (query.owner) {
+    where.owner = {
+      OR: [
+        { firstname: { contains: query.owner, mode: 'insensitive' } },
+        { surname: { contains: query.owner, mode: 'insensitive' } },
+      ]
+    };
+  }
+  
+  if (query.department) {
+    where.department = query.department;
+  }
+
   const vehicles = await prisma.vehicle.findMany({
+    where,
     include: {
       owner: true,
     },
@@ -53,35 +85,7 @@ export default async function VehiclesPage() {
 
 
       {/* Search & Filter Bar */}
-      <div className="card-padded border-b-2 border-[var(--color-primary)]">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="space-y-2">
-            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Placa</label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] text-sm opacity-50">search</span>
-              <input className="search-input" placeholder="ej. ABC-1234" type="text" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Nombre de Usuario</label>
-            <input className="w-full bg-[var(--color-surface-container-high)] border-0 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] outline-none" placeholder="Buscar propietarios registrados..." type="text" />
-          </div>
-          <div className="space-y-2">
-            <label className="font-[var(--font-label)] text-[0.75rem] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Departamento</label>
-            <select className="w-full bg-[var(--color-surface-container-high)] border-0 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] appearance-none outline-none">
-              <option>Todos los Departamentos</option>
-              <option>Administración</option>
-              <option>Ingeniería</option>
-              <option>Ciencias Médicas</option>
-              <option>Artes y Humanidades</option>
-            </select>
-          </div>
-          <div className="flex items-end gap-3">
-            <button className="btn btn-ghost flex-1">Limpiar Filtros</button>
-            <button className="btn btn-outline-primary flex-1">Aplicar Búsqueda</button>
-          </div>
-        </div>
-      </div>
+      <VehicleFilters />
 
       {/* Data Table */}
       <div className="table-wrapper">
@@ -126,14 +130,7 @@ export default async function VehiclesPage() {
                   <span className="font-[var(--font-label)] text-sm text-[var(--color-on-surface-variant)]">{new Date(v.registeredAt).toLocaleDateString()}</span>
                 </td>
                 <td className="table-cell text-right">
-                  <div className="flex justify-end gap-1">
-                    <button className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]">
-                      <span className="material-symbols-outlined text-lg">history</span>
-                    </button>
-                    <button className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors text-[var(--color-on-surface-variant)]">
-                      <span className="material-symbols-outlined text-lg">more_vert</span>
-                    </button>
-                  </div>
+                  <VehicleRowActions vehicle={v} />
                 </td>
               </tr>
             ))}
