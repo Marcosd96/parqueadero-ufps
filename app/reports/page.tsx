@@ -177,7 +177,7 @@ export default async function ReportsPage() {
         </div>
       </div>
 
-      {/* Analytical Insight Section */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Peak Traffic Window */}
         <div className="card-padded !p-8 relative">
