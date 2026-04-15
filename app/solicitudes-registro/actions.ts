@@ -5,15 +5,79 @@ import { revalidatePath } from "next/cache";
 
 export async function updateRegistrationStatus(id: number, status: string) {
   try {
-    await prisma.userRegistration.update({
-      where: { id },
-      data: { status },
-    });
-    
+    // If approving, we need to create the permanent records
+    if (status === "APROBADO") {
+      await prisma.$transaction(async (tx) => {
+        // 1. Get current registration data
+        const reg = await tx.userRegistration.findUnique({
+          where: { id },
+        });
+
+        if (!reg) throw new Error("Solicitud no encontrada.");
+        if (reg.status !== "PENDIENTE") throw new Error("La solicitud ya fue procesada.");
+
+        // 2. Split Name (Simple split: first word as firstname, rest as surname)
+        const nameParts = reg.fullName.trim().split(/\s+/);
+        const firstname = nameParts[0] || "Usuario";
+        const surname = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "S/A";
+
+        // 3. Create or find Student
+        const student = await tx.student.upsert({
+          where: { cardnumber: reg.institutionalCode },
+          update: {
+            email: reg.email, // Ensure email is kept up to date
+          },
+          create: {
+            cardnumber: reg.institutionalCode,
+            firstname,
+            surname,
+            email: reg.email,
+          },
+        });
+
+        // 4. Create Vehicle if not exists
+        await tx.vehicle.upsert({
+          where: { plate: reg.plate.toUpperCase().trim() },
+          update: {
+            ownerId: student.id, // Assign to this student if it existed but was loose
+            department: reg.userType,
+            brand: reg.vehicleBrand,
+            model: reg.vehicleModel || "N/A",
+          },
+          create: {
+            plate: reg.plate.toUpperCase().trim(),
+            ownerId: student.id,
+            brand: reg.vehicleBrand,
+            model: reg.vehicleModel || "N/A",
+            color: "N/A",
+            icon: "directions_car",
+            department: reg.userType,
+            status: "ACTIVO",
+          },
+        });
+
+        // 5. Finally update status
+        await tx.userRegistration.update({
+          where: { id },
+          data: { status: "APROBADO" },
+        });
+      });
+    } else {
+      // Just update status (e.g. if RECHAZADO)
+      await prisma.userRegistration.update({
+        where: { id },
+        data: { status },
+      });
+    }
+
     revalidatePath("/solicitudes-registro");
+    revalidatePath("/students");
+    revalidatePath("/vehicles");
+    
     return { success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating status:", error);
-    return { error: "No se pudo actualizar el estado." };
+    const errorMessage = error instanceof Error ? error.message : "No se pudo actualizar el estado.";
+    return { error: errorMessage };
   }
 }

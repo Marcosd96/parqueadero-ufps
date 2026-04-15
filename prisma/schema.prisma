@@ -25,6 +25,7 @@ model Student {
 model Vehicle {
   id           Int       @id @default(autoincrement())
   plate        String    @unique
+  brand        String?
   model        String
   color        String
   icon         String
@@ -64,6 +65,8 @@ model UserRegistration {
   carnetFilePath    String
   ownershipFilePath String
   plate             String
+  vehicleBrand      String?
+  vehicleModel      String?
   status            String   @default("PENDIENTE") // PENDIENTE, APROBADO, RECHAZADO
   createdAt         DateTime @default(now())
 }

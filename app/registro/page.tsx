@@ -330,6 +330,8 @@ export default function RegistroPage() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [plate, setPlate] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
   const [carnetFile, setCarnetFile] = useState<File | null>(null);
   const [ownershipFile, setOwnershipFile] = useState<File | null>(null);
 
@@ -405,12 +407,14 @@ export default function RegistroPage() {
       e.email = "Debe ser un correo @ufps.edu.co.";
     }
 
-    const trimmedPlate = plate.trim();
-    if (!trimmedPlate) {
+    if (!plate.trim()) {
       e.plate = "La placa es obligatoria.";
-    } else if (!PLATE_RE.test(trimmedPlate)) {
+    } else if (!PLATE_RE.test(plate)) {
       e.plate = "Formato inválido. Ej: ABC123 (carro), MGO18G (moto) o AB1234 (venezolana).";
     }
+
+    if (!brand.trim()) e.brand = "La marca es obligatoria.";
+    if (!model.trim()) e.model = "El modelo es obligatorio.";
 
     if (!carnetFile) e.carnetFile = "Debes subir el carnet.";
     if (!ownershipFile) e.ownershipFile = "Debes subir el documento de propiedad.";
@@ -438,6 +442,8 @@ export default function RegistroPage() {
     fd.append("institutionalCode", code);
     fd.append("fullName", fullName);
     fd.append("plate", plate);
+    fd.append("vehicleBrand", brand);
+    fd.append("vehicleModel", model);
     if (carnetFile) fd.append("carnetFile", carnetFile);
     if (ownershipFile) fd.append("ownershipFile", ownershipFile);
 
@@ -475,7 +481,7 @@ export default function RegistroPage() {
             </div>
             <div style={styles.successMetaItem}>
               <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>directions_car</span>
-              <span>{plate}</span>
+              <span>{brand} {model} ({plate})</span>
             </div>
           </div>
           <button
@@ -483,6 +489,7 @@ export default function RegistroPage() {
             onClick={() => {
               setSubmitted(false);
               setCode(""); setEmail(""); setFullName(""); setPlate("");
+              setBrand(""); setModel("");
               setUserType(""); setCarnetFile(null); setOwnershipFile(null);
               setCodeState("idle");
             }}
@@ -755,6 +762,28 @@ export default function RegistroPage() {
               hint="Carro: ABC123 · Moto: MGO18G · Venezolana: AB1234"
               error={errors.plate}
             />
+
+            {/* Brand and Model */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <Field
+                id="brand"
+                label="Marca"
+                icon="factory"
+                value={brand}
+                onChange={setBrand}
+                placeholder="Ej: Mazda, Yamaha"
+                error={errors.brand}
+              />
+              <Field
+                id="model"
+                label="Modelo"
+                icon="model_training"
+                value={model}
+                onChange={setModel}
+                placeholder="Ej: 3, R6, Spark"
+                error={errors.model}
+              />
+            </div>
 
             {/* Files */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>

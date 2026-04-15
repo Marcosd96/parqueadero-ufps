@@ -14,6 +14,8 @@ export async function submitRegistration(formData: FormData) {
     const institutionalCode = formData.get("institutionalCode") as string;
     const fullName = formData.get("fullName") as string;
     const plate = (formData.get("plate") as string).toUpperCase().trim();
+    const vehicleBrand = (formData.get("vehicleBrand") as string) || null;
+    const vehicleModel = (formData.get("vehicleModel") as string) || null;
     const carnetFile = formData.get("carnetFile") as File | null;
     const ownershipFile = formData.get("ownershipFile") as File | null;
 
@@ -87,6 +89,8 @@ export async function submitRegistration(formData: FormData) {
         institutionalCode,
         fullName,
         plate,
+        vehicleBrand,
+        vehicleModel,
         carnetFilePath: carnetPath,
         ownershipFilePath: ownershipPath,
         status: "PENDIENTE",

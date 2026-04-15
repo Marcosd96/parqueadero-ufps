@@ -134,6 +134,7 @@ exports.Prisma.StudentScalarFieldEnum = {
 exports.Prisma.VehicleScalarFieldEnum = {
   id: 'id',
   plate: 'plate',
+  brand: 'brand',
   model: 'model',
   color: 'color',
   icon: 'icon',
@@ -171,6 +172,8 @@ exports.Prisma.UserRegistrationScalarFieldEnum = {
   carnetFilePath: 'carnetFilePath',
   ownershipFilePath: 'ownershipFilePath',
   plate: 'plate',
+  vehicleBrand: 'vehicleBrand',
+  vehicleModel: 'vehicleModel',
   status: 'status',
   createdAt: 'createdAt'
 };

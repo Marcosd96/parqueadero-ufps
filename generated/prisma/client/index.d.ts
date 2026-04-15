@@ -2433,6 +2433,7 @@ export namespace Prisma {
   export type VehicleMinAggregateOutputType = {
     id: number | null
     plate: string | null
+    brand: string | null
     model: string | null
     color: string | null
     icon: string | null
@@ -2445,6 +2446,7 @@ export namespace Prisma {
   export type VehicleMaxAggregateOutputType = {
     id: number | null
     plate: string | null
+    brand: string | null
     model: string | null
     color: string | null
     icon: string | null
@@ -2457,6 +2459,7 @@ export namespace Prisma {
   export type VehicleCountAggregateOutputType = {
     id: number
     plate: number
+    brand: number
     model: number
     color: number
     icon: number
@@ -2481,6 +2484,7 @@ export namespace Prisma {
   export type VehicleMinAggregateInputType = {
     id?: true
     plate?: true
+    brand?: true
     model?: true
     color?: true
     icon?: true
@@ -2493,6 +2497,7 @@ export namespace Prisma {
   export type VehicleMaxAggregateInputType = {
     id?: true
     plate?: true
+    brand?: true
     model?: true
     color?: true
     icon?: true
@@ -2505,6 +2510,7 @@ export namespace Prisma {
   export type VehicleCountAggregateInputType = {
     id?: true
     plate?: true
+    brand?: true
     model?: true
     color?: true
     icon?: true
@@ -2604,6 +2610,7 @@ export namespace Prisma {
   export type VehicleGroupByOutputType = {
     id: number
     plate: string
+    brand: string | null
     model: string
     color: string
     icon: string
@@ -2635,6 +2642,7 @@ export namespace Prisma {
   export type VehicleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     plate?: boolean
+    brand?: boolean
     model?: boolean
     color?: boolean
     icon?: boolean
@@ -2648,6 +2656,7 @@ export namespace Prisma {
   export type VehicleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     plate?: boolean
+    brand?: boolean
     model?: boolean
     color?: boolean
     icon?: boolean
@@ -2661,6 +2670,7 @@ export namespace Prisma {
   export type VehicleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     plate?: boolean
+    brand?: boolean
     model?: boolean
     color?: boolean
     icon?: boolean
@@ -2674,6 +2684,7 @@ export namespace Prisma {
   export type VehicleSelectScalar = {
     id?: boolean
     plate?: boolean
+    brand?: boolean
     model?: boolean
     color?: boolean
     icon?: boolean
@@ -2683,7 +2694,7 @@ export namespace Prisma {
     ownerId?: boolean
   }
 
-  export type VehicleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "plate" | "model" | "color" | "icon" | "department" | "status" | "registeredAt" | "ownerId", ExtArgs["result"]["vehicle"]>
+  export type VehicleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "plate" | "brand" | "model" | "color" | "icon" | "department" | "status" | "registeredAt" | "ownerId", ExtArgs["result"]["vehicle"]>
   export type VehicleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | Vehicle$ownerArgs<ExtArgs>
   }
@@ -2702,6 +2713,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       plate: string
+      brand: string | null
       model: string
       color: string
       icon: string
@@ -3135,6 +3147,7 @@ export namespace Prisma {
   interface VehicleFieldRefs {
     readonly id: FieldRef<"Vehicle", 'Int'>
     readonly plate: FieldRef<"Vehicle", 'String'>
+    readonly brand: FieldRef<"Vehicle", 'String'>
     readonly model: FieldRef<"Vehicle", 'String'>
     readonly color: FieldRef<"Vehicle", 'String'>
     readonly icon: FieldRef<"Vehicle", 'String'>
@@ -5716,6 +5729,8 @@ export namespace Prisma {
     carnetFilePath: string | null
     ownershipFilePath: string | null
     plate: string | null
+    vehicleBrand: string | null
+    vehicleModel: string | null
     status: string | null
     createdAt: Date | null
   }
@@ -5729,6 +5744,8 @@ export namespace Prisma {
     carnetFilePath: string | null
     ownershipFilePath: string | null
     plate: string | null
+    vehicleBrand: string | null
+    vehicleModel: string | null
     status: string | null
     createdAt: Date | null
   }
@@ -5742,6 +5759,8 @@ export namespace Prisma {
     carnetFilePath: number
     ownershipFilePath: number
     plate: number
+    vehicleBrand: number
+    vehicleModel: number
     status: number
     createdAt: number
     _all: number
@@ -5765,6 +5784,8 @@ export namespace Prisma {
     carnetFilePath?: true
     ownershipFilePath?: true
     plate?: true
+    vehicleBrand?: true
+    vehicleModel?: true
     status?: true
     createdAt?: true
   }
@@ -5778,6 +5799,8 @@ export namespace Prisma {
     carnetFilePath?: true
     ownershipFilePath?: true
     plate?: true
+    vehicleBrand?: true
+    vehicleModel?: true
     status?: true
     createdAt?: true
   }
@@ -5791,6 +5814,8 @@ export namespace Prisma {
     carnetFilePath?: true
     ownershipFilePath?: true
     plate?: true
+    vehicleBrand?: true
+    vehicleModel?: true
     status?: true
     createdAt?: true
     _all?: true
@@ -5891,6 +5916,8 @@ export namespace Prisma {
     carnetFilePath: string
     ownershipFilePath: string
     plate: string
+    vehicleBrand: string | null
+    vehicleModel: string | null
     status: string
     createdAt: Date
     _count: UserRegistrationCountAggregateOutputType | null
@@ -5923,6 +5950,8 @@ export namespace Prisma {
     carnetFilePath?: boolean
     ownershipFilePath?: boolean
     plate?: boolean
+    vehicleBrand?: boolean
+    vehicleModel?: boolean
     status?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["userRegistration"]>
@@ -5936,6 +5965,8 @@ export namespace Prisma {
     carnetFilePath?: boolean
     ownershipFilePath?: boolean
     plate?: boolean
+    vehicleBrand?: boolean
+    vehicleModel?: boolean
     status?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["userRegistration"]>
@@ -5949,6 +5980,8 @@ export namespace Prisma {
     carnetFilePath?: boolean
     ownershipFilePath?: boolean
     plate?: boolean
+    vehicleBrand?: boolean
+    vehicleModel?: boolean
     status?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["userRegistration"]>
@@ -5962,11 +5995,13 @@ export namespace Prisma {
     carnetFilePath?: boolean
     ownershipFilePath?: boolean
     plate?: boolean
+    vehicleBrand?: boolean
+    vehicleModel?: boolean
     status?: boolean
     createdAt?: boolean
   }
 
-  export type UserRegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userType" | "email" | "institutionalCode" | "fullName" | "carnetFilePath" | "ownershipFilePath" | "plate" | "status" | "createdAt", ExtArgs["result"]["userRegistration"]>
+  export type UserRegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userType" | "email" | "institutionalCode" | "fullName" | "carnetFilePath" | "ownershipFilePath" | "plate" | "vehicleBrand" | "vehicleModel" | "status" | "createdAt", ExtArgs["result"]["userRegistration"]>
 
   export type $UserRegistrationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "UserRegistration"
@@ -5980,6 +6015,8 @@ export namespace Prisma {
       carnetFilePath: string
       ownershipFilePath: string
       plate: string
+      vehicleBrand: string | null
+      vehicleModel: string | null
       status: string
       createdAt: Date
     }, ExtArgs["result"]["userRegistration"]>
@@ -6413,6 +6450,8 @@ export namespace Prisma {
     readonly carnetFilePath: FieldRef<"UserRegistration", 'String'>
     readonly ownershipFilePath: FieldRef<"UserRegistration", 'String'>
     readonly plate: FieldRef<"UserRegistration", 'String'>
+    readonly vehicleBrand: FieldRef<"UserRegistration", 'String'>
+    readonly vehicleModel: FieldRef<"UserRegistration", 'String'>
     readonly status: FieldRef<"UserRegistration", 'String'>
     readonly createdAt: FieldRef<"UserRegistration", 'DateTime'>
   }
@@ -6817,6 +6856,7 @@ export namespace Prisma {
   export const VehicleScalarFieldEnum: {
     id: 'id',
     plate: 'plate',
+    brand: 'brand',
     model: 'model',
     color: 'color',
     icon: 'icon',
@@ -6863,6 +6903,8 @@ export namespace Prisma {
     carnetFilePath: 'carnetFilePath',
     ownershipFilePath: 'ownershipFilePath',
     plate: 'plate',
+    vehicleBrand: 'vehicleBrand',
+    vehicleModel: 'vehicleModel',
     status: 'status',
     createdAt: 'createdAt'
   };
@@ -7043,6 +7085,7 @@ export namespace Prisma {
     NOT?: VehicleWhereInput | VehicleWhereInput[]
     id?: IntFilter<"Vehicle"> | number
     plate?: StringFilter<"Vehicle"> | string
+    brand?: StringNullableFilter<"Vehicle"> | string | null
     model?: StringFilter<"Vehicle"> | string
     color?: StringFilter<"Vehicle"> | string
     icon?: StringFilter<"Vehicle"> | string
@@ -7056,6 +7099,7 @@ export namespace Prisma {
   export type VehicleOrderByWithRelationInput = {
     id?: SortOrder
     plate?: SortOrder
+    brand?: SortOrderInput | SortOrder
     model?: SortOrder
     color?: SortOrder
     icon?: SortOrder
@@ -7072,6 +7116,7 @@ export namespace Prisma {
     AND?: VehicleWhereInput | VehicleWhereInput[]
     OR?: VehicleWhereInput[]
     NOT?: VehicleWhereInput | VehicleWhereInput[]
+    brand?: StringNullableFilter<"Vehicle"> | string | null
     model?: StringFilter<"Vehicle"> | string
     color?: StringFilter<"Vehicle"> | string
     icon?: StringFilter<"Vehicle"> | string
@@ -7085,6 +7130,7 @@ export namespace Prisma {
   export type VehicleOrderByWithAggregationInput = {
     id?: SortOrder
     plate?: SortOrder
+    brand?: SortOrderInput | SortOrder
     model?: SortOrder
     color?: SortOrder
     icon?: SortOrder
@@ -7105,6 +7151,7 @@ export namespace Prisma {
     NOT?: VehicleScalarWhereWithAggregatesInput | VehicleScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Vehicle"> | number
     plate?: StringWithAggregatesFilter<"Vehicle"> | string
+    brand?: StringNullableWithAggregatesFilter<"Vehicle"> | string | null
     model?: StringWithAggregatesFilter<"Vehicle"> | string
     color?: StringWithAggregatesFilter<"Vehicle"> | string
     icon?: StringWithAggregatesFilter<"Vehicle"> | string
@@ -7249,6 +7296,8 @@ export namespace Prisma {
     carnetFilePath?: StringFilter<"UserRegistration"> | string
     ownershipFilePath?: StringFilter<"UserRegistration"> | string
     plate?: StringFilter<"UserRegistration"> | string
+    vehicleBrand?: StringNullableFilter<"UserRegistration"> | string | null
+    vehicleModel?: StringNullableFilter<"UserRegistration"> | string | null
     status?: StringFilter<"UserRegistration"> | string
     createdAt?: DateTimeFilter<"UserRegistration"> | Date | string
   }
@@ -7262,6 +7311,8 @@ export namespace Prisma {
     carnetFilePath?: SortOrder
     ownershipFilePath?: SortOrder
     plate?: SortOrder
+    vehicleBrand?: SortOrderInput | SortOrder
+    vehicleModel?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -7278,6 +7329,8 @@ export namespace Prisma {
     carnetFilePath?: StringFilter<"UserRegistration"> | string
     ownershipFilePath?: StringFilter<"UserRegistration"> | string
     plate?: StringFilter<"UserRegistration"> | string
+    vehicleBrand?: StringNullableFilter<"UserRegistration"> | string | null
+    vehicleModel?: StringNullableFilter<"UserRegistration"> | string | null
     status?: StringFilter<"UserRegistration"> | string
     createdAt?: DateTimeFilter<"UserRegistration"> | Date | string
   }, "id">
@@ -7291,6 +7344,8 @@ export namespace Prisma {
     carnetFilePath?: SortOrder
     ownershipFilePath?: SortOrder
     plate?: SortOrder
+    vehicleBrand?: SortOrderInput | SortOrder
+    vehicleModel?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     _count?: UserRegistrationCountOrderByAggregateInput
@@ -7312,6 +7367,8 @@ export namespace Prisma {
     carnetFilePath?: StringWithAggregatesFilter<"UserRegistration"> | string
     ownershipFilePath?: StringWithAggregatesFilter<"UserRegistration"> | string
     plate?: StringWithAggregatesFilter<"UserRegistration"> | string
+    vehicleBrand?: StringNullableWithAggregatesFilter<"UserRegistration"> | string | null
+    vehicleModel?: StringNullableWithAggregatesFilter<"UserRegistration"> | string | null
     status?: StringWithAggregatesFilter<"UserRegistration"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserRegistration"> | Date | string
   }
@@ -7396,6 +7453,7 @@ export namespace Prisma {
 
   export type VehicleCreateInput = {
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -7408,6 +7466,7 @@ export namespace Prisma {
   export type VehicleUncheckedCreateInput = {
     id?: number
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -7419,6 +7478,7 @@ export namespace Prisma {
 
   export type VehicleUpdateInput = {
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -7431,6 +7491,7 @@ export namespace Prisma {
   export type VehicleUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -7443,6 +7504,7 @@ export namespace Prisma {
   export type VehicleCreateManyInput = {
     id?: number
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -7454,6 +7516,7 @@ export namespace Prisma {
 
   export type VehicleUpdateManyMutationInput = {
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -7465,6 +7528,7 @@ export namespace Prisma {
   export type VehicleUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -7609,6 +7673,8 @@ export namespace Prisma {
     carnetFilePath: string
     ownershipFilePath: string
     plate: string
+    vehicleBrand?: string | null
+    vehicleModel?: string | null
     status?: string
     createdAt?: Date | string
   }
@@ -7622,6 +7688,8 @@ export namespace Prisma {
     carnetFilePath: string
     ownershipFilePath: string
     plate: string
+    vehicleBrand?: string | null
+    vehicleModel?: string | null
     status?: string
     createdAt?: Date | string
   }
@@ -7634,6 +7702,8 @@ export namespace Prisma {
     carnetFilePath?: StringFieldUpdateOperationsInput | string
     ownershipFilePath?: StringFieldUpdateOperationsInput | string
     plate?: StringFieldUpdateOperationsInput | string
+    vehicleBrand?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleModel?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7647,6 +7717,8 @@ export namespace Prisma {
     carnetFilePath?: StringFieldUpdateOperationsInput | string
     ownershipFilePath?: StringFieldUpdateOperationsInput | string
     plate?: StringFieldUpdateOperationsInput | string
+    vehicleBrand?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleModel?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7660,6 +7732,8 @@ export namespace Prisma {
     carnetFilePath: string
     ownershipFilePath: string
     plate: string
+    vehicleBrand?: string | null
+    vehicleModel?: string | null
     status?: string
     createdAt?: Date | string
   }
@@ -7672,6 +7746,8 @@ export namespace Prisma {
     carnetFilePath?: StringFieldUpdateOperationsInput | string
     ownershipFilePath?: StringFieldUpdateOperationsInput | string
     plate?: StringFieldUpdateOperationsInput | string
+    vehicleBrand?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleModel?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7685,6 +7761,8 @@ export namespace Prisma {
     carnetFilePath?: StringFieldUpdateOperationsInput | string
     ownershipFilePath?: StringFieldUpdateOperationsInput | string
     plate?: StringFieldUpdateOperationsInput | string
+    vehicleBrand?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleModel?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7882,6 +7960,7 @@ export namespace Prisma {
   export type VehicleCountOrderByAggregateInput = {
     id?: SortOrder
     plate?: SortOrder
+    brand?: SortOrder
     model?: SortOrder
     color?: SortOrder
     icon?: SortOrder
@@ -7899,6 +7978,7 @@ export namespace Prisma {
   export type VehicleMaxOrderByAggregateInput = {
     id?: SortOrder
     plate?: SortOrder
+    brand?: SortOrder
     model?: SortOrder
     color?: SortOrder
     icon?: SortOrder
@@ -7911,6 +7991,7 @@ export namespace Prisma {
   export type VehicleMinOrderByAggregateInput = {
     id?: SortOrder
     plate?: SortOrder
+    brand?: SortOrder
     model?: SortOrder
     color?: SortOrder
     icon?: SortOrder
@@ -8036,6 +8117,8 @@ export namespace Prisma {
     carnetFilePath?: SortOrder
     ownershipFilePath?: SortOrder
     plate?: SortOrder
+    vehicleBrand?: SortOrder
+    vehicleModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -8053,6 +8136,8 @@ export namespace Prisma {
     carnetFilePath?: SortOrder
     ownershipFilePath?: SortOrder
     plate?: SortOrder
+    vehicleBrand?: SortOrder
+    vehicleModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -8066,6 +8151,8 @@ export namespace Prisma {
     carnetFilePath?: SortOrder
     ownershipFilePath?: SortOrder
     plate?: SortOrder
+    vehicleBrand?: SortOrder
+    vehicleModel?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -8342,6 +8429,7 @@ export namespace Prisma {
 
   export type VehicleCreateWithoutOwnerInput = {
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -8353,6 +8441,7 @@ export namespace Prisma {
   export type VehicleUncheckedCreateWithoutOwnerInput = {
     id?: number
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -8393,6 +8482,7 @@ export namespace Prisma {
     NOT?: VehicleScalarWhereInput | VehicleScalarWhereInput[]
     id?: IntFilter<"Vehicle"> | number
     plate?: StringFilter<"Vehicle"> | string
+    brand?: StringNullableFilter<"Vehicle"> | string | null
     model?: StringFilter<"Vehicle"> | string
     color?: StringFilter<"Vehicle"> | string
     icon?: StringFilter<"Vehicle"> | string
@@ -8463,6 +8553,7 @@ export namespace Prisma {
   export type VehicleCreateManyOwnerInput = {
     id?: number
     plate: string
+    brand?: string | null
     model: string
     color: string
     icon: string
@@ -8473,6 +8564,7 @@ export namespace Prisma {
 
   export type VehicleUpdateWithoutOwnerInput = {
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -8484,6 +8576,7 @@ export namespace Prisma {
   export type VehicleUncheckedUpdateWithoutOwnerInput = {
     id?: IntFieldUpdateOperationsInput | number
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string
@@ -8495,6 +8588,7 @@ export namespace Prisma {
   export type VehicleUncheckedUpdateManyWithoutOwnerInput = {
     id?: IntFieldUpdateOperationsInput | number
     plate?: StringFieldUpdateOperationsInput | string
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
     model?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     icon?: StringFieldUpdateOperationsInput | string

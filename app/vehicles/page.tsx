@@ -31,6 +31,12 @@ export default async function VehiclesPage() {
     }
   };
 
+  const getVehicleIcon = (plate: string) => {
+    // Motorcycle format: 3 letters + 2 digits + 1 letter (e.g., MGO18G)
+    const isMotorcycle = /^[A-Z]{3}[0-9]{2}[A-Z]$/.test(plate.toUpperCase().trim());
+    return isMotorcycle ? "two_wheeler" : "directions_car";
+  };
+
   return (
     <div className="page-wrapper space-y-8">
       {/* Header */}
@@ -91,16 +97,16 @@ export default async function VehiclesPage() {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((v: { id: number; plate: string; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
+            {vehicles.map((v: { id: number; plate: string; brand: string | null; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
               <tr key={v.plate} className="table-row">
                 <td className="table-cell">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 bg-[var(--color-surface-container-low)] rounded-lg flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">{v.icon}</span>
+                      <span className="material-symbols-outlined text-[var(--color-on-surface-variant)]">{getVehicleIcon(v.plate)}</span>
                     </div>
                     <div>
-                      <p className="font-bold text-sm text-[var(--color-on-surface)]">{v.model}</p>
-                      <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-on-surface-variant)]">{v.color}</p>
+                      <p className="font-bold text-sm text-[var(--color-on-surface)]">{v.brand || v.model}</p>
+                      <p className="font-[var(--font-label)] text-[0.75rem] text-[var(--color-on-surface-variant)]">{v.brand ? v.model : v.color}</p>
                     </div>
                   </div>
                 </td>

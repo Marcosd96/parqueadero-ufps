@@ -77,6 +77,7 @@ export default async function RegistroRequestsPage() {
                 "Usuario",
                 "Código",
                 "Tipo",
+                "Vehículo",
                 "Placa",
                 "Documentos",
                 "Estado",
@@ -111,6 +112,12 @@ export default async function RegistroRequestsPage() {
                 </td>
                 <td className="table-cell">
                   <span className="badge badge-neutral">{r.userType}</span>
+                </td>
+                <td className="table-cell">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-[var(--color-on-surface)]">{r.vehicleBrand || "N/A"}</span>
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">{r.vehicleModel || "N/A"}</span>
+                  </div>
                 </td>
                 <td className="table-cell">
                   <span className="px-2 py-1 bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] font-mono text-sm rounded border border-[var(--color-outline-variant)]/20">
