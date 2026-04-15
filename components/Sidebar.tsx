@@ -8,6 +8,7 @@ const navItems = [
   { href: "/analytics", label: "Analíticas", icon: "analytics" },
   { href: "/vehicles", label: "Registro de Vehículos", icon: "directions_car" },
   { href: "/requests", label: "Solicitudes", icon: "pending_actions" },
+  { href: "/solicitudes-registro", label: "Solicitudes de Registro", icon: "person_add" },
   { href: "/students", label: "Directorio de Estudiantes", icon: "school" },
   { href: "/reports", label: "Reportes", icon: "assessment" },
 ];

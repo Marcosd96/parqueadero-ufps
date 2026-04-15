@@ -33,6 +33,11 @@ export type AccessRequest = $Result.DefaultSelection<Prisma.$AccessRequestPayloa
  * 
  */
 export type AccessLog = $Result.DefaultSelection<Prisma.$AccessLogPayload>
+/**
+ * Model UserRegistration
+ * 
+ */
+export type UserRegistration = $Result.DefaultSelection<Prisma.$UserRegistrationPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -194,6 +199,16 @@ export class PrismaClient<
     * ```
     */
   get accessLog(): Prisma.AccessLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userRegistration`: Exposes CRUD operations for the **UserRegistration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserRegistrations
+    * const userRegistrations = await prisma.userRegistration.findMany()
+    * ```
+    */
+  get userRegistration(): Prisma.UserRegistrationDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -631,7 +646,8 @@ export namespace Prisma {
     Student: 'Student',
     Vehicle: 'Vehicle',
     AccessRequest: 'AccessRequest',
-    AccessLog: 'AccessLog'
+    AccessLog: 'AccessLog',
+    UserRegistration: 'UserRegistration'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -647,7 +663,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "student" | "vehicle" | "accessRequest" | "accessLog"
+      modelProps: "student" | "vehicle" | "accessRequest" | "accessLog" | "userRegistration"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -947,6 +963,80 @@ export namespace Prisma {
           }
         }
       }
+      UserRegistration: {
+        payload: Prisma.$UserRegistrationPayload<ExtArgs>
+        fields: Prisma.UserRegistrationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserRegistrationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserRegistrationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          findFirst: {
+            args: Prisma.UserRegistrationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserRegistrationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          findMany: {
+            args: Prisma.UserRegistrationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>[]
+          }
+          create: {
+            args: Prisma.UserRegistrationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          createMany: {
+            args: Prisma.UserRegistrationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserRegistrationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>[]
+          }
+          delete: {
+            args: Prisma.UserRegistrationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          update: {
+            args: Prisma.UserRegistrationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserRegistrationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserRegistrationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserRegistrationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserRegistrationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserRegistrationPayload>
+          }
+          aggregate: {
+            args: Prisma.UserRegistrationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserRegistration>
+          }
+          groupBy: {
+            args: Prisma.UserRegistrationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserRegistrationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserRegistrationCountArgs<ExtArgs>
+            result: $Utils.Optional<UserRegistrationCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1059,6 +1149,7 @@ export namespace Prisma {
     vehicle?: VehicleOmit
     accessRequest?: AccessRequestOmit
     accessLog?: AccessLogOmit
+    userRegistration?: UserRegistrationOmit
   }
 
   /* Types for Logging */
@@ -5597,6 +5688,1105 @@ export namespace Prisma {
 
 
   /**
+   * Model UserRegistration
+   */
+
+  export type AggregateUserRegistration = {
+    _count: UserRegistrationCountAggregateOutputType | null
+    _avg: UserRegistrationAvgAggregateOutputType | null
+    _sum: UserRegistrationSumAggregateOutputType | null
+    _min: UserRegistrationMinAggregateOutputType | null
+    _max: UserRegistrationMaxAggregateOutputType | null
+  }
+
+  export type UserRegistrationAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type UserRegistrationSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type UserRegistrationMinAggregateOutputType = {
+    id: number | null
+    userType: string | null
+    email: string | null
+    institutionalCode: string | null
+    fullName: string | null
+    carnetFilePath: string | null
+    ownershipFilePath: string | null
+    plate: string | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type UserRegistrationMaxAggregateOutputType = {
+    id: number | null
+    userType: string | null
+    email: string | null
+    institutionalCode: string | null
+    fullName: string | null
+    carnetFilePath: string | null
+    ownershipFilePath: string | null
+    plate: string | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type UserRegistrationCountAggregateOutputType = {
+    id: number
+    userType: number
+    email: number
+    institutionalCode: number
+    fullName: number
+    carnetFilePath: number
+    ownershipFilePath: number
+    plate: number
+    status: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type UserRegistrationAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type UserRegistrationSumAggregateInputType = {
+    id?: true
+  }
+
+  export type UserRegistrationMinAggregateInputType = {
+    id?: true
+    userType?: true
+    email?: true
+    institutionalCode?: true
+    fullName?: true
+    carnetFilePath?: true
+    ownershipFilePath?: true
+    plate?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type UserRegistrationMaxAggregateInputType = {
+    id?: true
+    userType?: true
+    email?: true
+    institutionalCode?: true
+    fullName?: true
+    carnetFilePath?: true
+    ownershipFilePath?: true
+    plate?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type UserRegistrationCountAggregateInputType = {
+    id?: true
+    userType?: true
+    email?: true
+    institutionalCode?: true
+    fullName?: true
+    carnetFilePath?: true
+    ownershipFilePath?: true
+    plate?: true
+    status?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type UserRegistrationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserRegistration to aggregate.
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserRegistrations to fetch.
+     */
+    orderBy?: UserRegistrationOrderByWithRelationInput | UserRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserRegistrations
+    **/
+    _count?: true | UserRegistrationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UserRegistrationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserRegistrationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserRegistrationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserRegistrationMaxAggregateInputType
+  }
+
+  export type GetUserRegistrationAggregateType<T extends UserRegistrationAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserRegistration]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserRegistration[P]>
+      : GetScalarType<T[P], AggregateUserRegistration[P]>
+  }
+
+
+
+
+  export type UserRegistrationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserRegistrationWhereInput
+    orderBy?: UserRegistrationOrderByWithAggregationInput | UserRegistrationOrderByWithAggregationInput[]
+    by: UserRegistrationScalarFieldEnum[] | UserRegistrationScalarFieldEnum
+    having?: UserRegistrationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserRegistrationCountAggregateInputType | true
+    _avg?: UserRegistrationAvgAggregateInputType
+    _sum?: UserRegistrationSumAggregateInputType
+    _min?: UserRegistrationMinAggregateInputType
+    _max?: UserRegistrationMaxAggregateInputType
+  }
+
+  export type UserRegistrationGroupByOutputType = {
+    id: number
+    userType: string
+    email: string
+    institutionalCode: string
+    fullName: string
+    carnetFilePath: string
+    ownershipFilePath: string
+    plate: string
+    status: string
+    createdAt: Date
+    _count: UserRegistrationCountAggregateOutputType | null
+    _avg: UserRegistrationAvgAggregateOutputType | null
+    _sum: UserRegistrationSumAggregateOutputType | null
+    _min: UserRegistrationMinAggregateOutputType | null
+    _max: UserRegistrationMaxAggregateOutputType | null
+  }
+
+  type GetUserRegistrationGroupByPayload<T extends UserRegistrationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserRegistrationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserRegistrationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserRegistrationGroupByOutputType[P]>
+            : GetScalarType<T[P], UserRegistrationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserRegistrationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userType?: boolean
+    email?: boolean
+    institutionalCode?: boolean
+    fullName?: boolean
+    carnetFilePath?: boolean
+    ownershipFilePath?: boolean
+    plate?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["userRegistration"]>
+
+  export type UserRegistrationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userType?: boolean
+    email?: boolean
+    institutionalCode?: boolean
+    fullName?: boolean
+    carnetFilePath?: boolean
+    ownershipFilePath?: boolean
+    plate?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["userRegistration"]>
+
+  export type UserRegistrationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userType?: boolean
+    email?: boolean
+    institutionalCode?: boolean
+    fullName?: boolean
+    carnetFilePath?: boolean
+    ownershipFilePath?: boolean
+    plate?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["userRegistration"]>
+
+  export type UserRegistrationSelectScalar = {
+    id?: boolean
+    userType?: boolean
+    email?: boolean
+    institutionalCode?: boolean
+    fullName?: boolean
+    carnetFilePath?: boolean
+    ownershipFilePath?: boolean
+    plate?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }
+
+  export type UserRegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userType" | "email" | "institutionalCode" | "fullName" | "carnetFilePath" | "ownershipFilePath" | "plate" | "status" | "createdAt", ExtArgs["result"]["userRegistration"]>
+
+  export type $UserRegistrationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserRegistration"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userType: string
+      email: string
+      institutionalCode: string
+      fullName: string
+      carnetFilePath: string
+      ownershipFilePath: string
+      plate: string
+      status: string
+      createdAt: Date
+    }, ExtArgs["result"]["userRegistration"]>
+    composites: {}
+  }
+
+  type UserRegistrationGetPayload<S extends boolean | null | undefined | UserRegistrationDefaultArgs> = $Result.GetResult<Prisma.$UserRegistrationPayload, S>
+
+  type UserRegistrationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserRegistrationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserRegistrationCountAggregateInputType | true
+    }
+
+  export interface UserRegistrationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserRegistration'], meta: { name: 'UserRegistration' } }
+    /**
+     * Find zero or one UserRegistration that matches the filter.
+     * @param {UserRegistrationFindUniqueArgs} args - Arguments to find a UserRegistration
+     * @example
+     * // Get one UserRegistration
+     * const userRegistration = await prisma.userRegistration.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserRegistrationFindUniqueArgs>(args: SelectSubset<T, UserRegistrationFindUniqueArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserRegistration that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserRegistrationFindUniqueOrThrowArgs} args - Arguments to find a UserRegistration
+     * @example
+     * // Get one UserRegistration
+     * const userRegistration = await prisma.userRegistration.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserRegistrationFindUniqueOrThrowArgs>(args: SelectSubset<T, UserRegistrationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserRegistration that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationFindFirstArgs} args - Arguments to find a UserRegistration
+     * @example
+     * // Get one UserRegistration
+     * const userRegistration = await prisma.userRegistration.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserRegistrationFindFirstArgs>(args?: SelectSubset<T, UserRegistrationFindFirstArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserRegistration that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationFindFirstOrThrowArgs} args - Arguments to find a UserRegistration
+     * @example
+     * // Get one UserRegistration
+     * const userRegistration = await prisma.userRegistration.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserRegistrationFindFirstOrThrowArgs>(args?: SelectSubset<T, UserRegistrationFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserRegistrations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserRegistrations
+     * const userRegistrations = await prisma.userRegistration.findMany()
+     * 
+     * // Get first 10 UserRegistrations
+     * const userRegistrations = await prisma.userRegistration.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userRegistrationWithIdOnly = await prisma.userRegistration.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserRegistrationFindManyArgs>(args?: SelectSubset<T, UserRegistrationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserRegistration.
+     * @param {UserRegistrationCreateArgs} args - Arguments to create a UserRegistration.
+     * @example
+     * // Create one UserRegistration
+     * const UserRegistration = await prisma.userRegistration.create({
+     *   data: {
+     *     // ... data to create a UserRegistration
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserRegistrationCreateArgs>(args: SelectSubset<T, UserRegistrationCreateArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserRegistrations.
+     * @param {UserRegistrationCreateManyArgs} args - Arguments to create many UserRegistrations.
+     * @example
+     * // Create many UserRegistrations
+     * const userRegistration = await prisma.userRegistration.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserRegistrationCreateManyArgs>(args?: SelectSubset<T, UserRegistrationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserRegistrations and returns the data saved in the database.
+     * @param {UserRegistrationCreateManyAndReturnArgs} args - Arguments to create many UserRegistrations.
+     * @example
+     * // Create many UserRegistrations
+     * const userRegistration = await prisma.userRegistration.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserRegistrations and only return the `id`
+     * const userRegistrationWithIdOnly = await prisma.userRegistration.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserRegistrationCreateManyAndReturnArgs>(args?: SelectSubset<T, UserRegistrationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserRegistration.
+     * @param {UserRegistrationDeleteArgs} args - Arguments to delete one UserRegistration.
+     * @example
+     * // Delete one UserRegistration
+     * const UserRegistration = await prisma.userRegistration.delete({
+     *   where: {
+     *     // ... filter to delete one UserRegistration
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserRegistrationDeleteArgs>(args: SelectSubset<T, UserRegistrationDeleteArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserRegistration.
+     * @param {UserRegistrationUpdateArgs} args - Arguments to update one UserRegistration.
+     * @example
+     * // Update one UserRegistration
+     * const userRegistration = await prisma.userRegistration.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserRegistrationUpdateArgs>(args: SelectSubset<T, UserRegistrationUpdateArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserRegistrations.
+     * @param {UserRegistrationDeleteManyArgs} args - Arguments to filter UserRegistrations to delete.
+     * @example
+     * // Delete a few UserRegistrations
+     * const { count } = await prisma.userRegistration.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserRegistrationDeleteManyArgs>(args?: SelectSubset<T, UserRegistrationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserRegistrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserRegistrations
+     * const userRegistration = await prisma.userRegistration.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserRegistrationUpdateManyArgs>(args: SelectSubset<T, UserRegistrationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserRegistrations and returns the data updated in the database.
+     * @param {UserRegistrationUpdateManyAndReturnArgs} args - Arguments to update many UserRegistrations.
+     * @example
+     * // Update many UserRegistrations
+     * const userRegistration = await prisma.userRegistration.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserRegistrations and only return the `id`
+     * const userRegistrationWithIdOnly = await prisma.userRegistration.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserRegistrationUpdateManyAndReturnArgs>(args: SelectSubset<T, UserRegistrationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserRegistration.
+     * @param {UserRegistrationUpsertArgs} args - Arguments to update or create a UserRegistration.
+     * @example
+     * // Update or create a UserRegistration
+     * const userRegistration = await prisma.userRegistration.upsert({
+     *   create: {
+     *     // ... data to create a UserRegistration
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserRegistration we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserRegistrationUpsertArgs>(args: SelectSubset<T, UserRegistrationUpsertArgs<ExtArgs>>): Prisma__UserRegistrationClient<$Result.GetResult<Prisma.$UserRegistrationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserRegistrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationCountArgs} args - Arguments to filter UserRegistrations to count.
+     * @example
+     * // Count the number of UserRegistrations
+     * const count = await prisma.userRegistration.count({
+     *   where: {
+     *     // ... the filter for the UserRegistrations we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserRegistrationCountArgs>(
+      args?: Subset<T, UserRegistrationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserRegistrationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserRegistration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserRegistrationAggregateArgs>(args: Subset<T, UserRegistrationAggregateArgs>): Prisma.PrismaPromise<GetUserRegistrationAggregateType<T>>
+
+    /**
+     * Group by UserRegistration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserRegistrationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserRegistrationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserRegistrationGroupByArgs['orderBy'] }
+        : { orderBy?: UserRegistrationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserRegistrationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserRegistrationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserRegistration model
+   */
+  readonly fields: UserRegistrationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserRegistration.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserRegistrationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserRegistration model
+   */
+  interface UserRegistrationFieldRefs {
+    readonly id: FieldRef<"UserRegistration", 'Int'>
+    readonly userType: FieldRef<"UserRegistration", 'String'>
+    readonly email: FieldRef<"UserRegistration", 'String'>
+    readonly institutionalCode: FieldRef<"UserRegistration", 'String'>
+    readonly fullName: FieldRef<"UserRegistration", 'String'>
+    readonly carnetFilePath: FieldRef<"UserRegistration", 'String'>
+    readonly ownershipFilePath: FieldRef<"UserRegistration", 'String'>
+    readonly plate: FieldRef<"UserRegistration", 'String'>
+    readonly status: FieldRef<"UserRegistration", 'String'>
+    readonly createdAt: FieldRef<"UserRegistration", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserRegistration findUnique
+   */
+  export type UserRegistrationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter, which UserRegistration to fetch.
+     */
+    where: UserRegistrationWhereUniqueInput
+  }
+
+  /**
+   * UserRegistration findUniqueOrThrow
+   */
+  export type UserRegistrationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter, which UserRegistration to fetch.
+     */
+    where: UserRegistrationWhereUniqueInput
+  }
+
+  /**
+   * UserRegistration findFirst
+   */
+  export type UserRegistrationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter, which UserRegistration to fetch.
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserRegistrations to fetch.
+     */
+    orderBy?: UserRegistrationOrderByWithRelationInput | UserRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserRegistrations.
+     */
+    cursor?: UserRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserRegistrations.
+     */
+    distinct?: UserRegistrationScalarFieldEnum | UserRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * UserRegistration findFirstOrThrow
+   */
+  export type UserRegistrationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter, which UserRegistration to fetch.
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserRegistrations to fetch.
+     */
+    orderBy?: UserRegistrationOrderByWithRelationInput | UserRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserRegistrations.
+     */
+    cursor?: UserRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserRegistrations.
+     */
+    distinct?: UserRegistrationScalarFieldEnum | UserRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * UserRegistration findMany
+   */
+  export type UserRegistrationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter, which UserRegistrations to fetch.
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserRegistrations to fetch.
+     */
+    orderBy?: UserRegistrationOrderByWithRelationInput | UserRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserRegistrations.
+     */
+    cursor?: UserRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserRegistrations.
+     */
+    distinct?: UserRegistrationScalarFieldEnum | UserRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * UserRegistration create
+   */
+  export type UserRegistrationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * The data needed to create a UserRegistration.
+     */
+    data: XOR<UserRegistrationCreateInput, UserRegistrationUncheckedCreateInput>
+  }
+
+  /**
+   * UserRegistration createMany
+   */
+  export type UserRegistrationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserRegistrations.
+     */
+    data: UserRegistrationCreateManyInput | UserRegistrationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserRegistration createManyAndReturn
+   */
+  export type UserRegistrationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserRegistrations.
+     */
+    data: UserRegistrationCreateManyInput | UserRegistrationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserRegistration update
+   */
+  export type UserRegistrationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * The data needed to update a UserRegistration.
+     */
+    data: XOR<UserRegistrationUpdateInput, UserRegistrationUncheckedUpdateInput>
+    /**
+     * Choose, which UserRegistration to update.
+     */
+    where: UserRegistrationWhereUniqueInput
+  }
+
+  /**
+   * UserRegistration updateMany
+   */
+  export type UserRegistrationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserRegistrations.
+     */
+    data: XOR<UserRegistrationUpdateManyMutationInput, UserRegistrationUncheckedUpdateManyInput>
+    /**
+     * Filter which UserRegistrations to update
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * Limit how many UserRegistrations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserRegistration updateManyAndReturn
+   */
+  export type UserRegistrationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * The data used to update UserRegistrations.
+     */
+    data: XOR<UserRegistrationUpdateManyMutationInput, UserRegistrationUncheckedUpdateManyInput>
+    /**
+     * Filter which UserRegistrations to update
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * Limit how many UserRegistrations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserRegistration upsert
+   */
+  export type UserRegistrationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * The filter to search for the UserRegistration to update in case it exists.
+     */
+    where: UserRegistrationWhereUniqueInput
+    /**
+     * In case the UserRegistration found by the `where` argument doesn't exist, create a new UserRegistration with this data.
+     */
+    create: XOR<UserRegistrationCreateInput, UserRegistrationUncheckedCreateInput>
+    /**
+     * In case the UserRegistration was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserRegistrationUpdateInput, UserRegistrationUncheckedUpdateInput>
+  }
+
+  /**
+   * UserRegistration delete
+   */
+  export type UserRegistrationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+    /**
+     * Filter which UserRegistration to delete.
+     */
+    where: UserRegistrationWhereUniqueInput
+  }
+
+  /**
+   * UserRegistration deleteMany
+   */
+  export type UserRegistrationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserRegistrations to delete
+     */
+    where?: UserRegistrationWhereInput
+    /**
+     * Limit how many UserRegistrations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserRegistration without action
+   */
+  export type UserRegistrationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserRegistration
+     */
+    select?: UserRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserRegistration
+     */
+    omit?: UserRegistrationOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5662,6 +6852,22 @@ export namespace Prisma {
   };
 
   export type AccessLogScalarFieldEnum = (typeof AccessLogScalarFieldEnum)[keyof typeof AccessLogScalarFieldEnum]
+
+
+  export const UserRegistrationScalarFieldEnum: {
+    id: 'id',
+    userType: 'userType',
+    email: 'email',
+    institutionalCode: 'institutionalCode',
+    fullName: 'fullName',
+    carnetFilePath: 'carnetFilePath',
+    ownershipFilePath: 'ownershipFilePath',
+    plate: 'plate',
+    status: 'status',
+    createdAt: 'createdAt'
+  };
+
+  export type UserRegistrationScalarFieldEnum = (typeof UserRegistrationScalarFieldEnum)[keyof typeof UserRegistrationScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -6031,6 +7237,85 @@ export namespace Prisma {
     status?: BoolWithAggregatesFilter<"AccessLog"> | boolean
   }
 
+  export type UserRegistrationWhereInput = {
+    AND?: UserRegistrationWhereInput | UserRegistrationWhereInput[]
+    OR?: UserRegistrationWhereInput[]
+    NOT?: UserRegistrationWhereInput | UserRegistrationWhereInput[]
+    id?: IntFilter<"UserRegistration"> | number
+    userType?: StringFilter<"UserRegistration"> | string
+    email?: StringFilter<"UserRegistration"> | string
+    institutionalCode?: StringFilter<"UserRegistration"> | string
+    fullName?: StringFilter<"UserRegistration"> | string
+    carnetFilePath?: StringFilter<"UserRegistration"> | string
+    ownershipFilePath?: StringFilter<"UserRegistration"> | string
+    plate?: StringFilter<"UserRegistration"> | string
+    status?: StringFilter<"UserRegistration"> | string
+    createdAt?: DateTimeFilter<"UserRegistration"> | Date | string
+  }
+
+  export type UserRegistrationOrderByWithRelationInput = {
+    id?: SortOrder
+    userType?: SortOrder
+    email?: SortOrder
+    institutionalCode?: SortOrder
+    fullName?: SortOrder
+    carnetFilePath?: SortOrder
+    ownershipFilePath?: SortOrder
+    plate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserRegistrationWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: UserRegistrationWhereInput | UserRegistrationWhereInput[]
+    OR?: UserRegistrationWhereInput[]
+    NOT?: UserRegistrationWhereInput | UserRegistrationWhereInput[]
+    userType?: StringFilter<"UserRegistration"> | string
+    email?: StringFilter<"UserRegistration"> | string
+    institutionalCode?: StringFilter<"UserRegistration"> | string
+    fullName?: StringFilter<"UserRegistration"> | string
+    carnetFilePath?: StringFilter<"UserRegistration"> | string
+    ownershipFilePath?: StringFilter<"UserRegistration"> | string
+    plate?: StringFilter<"UserRegistration"> | string
+    status?: StringFilter<"UserRegistration"> | string
+    createdAt?: DateTimeFilter<"UserRegistration"> | Date | string
+  }, "id">
+
+  export type UserRegistrationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userType?: SortOrder
+    email?: SortOrder
+    institutionalCode?: SortOrder
+    fullName?: SortOrder
+    carnetFilePath?: SortOrder
+    ownershipFilePath?: SortOrder
+    plate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    _count?: UserRegistrationCountOrderByAggregateInput
+    _avg?: UserRegistrationAvgOrderByAggregateInput
+    _max?: UserRegistrationMaxOrderByAggregateInput
+    _min?: UserRegistrationMinOrderByAggregateInput
+    _sum?: UserRegistrationSumOrderByAggregateInput
+  }
+
+  export type UserRegistrationScalarWhereWithAggregatesInput = {
+    AND?: UserRegistrationScalarWhereWithAggregatesInput | UserRegistrationScalarWhereWithAggregatesInput[]
+    OR?: UserRegistrationScalarWhereWithAggregatesInput[]
+    NOT?: UserRegistrationScalarWhereWithAggregatesInput | UserRegistrationScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"UserRegistration"> | number
+    userType?: StringWithAggregatesFilter<"UserRegistration"> | string
+    email?: StringWithAggregatesFilter<"UserRegistration"> | string
+    institutionalCode?: StringWithAggregatesFilter<"UserRegistration"> | string
+    fullName?: StringWithAggregatesFilter<"UserRegistration"> | string
+    carnetFilePath?: StringWithAggregatesFilter<"UserRegistration"> | string
+    ownershipFilePath?: StringWithAggregatesFilter<"UserRegistration"> | string
+    plate?: StringWithAggregatesFilter<"UserRegistration"> | string
+    status?: StringWithAggregatesFilter<"UserRegistration"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserRegistration"> | Date | string
+  }
+
   export type StudentCreateInput = {
     cardnumber: string
     firstname: string
@@ -6314,6 +7599,94 @@ export namespace Prisma {
     userType?: StringFieldUpdateOperationsInput | string
     zone?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type UserRegistrationCreateInput = {
+    userType: string
+    email: string
+    institutionalCode: string
+    fullName: string
+    carnetFilePath: string
+    ownershipFilePath: string
+    plate: string
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type UserRegistrationUncheckedCreateInput = {
+    id?: number
+    userType: string
+    email: string
+    institutionalCode: string
+    fullName: string
+    carnetFilePath: string
+    ownershipFilePath: string
+    plate: string
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type UserRegistrationUpdateInput = {
+    userType?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    institutionalCode?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    carnetFilePath?: StringFieldUpdateOperationsInput | string
+    ownershipFilePath?: StringFieldUpdateOperationsInput | string
+    plate?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserRegistrationUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userType?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    institutionalCode?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    carnetFilePath?: StringFieldUpdateOperationsInput | string
+    ownershipFilePath?: StringFieldUpdateOperationsInput | string
+    plate?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserRegistrationCreateManyInput = {
+    id?: number
+    userType: string
+    email: string
+    institutionalCode: string
+    fullName: string
+    carnetFilePath: string
+    ownershipFilePath: string
+    plate: string
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type UserRegistrationUpdateManyMutationInput = {
+    userType?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    institutionalCode?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    carnetFilePath?: StringFieldUpdateOperationsInput | string
+    ownershipFilePath?: StringFieldUpdateOperationsInput | string
+    plate?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserRegistrationUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userType?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    institutionalCode?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    carnetFilePath?: StringFieldUpdateOperationsInput | string
+    ownershipFilePath?: StringFieldUpdateOperationsInput | string
+    plate?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6652,6 +8025,53 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type UserRegistrationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userType?: SortOrder
+    email?: SortOrder
+    institutionalCode?: SortOrder
+    fullName?: SortOrder
+    carnetFilePath?: SortOrder
+    ownershipFilePath?: SortOrder
+    plate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserRegistrationAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type UserRegistrationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userType?: SortOrder
+    email?: SortOrder
+    institutionalCode?: SortOrder
+    fullName?: SortOrder
+    carnetFilePath?: SortOrder
+    ownershipFilePath?: SortOrder
+    plate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserRegistrationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userType?: SortOrder
+    email?: SortOrder
+    institutionalCode?: SortOrder
+    fullName?: SortOrder
+    carnetFilePath?: SortOrder
+    ownershipFilePath?: SortOrder
+    plate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserRegistrationSumOrderByAggregateInput = {
+    id?: SortOrder
   }
 
   export type VehicleCreateNestedManyWithoutOwnerInput = {

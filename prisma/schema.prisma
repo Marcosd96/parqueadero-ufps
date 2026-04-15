@@ -54,3 +54,16 @@ model AccessLog {
   zone      String
   status    Boolean  // true = GRANTED, false = REJECTED
 }
+
+model UserRegistration {
+  id                Int      @id @default(autoincrement())
+  userType          String   // ESTUDIANTE, ADMINISTRATIVO, DOCENTE
+  email             String
+  institutionalCode String
+  fullName          String
+  carnetFilePath    String
+  ownershipFilePath String
+  plate             String
+  status            String   @default("PENDIENTE") // PENDIENTE, APROBADO, RECHAZADO
+  createdAt         DateTime @default(now())
+}

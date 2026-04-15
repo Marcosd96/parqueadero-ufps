@@ -162,6 +162,19 @@ exports.Prisma.AccessLogScalarFieldEnum = {
   status: 'status'
 };
 
+exports.Prisma.UserRegistrationScalarFieldEnum = {
+  id: 'id',
+  userType: 'userType',
+  email: 'email',
+  institutionalCode: 'institutionalCode',
+  fullName: 'fullName',
+  carnetFilePath: 'carnetFilePath',
+  ownershipFilePath: 'ownershipFilePath',
+  plate: 'plate',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -182,7 +195,8 @@ exports.Prisma.ModelName = {
   Student: 'Student',
   Vehicle: 'Vehicle',
   AccessRequest: 'AccessRequest',
-  AccessLog: 'AccessLog'
+  AccessLog: 'AccessLog',
+  UserRegistration: 'UserRegistration'
 };
 
 /**
