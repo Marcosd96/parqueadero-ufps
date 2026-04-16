@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback, DragEvent, ChangeEvent } from "react";
-import { submitRegistration } from "./actions";
+import { submitRegistration, submitGuestRegistration } from "./actions";
 
 /* ─── Types ────────────────────────────────────────────────── */
 type UserType = "ESTUDIANTE" | "ADMINISTRATIVO" | "DOCENTE" | "";
@@ -378,6 +378,33 @@ export default function RegistroPage() {
     }
   }, [code, userType]);
 
+  const [tab, setTab] = useState<"institutional" | "guest">("institutional");
+  
+  // Guest form state
+  const [hostCode, setHostCode] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
+  const [guestDescription, setGuestDescription] = useState("");
+  const [guestPlate, setGuestPlate] = useState("");
+  const [hostCarnetFile, setHostCarnetFile] = useState<File | null>(null);
+  const [hostCodeState, setHostCodeState] = useState<FieldState>("idle");
+
+  const handleHostCodeBlur = useCallback(async () => {
+    if (!hostCode.trim()) return;
+    setHostCodeState("loading");
+    try {
+      const res = await fetch(`/api/lookup-student?code=${encodeURIComponent(hostCode.trim())}`);
+      const data = await res.json();
+      if (data) {
+        setHostCodeState("found");
+      } else {
+        setHostCodeState("not-found");
+      }
+    } catch {
+      setHostCodeState("not-found");
+    }
+  }, [hostCode]);
+
   /* ── Plate uppercase ───────────────────────────────────── */
   const handlePlateChange = (v: string) => setPlate(v.toUpperCase().replace(/[^A-Z0-9]/g, ""));
 
@@ -457,8 +484,45 @@ export default function RegistroPage() {
     }
   };
 
+  const handleGuestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError("");
+    setErrors({});
+
+    const eArr: Record<string, string> = {};
+    if (!hostCode.trim()) eArr.hostCode = "El código del anfitrión es obligatorio.";
+    if (!guestName.trim()) eArr.guestName = "El nombre del invitado es obligatorio.";
+    if (!guestPhone.trim()) eArr.guestPhone = "El teléfono es obligatorio.";
+    if (!guestDescription.trim()) eArr.guestDescription = "La descripción es obligatoria.";
+    if (!hostCarnetFile) eArr.hostCarnetFile = "Debes subir el carnet del anfitrión.";
+
+    if (Object.keys(eArr).length > 0) {
+      setErrors(eArr);
+      return;
+    }
+
+    setSubmitting(true);
+    const fd = new FormData();
+    fd.append("hostCode", hostCode);
+    fd.append("guestName", guestName);
+    fd.append("phone", guestPhone);
+    fd.append("description", guestDescription);
+    fd.append("plate", guestPlate);
+    if (hostCarnetFile) fd.append("hostCarnetFile", hostCarnetFile);
+
+    const result = await submitGuestRegistration(fd);
+    setSubmitting(false);
+
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      setServerError(result.error ?? "Error desconocido.");
+    }
+  };
+
   /* ── Success screen ────────────────────────────────────── */
   if (submitted) {
+    const isGuest = tab === "guest";
     return (
       <div style={styles.pageCenter}>
         <div style={styles.successCard}>
@@ -471,27 +535,41 @@ export default function RegistroPage() {
             ¡Solicitud enviada!
           </h1>
           <p style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-label)", margin: 0, textAlign: "center", lineHeight: 1.6 }}>
-            Tu solicitud de acceso al parqueadero está en revisión. Recibirás una respuesta en tu correo{" "}
-            <strong style={{ color: "var(--color-primary)" }}>{email}</strong>.
+            Tu solicitud de acceso al parqueadero está en revisión. Recibirás una respuesta en {isGuest ? "el teléfono proporcionado" : "tu correo"}{" "}
+            <strong style={{ color: "var(--color-primary)" }}>{isGuest ? guestPhone : email}</strong>.
           </p>
           <div style={styles.successMeta}>
             <div style={styles.successMetaItem}>
-              <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>badge</span>
-              <span>{code}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>
+                {isGuest ? "account_circle" : "badge"}
+              </span>
+              <span>{isGuest ? `Invitado: ${guestName} (Anfitrión: ${hostCode})` : code}</span>
             </div>
-            <div style={styles.successMetaItem}>
-              <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>directions_car</span>
-              <span>{brand} {model} ({plate})</span>
-            </div>
+            {(isGuest ? guestPlate : plate) && (
+              <div style={styles.successMetaItem}>
+                <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>directions_car</span>
+                <span>
+                  {isGuest 
+                    ? `Vehículo: ${guestPlate}`
+                    : `${brand} ${model} (${plate})`
+                  }
+                </span>
+              </div>
+            )}
           </div>
           <button
             style={{ ...styles.btnPrimary, marginTop: "1.5rem" }}
             onClick={() => {
               setSubmitted(false);
+              // Clear institutional
               setCode(""); setEmail(""); setFullName(""); setPlate("");
               setBrand(""); setModel("");
               setUserType(""); setCarnetFile(null); setOwnershipFile(null);
               setCodeState("idle");
+              // Clear guest
+              setHostCode(""); setGuestName(""); setGuestPhone("");
+              setGuestDescription(""); setGuestPlate(""); setHostCarnetFile(null);
+              setHostCodeState("idle");
             }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: "1rem" }}>add</span>
@@ -521,11 +599,69 @@ export default function RegistroPage() {
             </div>
           </div>
 
+          <div style={{
+            display: "flex",
+            background: "rgba(255,255,255,0.1)",
+            padding: "0.25rem",
+            borderRadius: "0.75rem",
+            marginBottom: "2rem",
+            gap: "0.25rem"
+          }}>
+            <button
+              onClick={() => setTab("institutional")}
+              style={{
+                flex: 1,
+                padding: "0.625rem",
+                borderRadius: "0.625rem",
+                border: "none",
+                background: tab === "institutional" ? "var(--color-primary-container)" : "transparent",
+                color: tab === "institutional" ? "var(--color-on-primary-container)" : "#fff",
+                fontWeight: 700,
+                fontSize: "0.8125rem",
+                cursor: "pointer",
+                transition: "all 200ms",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem"
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>school</span>
+              Comunidad UFPS
+            </button>
+            <button
+              onClick={() => setTab("guest")}
+              style={{
+                flex: 1,
+                padding: "0.625rem",
+                borderRadius: "0.625rem",
+                border: "none",
+                background: tab === "guest" ? "var(--color-primary-container)" : "transparent",
+                color: tab === "guest" ? "var(--color-on-primary-container)" : "#fff",
+                fontWeight: 700,
+                fontSize: "0.8125rem",
+                cursor: "pointer",
+                transition: "all 200ms",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem"
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>group</span>
+              Invitados
+            </button>
+          </div>
+
           {/* Headline */}
           <div style={styles.leftHeadline}>
-            <h1 style={styles.leftH1}>Solicita tu acceso al parqueadero</h1>
+            <h1 style={styles.leftH1}>
+              {tab === "institutional" ? "Solicita tu acceso al parqueadero" : "Registro para invitados externos"}
+            </h1>
             <p style={styles.leftSubtitle}>
-              Completa el formulario y adjunta los documentos requeridos. El equipo administrativo revisará tu solicitud y te notificará por correo.
+              {tab === "institutional" 
+                ? "Completa el formulario y adjunta los documentos requeridos. El equipo administrativo revisará tu solicitud y te notificará por correo."
+                : "Si eres un invitado auspiciado por un miembro de la universidad, completa estos datos para solicitar tu acceso temporal al campus."}
             </p>
           </div>
 
@@ -556,305 +692,420 @@ export default function RegistroPage() {
       <div style={styles.rightPanel}>
         <div style={styles.formContainer}>
           <div style={{ marginBottom: "2rem" }}>
-            <h2 style={styles.formTitle}>Formulario de registro</h2>
+            <h2 style={styles.formTitle}>
+              {tab === "institutional" ? "Formulario de registro" : "Solicitud para visitantes"}
+            </h2>
             <p style={styles.formSubtitle}>
-              Ingresa tu código institucional primero — los demás campos se completarán automáticamente.
+              {tab === "institutional" 
+                ? "Ingresa tu código institucional primero — los demás campos se completarán automáticamente."
+                : "Ingresa el código institucional de la persona que te invita junto con tus datos de contacto."}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            {/* Section 1 */}
-            <div style={styles.sectionHeader}>
-              <span className="material-symbols-outlined" style={styles.sectionIcon}>person</span>
-              <span style={styles.sectionLabel}>Datos personales</span>
-            </div>
+          {tab === "institutional" ? (
+            <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              {/* Section 1 */}
+              <div style={styles.sectionHeader}>
+                <span className="material-symbols-outlined" style={styles.sectionIcon}>person</span>
+                <span style={styles.sectionLabel}>Datos personales</span>
+              </div>
 
-            {/* User type */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
-              <label
-                htmlFor="userType"
-                style={{
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  color: errors.userType ? "var(--color-error)" : "var(--color-on-surface-variant)",
-                  fontFamily: "var(--font-label)",
-                  letterSpacing: "0.01em",
-                }}
-              >
-                Tipo de usuario
-              </label>
-              <div style={{ position: "relative" }}>
-                <span
-                  className="material-symbols-outlined"
+              {/* User type */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                <label
+                  htmlFor="userType"
                   style={{
-                    position: "absolute",
-                    left: "0.875rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "1.125rem",
-                    color: "var(--color-on-surface-variant)",
-                    opacity: 0.7,
-                    pointerEvents: "none",
-                    zIndex: 1,
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: errors.userType ? "var(--color-error)" : "var(--color-on-surface-variant)",
+                    fontFamily: "var(--font-label)",
+                    letterSpacing: "0.01em",
                   }}
                 >
-                  group
-                </span>
-                <select
-                  id="userType"
-                  value={userType}
-                  onChange={(e) => setUserType(e.target.value as UserType)}
+                  Tipo de usuario
+                </label>
+                <div style={{ position: "relative" }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: "absolute",
+                      left: "0.875rem",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      fontSize: "1.125rem",
+                      color: "var(--color-on-surface-variant)",
+                      opacity: 0.7,
+                      pointerEvents: "none",
+                      zIndex: 1,
+                    }}
+                  >
+                    group
+                  </span>
+                  <select
+                    id="userType"
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value as UserType)}
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      background: "var(--color-surface-container-lowest)",
+                      border: `1.5px solid ${errors.userType ? "var(--color-error)" : "var(--color-outline-variant)"}`,
+                      borderRadius: "0.625rem",
+                      padding: "0.75rem 1rem 0.75rem 2.5rem",
+                      fontSize: "0.9375rem",
+                      fontFamily: "var(--font-body)",
+                      color: userType ? "var(--color-on-surface)" : "var(--color-on-surface-variant)",
+                      outline: "none",
+                      cursor: "pointer",
+                      appearance: "none",
+                    }}
+                  >
+                    <option value="" disabled>Selecciona una opción…</option>
+                    <option value="ESTUDIANTE">Estudiante</option>
+                    <option value="ADMINISTRATIVO">Administrativo</option>
+                    <option value="DOCENTE">Docente</option>
+                  </select>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: "absolute",
+                      right: "0.875rem",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      fontSize: "1rem",
+                      color: "var(--color-on-surface-variant)",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    expand_more
+                  </span>
+                </div>
+                {errors.userType && (
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
+                    {errors.userType}
+                  </span>
+                )}
+              </div>
+
+              {/* Code */}
+              <Field
+                id="institutionalCode"
+                label="Código institucional (N° de carnet)"
+                icon="badge"
+                value={code}
+                onChange={(v) => {
+                  setCode(v);
+                  if (codeState !== "idle") setCodeState("idle");
+                }}
+                onBlur={handleCodeBlur}
+                placeholder={userType === "ADMINISTRATIVO" || userType === "DOCENTE" ? "Ej: 0759" : "Ej: 1151757"}
+                hint={
+                  userType === "ADMINISTRATIVO" || userType === "DOCENTE"
+                    ? "Los códigos administrativos y docentes inician con 0"
+                    : userType === "ESTUDIANTE"
+                    ? "Ingresa tu código tal como aparece en el carnet estudiantil"
+                    : undefined
+                }
+                error={errors.code}
+                autoCompleting={codeState === "loading"}
+                suffix={
+                  codeState === "found" ? (
+                    <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "#16a34a" }}>check_circle</span>
+                  ) : codeState === "not-found" ? (
+                    <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-on-surface-variant)", opacity: 0.5 }}>help</span>
+                  ) : null
+                }
+              />
+              <div style={{ marginTop: "-0.75rem" }}>
+                <button
+                  type="button"
+                  onClick={handleCodeBlur}
+                  disabled={!code.trim() || codeState === "loading"}
+                  style={{
+                    background: "var(--color-primary-fixed)",
+                    color: "var(--color-primary)",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    padding: "0.4rem 0.875rem",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    fontFamily: "var(--font-label)",
+                    cursor: code.trim() ? "pointer" : "not-allowed",
+                    opacity: !code.trim() ? 0.5 : 1,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    transition: "all 150ms",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: "0.9rem" }}>
+                    {codeState === "loading" ? "sync" : "search"}
+                  </span>
+                  {codeState === "loading" ? "Buscando…" : "Buscar en base de datos"}
+                </button>
+              </div>
+
+              {/* Full name */}
+              <Field
+                id="fullName"
+                label="Nombre completo"
+                icon="person"
+                value={fullName}
+                onChange={setFullName}
+                placeholder="Nombres y apellidos"
+                error={errors.fullName}
+                readOnly={codeState === "found" && !!fullName}
+              />
+
+              {/* Email */}
+              <Field
+                id="email"
+                label="Correo institucional"
+                icon="mail"
+                value={email}
+                onChange={setEmail}
+                type="email"
+                placeholder="usuario@ufps.edu.co"
+                hint="Debe ser un correo @ufps.edu.co"
+                error={errors.email}
+                readOnly={codeState === "found" && !!email}
+              />
+
+              {/* Section 2 */}
+              <div style={{ ...styles.sectionHeader, marginTop: "0.5rem" }}>
+                <span className="material-symbols-outlined" style={styles.sectionIcon}>directions_car</span>
+                <span style={styles.sectionLabel}>Información del vehículo</span>
+              </div>
+
+              {/* Plate */}
+              <Field
+                id="plate"
+                label="Placa del vehículo"
+                icon="confirmation_number"
+                value={plate}
+                onChange={handlePlateChange}
+                placeholder="ABC123 o MGO18G"
+                hint="Carro: ABC123 · Moto: MGO18G · Venezolana: AB1234"
+                error={errors.plate}
+              />
+              {/* Brand and Model */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <Field
+                  id="brand"
+                  label="Marca"
+                  icon="factory"
+                  value={brand}
+                  onChange={setBrand}
+                  placeholder="Ej: Mazda, Yamaha"
+                  error={errors.brand}
+                />
+                <Field
+                  id="model"
+                  label="Modelo"
+                  icon="model_training"
+                  value={model}
+                  onChange={setModel}
+                  placeholder="Ej: 3, R6, Spark"
+                  error={errors.model}
+                />
+              </div>
+
+              {/* Files */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div>
+                  <FileDropZone
+                    id="carnetFile"
+                    label="Carnet estudiantil / institucional"
+                    icon="badge"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    file={carnetFile}
+                    onChange={setCarnetFile}
+                  />
+                  {errors.carnetFile && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
+                      {errors.carnetFile}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <FileDropZone
+                    id="ownershipFile"
+                    label="Documento de propiedad"
+                    icon="assignment"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    file={ownershipFile}
+                    onChange={setOwnershipFile}
+                  />
+                  {errors.ownershipFile && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
+                      {errors.ownershipFile}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {serverError && (
+                <div style={styles.serverError}>
+                  <span className="material-symbols-outlined">error</span>
+                  {serverError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                style={{
+                  ...styles.btnPrimary,
+                  opacity: submitting ? 0.7 : 1,
+                  marginTop: "0.5rem"
+                }}
+              >
+                {submitting ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: "1.25rem" }}>sync</span>
+                    Procesando...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: "1.25rem" }}>send</span>
+                    Solicitar Acceso
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleGuestSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <div style={styles.sectionHeader}>
+                <span className="material-symbols-outlined" style={styles.sectionIcon}>person_add</span>
+                <span style={styles.sectionLabel}>Datos del Visitante e Invitación</span>
+              </div>
+
+              <Field
+                id="hostCode"
+                label="Código del anfitrión (Quién te invita)"
+                icon="account_circle"
+                value={hostCode}
+                onChange={(v) => { setHostCode(v); setHostCodeState("idle"); }}
+                onBlur={handleHostCodeBlur}
+                placeholder="Ej: 1151757 o 0759"
+                error={errors.hostCode}
+                autoCompleting={hostCodeState === "loading"}
+                suffix={
+                  hostCodeState === "found" ? (
+                    <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "#16a34a" }}>check_circle</span>
+                  ) : hostCodeState === "not-found" ? (
+                    <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-error)" }}>cancel</span>
+                  ) : null
+                }
+              />
+
+              <Field
+                id="guestName"
+                label="Nombre completo del invitado"
+                icon="person"
+                value={guestName}
+                onChange={setGuestName}
+                placeholder="Nombres y apellidos de quien ingresa"
+                error={errors.guestName}
+              />
+
+              <Field
+                id="guestPhone"
+                label="Número de teléfono"
+                icon="phone"
+                value={guestPhone}
+                onChange={setGuestPhone}
+                placeholder="Ej: 310 000 0000"
+                error={errors.guestPhone}
+              />
+
+              <Field
+                id="guestPlate"
+                label="Placa del vehículo (Opcional)"
+                icon="confirmation_number"
+                value={guestPlate}
+                onChange={(v) => setGuestPlate(v.toUpperCase())}
+                placeholder="Ej: HUF367"
+              />
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-on-surface-variant)", fontFamily: "var(--font-label)" }}>
+                  Descripción de la solicitud
+                </label>
+                <textarea
+                  value={guestDescription}
+                  onChange={(e) => setGuestDescription(e.target.value)}
+                  placeholder="Detalla tu solicitud. Ej: Se solicita el ingreso de vehiculo con placas HUF 367 con pasajeros pepito j y maria g"
                   style={{
                     width: "100%",
+                    minHeight: "100px",
                     boxSizing: "border-box",
                     background: "var(--color-surface-container-lowest)",
-                    border: `1.5px solid ${errors.userType ? "var(--color-error)" : "var(--color-outline-variant)"}`,
+                    border: `1.5px solid ${errors.guestDescription ? "var(--color-error)" : "var(--color-outline-variant)"}`,
                     borderRadius: "0.625rem",
-                    padding: "0.75rem 1rem 0.75rem 2.5rem",
+                    padding: "0.75rem 1rem",
                     fontSize: "0.9375rem",
                     fontFamily: "var(--font-body)",
-                    color: userType ? "var(--color-on-surface)" : "var(--color-on-surface-variant)",
+                    color: "var(--color-on-surface)",
                     outline: "none",
-                    cursor: "pointer",
-                    appearance: "none",
+                    resize: "vertical"
                   }}
-                >
-                  <option value="" disabled>Selecciona una opción…</option>
-                  <option value="ESTUDIANTE">Estudiante</option>
-                  <option value="ADMINISTRATIVO">Administrativo</option>
-                  <option value="DOCENTE">Docente</option>
-                </select>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    position: "absolute",
-                    right: "0.875rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "1rem",
-                    color: "var(--color-on-surface-variant)",
-                    pointerEvents: "none",
-                  }}
-                >
-                  expand_more
-                </span>
+                />
+                {errors.guestDescription && (
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
+                    {errors.guestDescription}
+                  </span>
+                )}
               </div>
-              {errors.userType && (
-                <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+
+              <FileDropZone
+                id="hostCarnetFile"
+                label="Subir Carnet del anfitrión"
+                icon="badge"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+                file={hostCarnetFile}
+                onChange={setHostCarnetFile}
+              />
+              {errors.hostCarnetFile && (
+                <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "-0.75rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                   <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
-                  {errors.userType}
+                  {errors.hostCarnetFile}
                 </span>
               )}
-            </div>
 
-            {/* Code */}
-            <Field
-              id="institutionalCode"
-              label="Código institucional (N° de carnet)"
-              icon="badge"
-              value={code}
-              onChange={(v) => {
-                setCode(v);
-                // Clear state when user types
-                if (codeState !== "idle") setCodeState("idle");
-              }}
-              onBlur={handleCodeBlur}
-              placeholder={userType === "ADMINISTRATIVO" || userType === "DOCENTE" ? "Ej: 0759" : "Ej: 1151757"}
-              hint={
-                userType === "ADMINISTRATIVO" || userType === "DOCENTE"
-                  ? "Los códigos administrativos y docentes inician con 0"
-                  : userType === "ESTUDIANTE"
-                  ? "Ingresa tu código tal como aparece en el carnet estudiantil"
-                  : undefined
-              }
-              error={errors.code}
-              autoCompleting={codeState === "loading"}
-              suffix={
-                codeState === "found" ? (
-                  <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "#16a34a" }}>check_circle</span>
-                ) : codeState === "not-found" ? (
-                  <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-on-surface-variant)", opacity: 0.5 }}>help</span>
-                ) : null
-              }
-            />
-            {/* Blur trigger for autocomplete */}
-            <div style={{ marginTop: "-0.75rem" }}>
+              {serverError && (
+                <div style={styles.serverError}>
+                  <span className="material-symbols-outlined">error</span>
+                  {serverError}
+                </div>
+              )}
+
               <button
-                type="button"
-                onClick={handleCodeBlur}
-                disabled={!code.trim() || codeState === "loading"}
+                type="submit"
+                disabled={submitting}
                 style={{
-                  background: "var(--color-primary-fixed)",
-                  color: "var(--color-primary)",
-                  border: "none",
-                  borderRadius: "0.5rem",
-                  padding: "0.4rem 0.875rem",
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-label)",
-                  cursor: code.trim() ? "pointer" : "not-allowed",
-                  opacity: !code.trim() ? 0.5 : 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.375rem",
-                  transition: "all 150ms",
+                  ...styles.btnPrimary,
+                  opacity: submitting ? 0.7 : 1,
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: "0.9rem" }}>
-                  {codeState === "loading" ? "sync" : "search"}
-                </span>
-                {codeState === "loading" ? "Buscando…" : "Buscar en base de datos"}
+                {submitting ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: "1.25rem" }}>sync</span>
+                    Registrando...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: "1.25rem" }}>send</span>
+                    Enviar Solicitud
+                  </>
+                )}
               </button>
-              {codeState === "not-found" && (
-                <p style={{ fontSize: "0.75rem", color: "var(--color-on-surface-variant)", margin: "0.375rem 0 0", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>info</span>
-                  Código no encontrado en la BD. Puedes continuar llenando el formulario manualmente.
-                </p>
-              )}
-              {codeState === "found" && (
-                <p style={{ fontSize: "0.75rem", color: "#16a34a", margin: "0.375rem 0 0", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>check_circle</span>
-                  Datos autocompletados desde la base de datos.
-                </p>
-              )}
-            </div>
-
-            {/* Full name */}
-            <Field
-              id="fullName"
-              label="Nombre completo"
-              icon="person"
-              value={fullName}
-              onChange={setFullName}
-              placeholder="Nombres y apellidos"
-              error={errors.fullName}
-              readOnly={codeState === "found" && !!fullName}
-            />
-
-            {/* Email */}
-            <Field
-              id="email"
-              label="Correo institucional"
-              icon="mail"
-              value={email}
-              onChange={setEmail}
-              type="email"
-              placeholder="usuario@ufps.edu.co"
-              hint="Debe ser un correo @ufps.edu.co"
-              error={errors.email}
-              readOnly={codeState === "found" && !!email}
-            />
-
-            {/* Section 2 */}
-            <div style={{ ...styles.sectionHeader, marginTop: "0.5rem" }}>
-              <span className="material-symbols-outlined" style={styles.sectionIcon}>directions_car</span>
-              <span style={styles.sectionLabel}>Información del vehículo</span>
-            </div>
-
-            {/* Plate */}
-            <Field
-              id="plate"
-              label="Placa del vehículo"
-              icon="confirmation_number"
-              value={plate}
-              onChange={handlePlateChange}
-              placeholder="ABC123 o MGO18G"
-              hint="Carro: ABC123 · Moto: MGO18G · Venezolana: AB1234"
-              error={errors.plate}
-            />
-
-            {/* Brand and Model */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              <Field
-                id="brand"
-                label="Marca"
-                icon="factory"
-                value={brand}
-                onChange={setBrand}
-                placeholder="Ej: Mazda, Yamaha"
-                error={errors.brand}
-              />
-              <Field
-                id="model"
-                label="Modelo"
-                icon="model_training"
-                value={model}
-                onChange={setModel}
-                placeholder="Ej: 3, R6, Spark"
-                error={errors.model}
-              />
-            </div>
-
-            {/* Files */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              <div>
-                <FileDropZone
-                  id="carnetFile"
-                  label="Carnet estudiantil / institucional"
-                  icon="badge"
-                  accept=".pdf,.jpg,.jpeg,.png,.webp"
-                  file={carnetFile}
-                  onChange={setCarnetFile}
-                />
-                {errors.carnetFile && (
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
-                    {errors.carnetFile}
-                  </span>
-                )}
-              </div>
-              <div>
-                <FileDropZone
-                  id="ownershipFile"
-                  label="Documento de propiedad del auto"
-                  icon="description"
-                  accept=".pdf,.jpg,.jpeg,.png,.webp"
-                  file={ownershipFile}
-                  onChange={setOwnershipFile}
-                />
-                {errors.ownershipFile && (
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
-                    {errors.ownershipFile}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Server error */}
-            {serverError && (
-              <div style={styles.serverError}>
-                <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>error</span>
-                {serverError}
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                ...styles.btnPrimary,
-                marginTop: "0.5rem",
-                opacity: submitting ? 0.7 : 1,
-                cursor: submitting ? "not-allowed" : "pointer",
-              }}
-            >
-              {submitting ? (
-                <>
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.125rem", animation: "spin 1s linear infinite" }}>
-                    sync
-                  </span>
-                  Enviando solicitud…
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>send</span>
-                  Enviar solicitud de acceso
-                </>
-              )}
-            </button>
-          </form>
+            </form>
+          )}
         </div>
       </div>
 

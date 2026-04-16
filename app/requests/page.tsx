@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Revisar y gestionar el acceso temporal al estacionamiento para invitados del campus",
 };
 
+import { AccessRequest } from "@/generated/prisma/client/index.js";
 import prisma from "@/lib/prisma";
 
 export default async function RequestsPage() {
@@ -72,10 +73,10 @@ export default async function RequestsPage() {
         <table className="table-base">
           <thead className="table-thead">
             <tr>
-              {["Nombre del Solicitante", "Número de Placa", "Fecha de Visita", "Motivo", "Estado", "Acciones"].map((h, i) => (
+              {["Visitante", "Placa", "Anfitrión", "Contacto", "Motivo/Descripción", "Estado", "Acciones"].map((h, i) => (
                 <th
                   key={h}
-                  className={i === 5 ? "text-right" : ""}
+                  className={i === 6 ? "text-right" : ""}
                 >
                   {h}
                 </th>
@@ -83,14 +84,19 @@ export default async function RequestsPage() {
             </tr>
           </thead>
           <tbody>
-            {requests.map((r: { id: number; requesterName: string; visitDate: Date; reason: string; plateNumber: string; status: string }) => (
+            {requests.map((r: AccessRequest) => (
               <tr key={r.id} className="table-row group">
                 <td className="table-cell">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-on-primary-fixed-variant)] font-bold text-xs">
                       {getInitials(r.requesterName)}
                     </div>
-                    <span className="font-bold text-[var(--color-on-surface)] font-[var(--font-label)] text-sm">{r.requesterName}</span>
+                    <div>
+                      <div className="font-bold text-[var(--color-on-surface)] font-[var(--font-label)] text-sm">{r.requesterName}</div>
+                      <div className="text-[10px] text-[var(--color-on-surface-variant)] uppercase font-bold tracking-tighter opacity-60">
+                        {new Date(r.visitDate).toLocaleDateString()}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td className="table-cell">
@@ -98,12 +104,36 @@ export default async function RequestsPage() {
                     {r.plateNumber}
                   </span>
                 </td>
-                <td className="table-cell text-sm text-[var(--color-on-surface-variant)] font-[var(--font-label)]">
-                  {new Date(r.visitDate).toLocaleDateString()}
+                <td className="table-cell text-sm">
+                  {r.hostCode ? (
+                    <div className="flex flex-col">
+                      <span className="font-bold text-[var(--color-primary)]">{r.hostCode}</span>
+                      {r.hostCarnetPath && (
+                        <a 
+                          href={r.hostCarnetPath} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[10px] text-[var(--color-primary)] hover:underline flex items-center gap-0.5"
+                        >
+                          <span className="material-symbols-outlined text-[12px]">visibility</span>
+                          Ver Carnet
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="opacity-40 text-xs">—</span>
+                  )}
                 </td>
-                <td className="table-cell text-sm text-[var(--color-on-surface-variant)] font-[var(--font-label)]">{r.reason}</td>
+                <td className="table-cell text-sm text-[var(--color-on-surface-variant)] font-[var(--font-label)]">
+                  {r.phone || <span className="opacity-40">—</span>}
+                </td>
+                <td className="table-cell text-sm text-[var(--color-on-surface-variant)] font-[var(--font-label)] max-w-[200px] truncate" title={r.reason}>
+                  {r.reason}
+                </td>
                 <td className="table-cell">
-                  <span className="badge badge-warning">{r.status}</span>
+                  <span className={`badge ${r.status === 'APROBADO' ? 'badge-success' : r.status === 'PENDIENTE' ? 'badge-warning' : 'badge-error'}`}>
+                    {r.status}
+                  </span>
                 </td>
                 <td className="table-cell text-right">
                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

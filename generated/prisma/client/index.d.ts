@@ -3620,6 +3620,9 @@ export namespace Prisma {
     visitDate: Date | null
     reason: string | null
     status: string | null
+    hostCode: string | null
+    hostCarnetPath: string | null
+    phone: string | null
     createdAt: Date | null
   }
 
@@ -3630,6 +3633,9 @@ export namespace Prisma {
     visitDate: Date | null
     reason: string | null
     status: string | null
+    hostCode: string | null
+    hostCarnetPath: string | null
+    phone: string | null
     createdAt: Date | null
   }
 
@@ -3640,6 +3646,9 @@ export namespace Prisma {
     visitDate: number
     reason: number
     status: number
+    hostCode: number
+    hostCarnetPath: number
+    phone: number
     createdAt: number
     _all: number
   }
@@ -3660,6 +3669,9 @@ export namespace Prisma {
     visitDate?: true
     reason?: true
     status?: true
+    hostCode?: true
+    hostCarnetPath?: true
+    phone?: true
     createdAt?: true
   }
 
@@ -3670,6 +3682,9 @@ export namespace Prisma {
     visitDate?: true
     reason?: true
     status?: true
+    hostCode?: true
+    hostCarnetPath?: true
+    phone?: true
     createdAt?: true
   }
 
@@ -3680,6 +3695,9 @@ export namespace Prisma {
     visitDate?: true
     reason?: true
     status?: true
+    hostCode?: true
+    hostCarnetPath?: true
+    phone?: true
     createdAt?: true
     _all?: true
   }
@@ -3777,6 +3795,9 @@ export namespace Prisma {
     visitDate: Date
     reason: string
     status: string
+    hostCode: string | null
+    hostCarnetPath: string | null
+    phone: string | null
     createdAt: Date
     _count: AccessRequestCountAggregateOutputType | null
     _avg: AccessRequestAvgAggregateOutputType | null
@@ -3806,6 +3827,9 @@ export namespace Prisma {
     visitDate?: boolean
     reason?: boolean
     status?: boolean
+    hostCode?: boolean
+    hostCarnetPath?: boolean
+    phone?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["accessRequest"]>
 
@@ -3816,6 +3840,9 @@ export namespace Prisma {
     visitDate?: boolean
     reason?: boolean
     status?: boolean
+    hostCode?: boolean
+    hostCarnetPath?: boolean
+    phone?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["accessRequest"]>
 
@@ -3826,6 +3853,9 @@ export namespace Prisma {
     visitDate?: boolean
     reason?: boolean
     status?: boolean
+    hostCode?: boolean
+    hostCarnetPath?: boolean
+    phone?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["accessRequest"]>
 
@@ -3836,10 +3866,13 @@ export namespace Prisma {
     visitDate?: boolean
     reason?: boolean
     status?: boolean
+    hostCode?: boolean
+    hostCarnetPath?: boolean
+    phone?: boolean
     createdAt?: boolean
   }
 
-  export type AccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "requesterName" | "plateNumber" | "visitDate" | "reason" | "status" | "createdAt", ExtArgs["result"]["accessRequest"]>
+  export type AccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "requesterName" | "plateNumber" | "visitDate" | "reason" | "status" | "hostCode" | "hostCarnetPath" | "phone" | "createdAt", ExtArgs["result"]["accessRequest"]>
 
   export type $AccessRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AccessRequest"
@@ -3851,6 +3884,9 @@ export namespace Prisma {
       visitDate: Date
       reason: string
       status: string
+      hostCode: string | null
+      hostCarnetPath: string | null
+      phone: string | null
       createdAt: Date
     }, ExtArgs["result"]["accessRequest"]>
     composites: {}
@@ -4281,6 +4317,9 @@ export namespace Prisma {
     readonly visitDate: FieldRef<"AccessRequest", 'DateTime'>
     readonly reason: FieldRef<"AccessRequest", 'String'>
     readonly status: FieldRef<"AccessRequest", 'String'>
+    readonly hostCode: FieldRef<"AccessRequest", 'String'>
+    readonly hostCarnetPath: FieldRef<"AccessRequest", 'String'>
+    readonly phone: FieldRef<"AccessRequest", 'String'>
     readonly createdAt: FieldRef<"AccessRequest", 'DateTime'>
   }
     
@@ -6876,6 +6915,9 @@ export namespace Prisma {
     visitDate: 'visitDate',
     reason: 'reason',
     status: 'status',
+    hostCode: 'hostCode',
+    hostCarnetPath: 'hostCarnetPath',
+    phone: 'phone',
     createdAt: 'createdAt'
   };
 
@@ -7171,6 +7213,9 @@ export namespace Prisma {
     visitDate?: DateTimeFilter<"AccessRequest"> | Date | string
     reason?: StringFilter<"AccessRequest"> | string
     status?: StringFilter<"AccessRequest"> | string
+    hostCode?: StringNullableFilter<"AccessRequest"> | string | null
+    hostCarnetPath?: StringNullableFilter<"AccessRequest"> | string | null
+    phone?: StringNullableFilter<"AccessRequest"> | string | null
     createdAt?: DateTimeFilter<"AccessRequest"> | Date | string
   }
 
@@ -7181,6 +7226,9 @@ export namespace Prisma {
     visitDate?: SortOrder
     reason?: SortOrder
     status?: SortOrder
+    hostCode?: SortOrderInput | SortOrder
+    hostCarnetPath?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     createdAt?: SortOrder
   }
 
@@ -7194,6 +7242,9 @@ export namespace Prisma {
     visitDate?: DateTimeFilter<"AccessRequest"> | Date | string
     reason?: StringFilter<"AccessRequest"> | string
     status?: StringFilter<"AccessRequest"> | string
+    hostCode?: StringNullableFilter<"AccessRequest"> | string | null
+    hostCarnetPath?: StringNullableFilter<"AccessRequest"> | string | null
+    phone?: StringNullableFilter<"AccessRequest"> | string | null
     createdAt?: DateTimeFilter<"AccessRequest"> | Date | string
   }, "id">
 
@@ -7204,6 +7255,9 @@ export namespace Prisma {
     visitDate?: SortOrder
     reason?: SortOrder
     status?: SortOrder
+    hostCode?: SortOrderInput | SortOrder
+    hostCarnetPath?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: AccessRequestCountOrderByAggregateInput
     _avg?: AccessRequestAvgOrderByAggregateInput
@@ -7222,6 +7276,9 @@ export namespace Prisma {
     visitDate?: DateTimeWithAggregatesFilter<"AccessRequest"> | Date | string
     reason?: StringWithAggregatesFilter<"AccessRequest"> | string
     status?: StringWithAggregatesFilter<"AccessRequest"> | string
+    hostCode?: StringNullableWithAggregatesFilter<"AccessRequest"> | string | null
+    hostCarnetPath?: StringNullableWithAggregatesFilter<"AccessRequest"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"AccessRequest"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"AccessRequest"> | Date | string
   }
 
@@ -7541,9 +7598,12 @@ export namespace Prisma {
   export type AccessRequestCreateInput = {
     requesterName: string
     plateNumber: string
-    visitDate: Date | string
+    visitDate?: Date | string
     reason: string
-    status: string
+    status?: string
+    hostCode?: string | null
+    hostCarnetPath?: string | null
+    phone?: string | null
     createdAt?: Date | string
   }
 
@@ -7551,9 +7611,12 @@ export namespace Prisma {
     id?: number
     requesterName: string
     plateNumber: string
-    visitDate: Date | string
+    visitDate?: Date | string
     reason: string
-    status: string
+    status?: string
+    hostCode?: string | null
+    hostCarnetPath?: string | null
+    phone?: string | null
     createdAt?: Date | string
   }
 
@@ -7563,6 +7626,9 @@ export namespace Prisma {
     visitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    hostCode?: NullableStringFieldUpdateOperationsInput | string | null
+    hostCarnetPath?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7573,6 +7639,9 @@ export namespace Prisma {
     visitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    hostCode?: NullableStringFieldUpdateOperationsInput | string | null
+    hostCarnetPath?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7580,9 +7649,12 @@ export namespace Prisma {
     id?: number
     requesterName: string
     plateNumber: string
-    visitDate: Date | string
+    visitDate?: Date | string
     reason: string
-    status: string
+    status?: string
+    hostCode?: string | null
+    hostCarnetPath?: string | null
+    phone?: string | null
     createdAt?: Date | string
   }
 
@@ -7592,6 +7664,9 @@ export namespace Prisma {
     visitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    hostCode?: NullableStringFieldUpdateOperationsInput | string | null
+    hostCarnetPath?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7602,6 +7677,9 @@ export namespace Prisma {
     visitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    hostCode?: NullableStringFieldUpdateOperationsInput | string | null
+    hostCarnetPath?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8029,6 +8107,9 @@ export namespace Prisma {
     visitDate?: SortOrder
     reason?: SortOrder
     status?: SortOrder
+    hostCode?: SortOrder
+    hostCarnetPath?: SortOrder
+    phone?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -8043,6 +8124,9 @@ export namespace Prisma {
     visitDate?: SortOrder
     reason?: SortOrder
     status?: SortOrder
+    hostCode?: SortOrder
+    hostCarnetPath?: SortOrder
+    phone?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -8053,6 +8137,9 @@ export namespace Prisma {
     visitDate?: SortOrder
     reason?: SortOrder
     status?: SortOrder
+    hostCode?: SortOrder
+    hostCarnetPath?: SortOrder
+    phone?: SortOrder
     createdAt?: SortOrder
   }
 

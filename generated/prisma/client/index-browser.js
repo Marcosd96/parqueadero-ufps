@@ -151,6 +151,9 @@ exports.Prisma.AccessRequestScalarFieldEnum = {
   visitDate: 'visitDate',
   reason: 'reason',
   status: 'status',
+  hostCode: 'hostCode',
+  hostCarnetPath: 'hostCarnetPath',
+  phone: 'phone',
   createdAt: 'createdAt'
 };
 

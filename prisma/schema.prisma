@@ -41,9 +41,14 @@ model AccessRequest {
   id            Int      @id @default(autoincrement())
   requesterName String
   plateNumber   String
-  visitDate     DateTime
-  reason        String
-  status        String   // PENDING, APPROVED, EXPIRED
+  visitDate     DateTime @default(now())
+  reason        String   // Servirá como Descripción libre
+  status        String   @default("PENDIENTE") // PENDING, APPROVED, EXPIRED
+  
+  hostCode      String?  // Código del anfitrión
+  hostCarnetPath String? // Ruta del archivo del carnet del anfitrión
+  phone         String?  // Número de teléfono del invitado
+  
   createdAt     DateTime @default(now())
 }
 

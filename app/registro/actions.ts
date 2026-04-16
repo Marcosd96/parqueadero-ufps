@@ -95,3 +95,59 @@ export async function submitRegistration(formData: FormData) {
   }
 }
 
+export async function submitGuestRegistration(formData: FormData) {
+  try {
+    const hostCode = formData.get("hostCode") as string;
+    const guestName = formData.get("guestName") as string;
+    const phone = formData.get("phone") as string;
+    const description = formData.get("description") as string;
+    const plate = (formData.get("plate") as string || "N/A").toUpperCase().trim();
+    const hostCarnetFile = formData.get("hostCarnetFile") as File | null;
+
+    // --- Validations ---
+    if (!hostCode || !guestName || !phone || !description) {
+      return { error: "Todos los campos son obligatorios." };
+    }
+
+    // Verify host exists
+    const host = await prisma.student.findUnique({
+      where: { cardnumber: hostCode },
+    });
+
+    if (!host) {
+      return { error: "El código del anfitrión no es válido o no está registrado." };
+    }
+
+    if (!hostCarnetFile || hostCarnetFile.size === 0) {
+      return { error: "Debes subir el carnet del anfitrión." };
+    }
+
+    // --- Save file to Vercel Blob ---
+    const timestamp = Date.now();
+    const safeName = guestName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+    
+    const carnetBlob = await put(
+      `guests/${timestamp}-${safeName}/host_carnet.${hostCarnetFile.name.split(".").pop() ?? "bin"}`,
+      hostCarnetFile,
+      { access: "public" }
+    );
+
+    // --- Create DB record ---
+    await prisma.accessRequest.create({
+      data: {
+        requesterName: guestName,
+        plateNumber: plate,
+        reason: description,
+        phone,
+        hostCode,
+        hostCarnetPath: carnetBlob.url,
+        status: "PENDIENTE",
+      },
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error("[submitGuestRegistration]", err);
+    return { error: "Ocurrió un error interno. Intenta nuevamente." };
+  }
+}
