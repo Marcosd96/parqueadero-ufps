@@ -1,7 +1,6 @@
 "use server";
 
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import prisma from "@/lib/prisma";
 
 // Support cars (ABC123, AB1234) and motorcycles (MGO18G, FJE62A)
@@ -52,34 +51,26 @@ export async function submitRegistration(formData: FormData) {
       return { error: "Debes subir el documento de propiedad del vehículo." };
     }
 
-    // --- Save files ---
+    // --- Save files to Vercel Blob ---
     const timestamp = Date.now();
     const safeName = fullName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-    const folderName = `${timestamp}-${safeName}`;
-    const uploadDir = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "registrations",
-      folderName
+    
+    // Upload carnet
+    const carnetBlob = await put(
+      `registrations/${timestamp}-${safeName}/carnet.${carnetFile.name.split(".").pop() ?? "bin"}`,
+      carnetFile,
+      { access: "public" }
     );
 
-    await mkdir(uploadDir, { recursive: true });
-
-    const carnetExt = carnetFile.name.split(".").pop() ?? "bin";
-    const ownershipExt = ownershipFile.name.split(".").pop() ?? "bin";
-
-    const carnetBytes = Buffer.from(await carnetFile.arrayBuffer());
-    const ownershipBytes = Buffer.from(await ownershipFile.arrayBuffer());
-
-    const carnetPath = `/uploads/registrations/${folderName}/carnet.${carnetExt}`;
-    const ownershipPath = `/uploads/registrations/${folderName}/propiedad.${ownershipExt}`;
-
-    await writeFile(path.join(uploadDir, `carnet.${carnetExt}`), carnetBytes);
-    await writeFile(
-      path.join(uploadDir, `propiedad.${ownershipExt}`),
-      ownershipBytes
+    // Upload ownership document
+    const ownershipBlob = await put(
+      `registrations/${timestamp}-${safeName}/propiedad.${ownershipFile.name.split(".").pop() ?? "bin"}`,
+      ownershipFile,
+      { access: "public" }
     );
+
+    const carnetPath = carnetBlob.url;
+    const ownershipPath = ownershipBlob.url;
 
     // --- Create DB record ---
     await prisma.userRegistration.create({
@@ -103,3 +94,4 @@ export async function submitRegistration(formData: FormData) {
     return { error: "Ocurrió un error interno. Intenta nuevamente." };
   }
 }
+

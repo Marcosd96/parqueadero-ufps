@@ -21,11 +21,11 @@ export async function updateRegistrationStatus(id: number, status: string) {
         const firstname = nameParts[0] || "Usuario";
         const surname = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "S/A";
 
-        // 3. Create or find Student
+        // 3. Crear o encontrar estudiante
         const student = await tx.student.upsert({
           where: { cardnumber: reg.institutionalCode },
           update: {
-            email: reg.email, // Ensure email is kept up to date
+            email: reg.email, // Asegurar que el correo electrónico se mantenga actualizado
           },
           create: {
             cardnumber: reg.institutionalCode,
@@ -35,11 +35,10 @@ export async function updateRegistrationStatus(id: number, status: string) {
           },
         });
 
-        // 4. Create Vehicle if not exists
         await tx.vehicle.upsert({
           where: { plate: reg.plate.toUpperCase().trim() },
           update: {
-            ownerId: student.id, // Assign to this student if it existed but was loose
+            ownerId: student.id,
             department: reg.userType,
             brand: reg.vehicleBrand,
             model: reg.vehicleModel || "N/A",
@@ -56,14 +55,12 @@ export async function updateRegistrationStatus(id: number, status: string) {
           },
         });
 
-        // 5. Finally update status
         await tx.userRegistration.update({
           where: { id },
           data: { status: "APROBADO" },
         });
       });
     } else {
-      // Just update status (e.g. if RECHAZADO)
       await prisma.userRegistration.update({
         where: { id },
         data: { status },
