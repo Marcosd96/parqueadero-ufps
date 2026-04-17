@@ -86,8 +86,14 @@ body {
 /* ── Utilities ───────────────────────────────────────────── */
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
 
 .custom-glass {
@@ -109,11 +115,17 @@ body {
 
 /* Wrapper estándar para todas las páginas */
 .page-wrapper {
-  padding: 2rem;
+  padding: 1.25rem;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .page-wrapper {
+    padding: 2rem;
+  }
 }
 
 /* Bloque header de página (título + acciones) */
@@ -172,7 +184,8 @@ body {
   background-color: var(--color-surface-container-lowest);
   border-radius: 0.75rem;
   border: 1px solid var(--color-outline-variant);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table-base {

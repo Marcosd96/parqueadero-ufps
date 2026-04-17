@@ -35,20 +35,20 @@ export default async function AnalyticsPage() {
           <h2 className="page-title">Analíticas de Operaciones</h2>
           <p className="page-subtitle">Métricas de capacidad y tráfico en tiempo real</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-[var(--color-surface-container)] rounded-lg p-1">
-            <button className="px-4 py-1.5 text-xs font-bold bg-[var(--color-surface-container-lowest)] shadow-sm rounded-md text-[var(--color-primary)]">Hoy</button>
-            <button className="px-4 py-1.5 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">Semana</button>
-            <button className="px-4 py-1.5 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">Mes</button>
+        <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
+          <div className="flex bg-[var(--color-surface-container)] rounded-lg p-1 w-full sm:w-auto">
+            <button className="flex-1 px-4 py-1.5 text-xs font-bold bg-[var(--color-surface-container-lowest)] shadow-sm rounded-md text-[var(--color-primary)]">Hoy</button>
+            <button className="flex-1 px-4 py-1.5 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">Semana</button>
+            <button className="flex-1 px-4 py-1.5 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">Mes</button>
           </div>
-          <select className="bg-[var(--color-surface-container-low)] border-none rounded-lg text-xs font-bold py-2 pr-8 pl-4 text-[var(--color-on-surface)] focus:ring-[var(--color-primary)]/20">
+          <select className="bg-[var(--color-surface-container-low)] border-none rounded-lg text-xs font-bold py-2 pr-8 pl-4 text-[var(--color-on-surface)] focus:ring-[var(--color-primary)]/20 w-full sm:w-auto">
             <option>Todos los Tipos de Usuario</option>
             <option>Estudiante</option>
             <option>Facultad</option>
             <option>Personal</option>
             <option>Visitante</option>
           </select>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[var(--color-on-surface)] text-[var(--color-surface)] rounded-lg font-bold text-xs hover:opacity-90 transition-all">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--color-on-surface)] text-[var(--color-surface)] rounded-lg font-bold text-xs hover:opacity-90 transition-all w-full sm:w-auto">
             <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
             Generar Reporte PDF
           </button>

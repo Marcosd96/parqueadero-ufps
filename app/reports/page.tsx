@@ -45,21 +45,21 @@ export default async function ReportsPage() {
           <h2 className="page-title">Reportes de Entrada/Salida de Vehículos</h2>
           <p className="page-subtitle">Log operacional detallado para el ciclo de 24 horas.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1">
-            <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] rounded transition-all">
+        <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
+          <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1 w-full sm:w-auto">
+            <button className="flex-1 px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] rounded transition-all">
               Últimas 24h
             </button>
-            <button className="px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-[var(--color-surface-container-lowest)] shadow-sm rounded transition-all">
+            <button className="flex-1 px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-[var(--color-surface-container-lowest)] shadow-sm rounded transition-all">
               Seleccionar Fecha
             </button>
           </div>
-          <div className="flex gap-2">
-            <button className="btn btn-ghost">
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button className="btn btn-ghost flex-1 sm:flex-none justify-center">
               <span className="material-symbols-outlined text-sm">download</span>
               EXPORTAR CSV
             </button>
-            <button className="btn btn-primary">
+            <button className="btn btn-primary flex-1 sm:flex-none justify-center">
               <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
               EXPORTAR PDF
             </button>

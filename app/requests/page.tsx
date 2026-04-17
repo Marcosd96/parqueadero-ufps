@@ -35,14 +35,14 @@ export default async function RequestsPage() {
             Revisar y gestionar el acceso temporal al estacionamiento para invitados del campus.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-[var(--color-surface-container-low)] p-1 rounded-lg">
-          <button className="px-6 py-2 bg-[var(--color-surface-container-lowest)] text-[var(--color-primary)] font-bold shadow-sm rounded-md font-[var(--font-label)] text-sm">
+        <div className="flex items-center gap-2 bg-[var(--color-surface-container-low)] p-1 rounded-lg overflow-x-auto no-scrollbar max-w-full">
+          <button className="flex-1 min-w-[100px] px-4 md:px-6 py-2 bg-[var(--color-surface-container-lowest)] text-[var(--color-primary)] font-bold shadow-sm rounded-md font-[var(--font-label)] text-xs md:text-sm">
             Pendientes
           </button>
-          <button className="px-6 py-2 text-[var(--color-on-surface-variant)] font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-sm transition-all">
+          <button className="flex-1 min-w-[100px] px-4 md:px-6 py-2 text-[var(--color-on-surface-variant)] font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-xs md:text-sm transition-all">
             Aprobados
           </button>
-          <button className="px-6 py-2 text-[var(--color-on-surface-variant)] font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-sm transition-all">
+          <button className="flex-1 min-w-[100px] px-4 md:px-6 py-2 text-[var(--color-on-surface-variant)] font-medium hover:bg-[var(--color-surface-container-high)] rounded-md font-[var(--font-label)] text-xs md:text-sm transition-all">
             Expirados
           </button>
         </div>

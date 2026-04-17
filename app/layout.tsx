@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import TopBar from "@/components/TopBar";
 import { getSession } from "@/lib/auth";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export const metadata: Metadata = {
   title: "Campus ParkGuard - Administración de Estacionamiento",
@@ -34,15 +33,9 @@ export default async function RootLayout({
       </head>
       <body className="bg-[var(--color-background)] min-h-screen">
         {isLoggedIn ? (
-          <>
-            <Sidebar user={session} />
-            <div className="ml-64 flex flex-col min-h-screen relative">
-              <TopBar />
-              <main className="flex-1">
-                {children}
-              </main>
-            </div>
-          </>
+          <DashboardLayout user={session}>
+            {children}
+          </DashboardLayout>
         ) : (
           <main className="min-h-screen">
             {children}

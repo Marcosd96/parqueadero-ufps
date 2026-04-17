@@ -65,7 +65,7 @@ export default async function StudentsPage({
               : `${totalFilteredStudents.toLocaleString()} estudiantes con correo @ufps.edu.co registrados`}
           </p>
         </div>
-        <button className="btn btn-primary">
+        <button className="btn btn-primary w-full sm:w-auto justify-center mt-4 sm:mt-0">
           <span className="material-symbols-outlined text-sm">person_add</span>
           Registrar Estudiante
         </button>
