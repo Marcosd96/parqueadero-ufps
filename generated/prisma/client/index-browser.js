@@ -181,6 +181,17 @@ exports.Prisma.UserRegistrationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  password: 'password',
+  name: 'name',
+  email: 'email',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -195,14 +206,18 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.UserRole = exports.$Enums.UserRole = {
+  ADMIN: 'ADMIN',
+  CELADOR: 'CELADOR'
+};
 
 exports.Prisma.ModelName = {
   Student: 'Student',
   Vehicle: 'Vehicle',
   AccessRequest: 'AccessRequest',
   AccessLog: 'AccessLog',
-  UserRegistration: 'UserRegistration'
+  UserRegistration: 'UserRegistration',
+  User: 'User'
 };
 
 /**

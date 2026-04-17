@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient } from "../generated/prisma/client/index.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
@@ -17,6 +18,7 @@ async function main() {
   await prisma.accessRequest.deleteMany();
   await prisma.vehicle.deleteMany();
   await prisma.student.deleteMany();
+  await prisma.user.deleteMany();
 
   // 2. Load Students from CSV
   const csvPath = path.join(process.cwd(), "estudiantes.csv");
@@ -92,6 +94,31 @@ async function main() {
     await prisma.accessLog.create({ data: l });
   }
 
+  // 6. Sembrar Usuarios (Seed Users)
+  console.log("Sembrando usuarios...");
+  const adminPassword = "$2b$10$aGvn/sUQWhdi92QY8wg2dOelXAsZn0LdBQ4mr9ppVYTjIw.ZBWaj6"; // admin123
+  const celadorPassword = "$2b$10$MPmPSpOL/YSRQwJJpVKo7uBo9QmSwhwAYuK812L1BS9UGaxzf.ANy"; // celador123
+
+  await prisma.user.createMany({
+    data: [
+      {
+        username: "admin",
+        password: adminPassword,
+        name: "Administrador General",
+        role: "ADMIN",
+        email: "admin@ufps.edu.co",
+      },
+      {
+        username: "celador",
+        password: celadorPassword,
+        name: "Vigilante Nocturno",
+        role: "CELADOR",
+        email: "celador@ufps.edu.co",
+      },
+    ],
+  });
+
+  console.log("Usuarios sembrados con éxito.");
   console.log("Seed completado con éxito.");
 }
 

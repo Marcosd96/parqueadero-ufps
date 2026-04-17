@@ -2,17 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
+import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Campus ParkGuard - Administración de Estacionamiento",
   description: "Sistema de gestión de estacionamiento y monitoreo de seguridad del campus universitario",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+  const isLoggedIn = !!session;
+
   return (
     <html lang="es" className="light">
       <head>
@@ -29,13 +33,21 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[var(--color-background)] min-h-screen">
-        <Sidebar />
-        <div className="ml-64 flex flex-col min-h-screen relative">
-          <TopBar />
-          <main className="flex-1">
+        {isLoggedIn ? (
+          <>
+            <Sidebar user={session} />
+            <div className="ml-64 flex flex-col min-h-screen relative">
+              <TopBar />
+              <main className="flex-1">
+                {children}
+              </main>
+            </div>
+          </>
+        ) : (
+          <main className="min-h-screen">
             {children}
           </main>
-        </div>
+        )}
       </body>
     </html>
   );
