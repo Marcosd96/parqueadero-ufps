@@ -18,10 +18,13 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close sidebar when route changes on mobile
-  useEffect(() => {
+  // Sincronización de estado durante el render (Patrón recomendado por React)
+  // Evita el error de "cascading renders" al cerrar el sidebar en navegación
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsSidebarOpen(false);
-  }, [pathname]);
+  }
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 

@@ -525,30 +525,30 @@ export default function RegistroPage() {
   if (submitted) {
     const isGuest = tab === "guest";
     return (
-      <div style={styles.pageCenter}>
-        <div style={styles.successCard}>
-          <div style={styles.successIconWrap}>
+      <div className="flex items-center justify-center min-h-screen bg-[var(--color-background)] p-4 sm:p-8">
+        <div className="bg-[var(--color-surface-container-lowest)] rounded-[1.25rem] border border-[var(--color-outline-variant)] p-8 sm:p-10 max-w-[440px] w-full flex flex-col items-center shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
+          <div className="w-20 h-20 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center mb-5">
             <span className="material-symbols-outlined" style={{ fontSize: "3rem", color: "var(--color-primary)" }}>
               check_circle
             </span>
           </div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem", fontFamily: "var(--font-headline)" }}>
+          <h1 className="text-2xl font-black mb-2 text-center font-[var(--font-headline)]">
             ¡Solicitud enviada!
           </h1>
-          <p style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-label)", margin: 0, textAlign: "center", lineHeight: 1.6 }}>
+          <p className="text-[var(--color-on-surface-variant)] font-[var(--font-label)] m-0 text-center leading-relaxed">
             Tu solicitud de acceso al parqueadero está en revisión. Recibirás una respuesta en {isGuest ? "el teléfono proporcionado" : "tu correo"}{" "}
-            <strong style={{ color: "var(--color-primary)" }}>{isGuest ? guestPhone : email}</strong>.
+            <strong className="text-[var(--color-primary)]">{isGuest ? guestPhone : email}</strong>.
           </p>
-          <div style={styles.successMeta}>
-            <div style={styles.successMetaItem}>
-              <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>
+          <div className="mt-5 bg-[var(--color-surface-container-low)] rounded-xl p-4 sm:p-5 flex flex-col gap-2 w-full">
+            <div className="flex items-center gap-2 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] font-bold">
+              <span className="material-symbols-outlined text-[var(--color-primary)]" style={{ fontSize: "1rem" }}>
                 {isGuest ? "account_circle" : "badge"}
               </span>
               <span>{isGuest ? `Invitado: ${guestName} (Anfitrión: ${hostCode})` : code}</span>
             </div>
             {(isGuest ? guestPlate : plate) && (
-              <div style={styles.successMetaItem}>
-                <span className="material-symbols-outlined" style={{ fontSize: "1rem", color: "var(--color-primary)" }}>directions_car</span>
+              <div className="flex items-center gap-2 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] font-bold">
+                <span className="material-symbols-outlined text-[var(--color-primary)]" style={{ fontSize: "1rem" }}>directions_car</span>
                 <span>
                   {isGuest 
                     ? `Vehículo: ${guestPlate}`
@@ -559,7 +559,7 @@ export default function RegistroPage() {
             )}
           </div>
           <button
-            style={{ ...styles.btnPrimary, marginTop: "1.5rem" }}
+            className="w-full mt-6 bg-[var(--color-primary)] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
             onClick={() => {
               setSubmitted(false);
               // Clear institutional
@@ -583,20 +583,20 @@ export default function RegistroPage() {
 
   /* ── Form ──────────────────────────────────────────────── */
   return (
-    <div style={styles.page}>
+    <div className="flex flex-col lg:flex-row min-h-screen font-[var(--font-body)] bg-[var(--color-background)]">
       {/* Left panel */}
-      <div style={styles.leftPanel}>
-        <div style={styles.leftContent}>
+      <div className="w-full lg:w-[420px] lg:flex-shrink-0 bg-gradient-to-br from-[#003c8f] via-[#005bbf] to-[#1a73e8] text-white flex flex-col justify-center p-8 lg:p-12 relative overflow-hidden">
+        <div className="relative z-10">
           {/* Logo */}
-          <div style={styles.logoRow}>
-            <div style={styles.logoIcon}>
-              <span className="material-symbols-outlined" style={{ fontSize: "1.5rem", color: "#fff" }}>
+          <div className="flex items-center gap-3 mb-8 lg:mb-12">
+            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-md">
+              <span className="material-symbols-outlined text-white text-2xl">
                 local_parking
               </span>
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: "1rem", letterSpacing: "-0.02em" }}>Campus ParkGuard</div>
-              <div style={{ fontSize: "0.75rem", opacity: 0.7, marginTop: "1px" }}>UFPS — Parqueadero Universitario</div>
+              <div className="font-black text-lg tracking-tight">Campus ParkGuard</div>
+              <div className="text-[0.7rem] opacity-70">UFPS — Parqueadero Universitario</div>
             </div>
           </div>
 
@@ -655,11 +655,11 @@ export default function RegistroPage() {
           </div>
 
           {/* Headline */}
-          <div style={styles.leftHeadline}>
-            <h1 style={styles.leftH1}>
+          <div className="mb-10">
+            <h1 className="text-2xl lg:text-3xl font-black leading-tight mb-4 font-[var(--font-headline)] tracking-tight">
               {tab === "institutional" ? "Solicita tu acceso al parqueadero" : "Registro para invitados externos"}
             </h1>
-            <p style={styles.leftSubtitle}>
+            <p className="text-sm lg:text-base opacity-80 leading-relaxed font-[var(--font-label)]">
               {tab === "institutional" 
                 ? "Completa el formulario y adjunta los documentos requeridos. El equipo administrativo revisará tu solicitud y te notificará por correo."
                 : "Si eres un invitado auspiciado por un miembro de la universidad, completa estos datos para solicitar tu acceso temporal al campus."}
@@ -667,15 +667,15 @@ export default function RegistroPage() {
           </div>
 
           {/* Feature list */}
-          <div style={styles.featureList}>
+          <div className="hidden sm:flex flex-col gap-4">
             {[
               { icon: "shield_lock", text: "Verificación institucional" },
               { icon: "upload_file", text: "Carga segura de documentos" },
               { icon: "notifications_active", text: "Notificación por correo @ufps.edu.co" },
               { icon: "manage_search", text: "Autocompletado desde base de datos" },
             ].map((f) => (
-              <div key={f.icon} style={styles.featureItem}>
-                <span className="material-symbols-outlined" style={{ fontSize: "1.125rem", opacity: 0.9 }}>
+              <div key={f.icon} className="flex items-center gap-3 text-sm opacity-90 font-[var(--font-label)]">
+                <span className="material-symbols-outlined text-[1.125rem]">
                   {f.icon}
                 </span>
                 <span>{f.text}</span>
@@ -683,20 +683,20 @@ export default function RegistroPage() {
             ))}
           </div>
         </div>
-
+ 
         {/* Decorative circles */}
-        <div style={styles.circle1} />
-        <div style={styles.circle2} />
+        <div className="absolute -bottom-20 -right-20 w-[300px] h-[300px] rounded-full bg-white/5" />
+        <div className="absolute top-20 -right-5 w-[180px] h-[180px] rounded-full bg-white/5" />
       </div>
 
       {/* Right panel — form */}
-      <div style={styles.rightPanel}>
-        <div style={styles.formContainer}>
-          <div style={{ marginBottom: "2rem" }}>
-            <h2 style={styles.formTitle}>
+      <div className="flex-1 overflow-y-auto flex justify-center items-start p-6 lg:p-12">
+        <div className="w-full max-w-[560px]">
+          <div className="mb-10">
+            <h2 className="text-2xl font-black mb-2 font-[var(--font-headline)] tracking-tight text-[var(--color-on-surface)]">
               {tab === "institutional" ? "Formulario de registro" : "Solicitud para visitantes"}
             </h2>
-            <p style={styles.formSubtitle}>
+            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed font-[var(--font-label)]">
               {tab === "institutional" 
                 ? "Ingresa tu código institucional primero — los demás campos se completarán automáticamente."
                 : "Ingresa el código institucional de la persona que te invita junto con tus datos de contacto."}
@@ -706,9 +706,9 @@ export default function RegistroPage() {
           {tab === "institutional" ? (
             <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {/* Section 1 */}
-              <div style={styles.sectionHeader}>
-                <span className="material-symbols-outlined" style={styles.sectionIcon}>person</span>
-                <span style={styles.sectionLabel}>Datos personales</span>
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-[var(--color-outline-variant)] mb-4">
+                <span className="material-symbols-outlined text-[var(--color-primary)] text-lg">person</span>
+                <span className="text-[0.75rem] font-black uppercase tracking-widest text-[var(--color-on-surface-variant)] font-[var(--font-label)]">Datos personales</span>
               </div>
 
               {/* User type */}
@@ -958,11 +958,7 @@ export default function RegistroPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                style={{
-                  ...styles.btnPrimary,
-                  opacity: submitting ? 0.7 : 1,
-                  marginTop: "0.5rem"
-                }}
+                className={`w-full py-4 bg-[var(--color-primary)] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all ${submitting ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"}`}
               >
                 {submitting ? (
                   <>
@@ -979,9 +975,9 @@ export default function RegistroPage() {
             </form>
           ) : (
             <form onSubmit={handleGuestSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-              <div style={styles.sectionHeader}>
-                <span className="material-symbols-outlined" style={styles.sectionIcon}>person_add</span>
-                <span style={styles.sectionLabel}>Datos del Visitante e Invitación</span>
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-[var(--color-outline-variant)] mb-4">
+                <span className="material-symbols-outlined text-[var(--color-primary)] text-lg">person</span>
+                <span className="text-[0.75rem] font-black uppercase tracking-widest text-[var(--color-on-surface-variant)] font-[var(--font-label)]">Información del invitado</span>
               </div>
 
               <Field
@@ -1088,10 +1084,7 @@ export default function RegistroPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                style={{
-                  ...styles.btnPrimary,
-                  opacity: submitting ? 0.7 : 1,
-                }}
+                className={`w-full py-4 bg-[var(--color-primary)] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all ${submitting ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"}`}
               >
                 {submitting ? (
                   <>
