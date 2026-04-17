@@ -358,7 +358,8 @@ export default function RegistroPage() {
 
     // Clear code error if valid prefix
     setErrors(prev => {
-      const { code: _, ...rest } = prev;
+      const rest = { ...prev };
+      delete rest.code;
       return rest;
     });
 
