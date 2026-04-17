@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { decrypt, SESSION_COOKIE_NAME } from "./lib/auth";
 
 // Routes that don't require authentication
-const publicRoutes = ["/login"];
+const publicRoutes = ["/login", "/registro", "/api/lookup-student"];
 
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
