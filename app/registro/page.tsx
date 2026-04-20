@@ -525,31 +525,31 @@ export default function RegistroPage() {
   if (submitted) {
     const isGuest = tab === "guest";
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[var(--color-background)] p-4 sm:p-8">
-        <div className="bg-[var(--color-surface-container-lowest)] rounded-[1.25rem] border border-[var(--color-outline-variant)] p-8 sm:p-10 max-w-[440px] w-full flex flex-col items-center shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
-          <div className="w-20 h-20 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center mb-5">
-            <span className="material-symbols-outlined" style={{ fontSize: "3rem", color: "var(--color-primary)" }}>
+      <div className="flex items-center justify-center min-h-screen bg-[var(--color-background)] p-4 sm:p-6 md:p-8">
+        <div className="bg-[var(--color-surface-container-lowest)] rounded-[1.25rem] border border-[var(--color-outline-variant)] p-6 sm:p-8 md:p-10 max-w-[440px] w-full flex flex-col items-center shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center mb-4 sm:mb-5">
+            <span className="material-symbols-outlined text-[2.5rem] sm:text-[3rem]" style={{ color: "var(--color-primary)" }}>
               check_circle
             </span>
           </div>
-          <h1 className="text-2xl font-black mb-2 text-center font-[var(--font-headline)]">
+          <h1 className="text-xl sm:text-2xl font-black mb-2 text-center font-[var(--font-headline)]">
             ¡Solicitud enviada!
           </h1>
-          <p className="text-[var(--color-on-surface-variant)] font-[var(--font-label)] m-0 text-center leading-relaxed">
+          <p className="text-sm sm:text-base text-[var(--color-on-surface-variant)] font-[var(--font-label)] m-0 text-center leading-relaxed">
             Tu solicitud de acceso al parqueadero está en revisión. Recibirás una respuesta en {isGuest ? "el teléfono proporcionado" : "tu correo"}{" "}
-            <strong className="text-[var(--color-primary)]">{isGuest ? guestPhone : email}</strong>.
+            <strong className="text-[var(--color-primary)] break-all">{isGuest ? guestPhone : email}</strong>.
           </p>
           <div className="mt-5 bg-[var(--color-surface-container-low)] rounded-xl p-4 sm:p-5 flex flex-col gap-2 w-full">
             <div className="flex items-center gap-2 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] font-bold">
               <span className="material-symbols-outlined text-[var(--color-primary)]" style={{ fontSize: "1rem" }}>
                 {isGuest ? "account_circle" : "badge"}
               </span>
-              <span>{isGuest ? `Invitado: ${guestName} (Anfitrión: ${hostCode})` : code}</span>
+              <span className="truncate">{isGuest ? `Invitado: ${guestName} (Anfitrión: ${hostCode})` : code}</span>
             </div>
             {(isGuest ? guestPlate : plate) && (
               <div className="flex items-center gap-2 text-sm font-[var(--font-label)] text-[var(--color-on-surface)] font-bold">
                 <span className="material-symbols-outlined text-[var(--color-primary)]" style={{ fontSize: "1rem" }}>directions_car</span>
-                <span>
+                <span className="truncate">
                   {isGuest 
                     ? `Vehículo: ${guestPlate}`
                     : `${brand} ${model} (${plate})`
@@ -559,7 +559,7 @@ export default function RegistroPage() {
             )}
           </div>
           <button
-            className="w-full mt-6 bg-[var(--color-primary)] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
+            className="w-full mt-6 bg-[var(--color-primary)] text-white py-3 sm:py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
             onClick={() => {
               setSubmitted(false);
               // Clear institutional
@@ -600,54 +600,25 @@ export default function RegistroPage() {
             </div>
           </div>
 
-          <div style={{
-            display: "flex",
-            background: "rgba(255,255,255,0.1)",
-            padding: "0.25rem",
-            borderRadius: "0.75rem",
-            marginBottom: "2rem",
-            gap: "0.25rem"
-          }}>
+          <div className="flex bg-white/10 p-1 rounded-xl mb-8 gap-1">
             <button
               onClick={() => setTab("institutional")}
-              style={{
-                flex: 1,
-                padding: "0.625rem",
-                borderRadius: "0.625rem",
-                border: "none",
-                background: tab === "institutional" ? "var(--color-primary-container)" : "transparent",
-                color: tab === "institutional" ? "var(--color-on-primary-container)" : "#fff",
-                fontWeight: 700,
-                fontSize: "0.8125rem",
-                cursor: "pointer",
-                transition: "all 200ms",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem"
-              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-none font-bold text-[0.8rem] transition-all cursor-pointer ${
+                tab === "institutional" 
+                ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]" 
+                : "bg-transparent text-white"
+              }`}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>school</span>
               Comunidad UFPS
             </button>
             <button
               onClick={() => setTab("guest")}
-              style={{
-                flex: 1,
-                padding: "0.625rem",
-                borderRadius: "0.625rem",
-                border: "none",
-                background: tab === "guest" ? "var(--color-primary-container)" : "transparent",
-                color: tab === "guest" ? "var(--color-on-primary-container)" : "#fff",
-                fontWeight: 700,
-                fontSize: "0.8125rem",
-                cursor: "pointer",
-                transition: "all 200ms",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem"
-              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-none font-bold text-[0.8rem] transition-all cursor-pointer ${
+                tab === "guest" 
+                ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]" 
+                : "bg-transparent text-white"
+              }`}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>group</span>
               Invitados
@@ -684,9 +655,9 @@ export default function RegistroPage() {
           </div>
         </div>
  
-        {/* Decorative circles */}
-        <div className="absolute -bottom-20 -right-20 w-[300px] h-[300px] rounded-full bg-white/5" />
-        <div className="absolute top-20 -right-5 w-[180px] h-[180px] rounded-full bg-white/5" />
+        {/* Decorative elements */}
+        <div className="absolute -bottom-20 -right-20 w-[240px] h-[240px] md:w-[300px] md:h-[300px] rounded-full bg-white/5" />
+        <div className="absolute top-20 -right-5 w-[140px] h-[140px] md:w-[180px] md:h-[180px] rounded-full bg-white/5" />
       </div>
 
       {/* Right panel — form */}
@@ -874,9 +845,9 @@ export default function RegistroPage() {
               />
 
               {/* Section 2 */}
-              <div style={{ ...styles.sectionHeader, marginTop: "0.5rem" }}>
-                <span className="material-symbols-outlined" style={styles.sectionIcon}>directions_car</span>
-                <span style={styles.sectionLabel}>Información del vehículo</span>
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-[var(--color-outline-variant)] mb-4 mt-2">
+                <span className="material-symbols-outlined text-[var(--color-primary)] text-lg">directions_car</span>
+                <span className="text-[0.75rem] font-black uppercase tracking-widest text-[var(--color-on-surface-variant)] font-[var(--font-label)]">Información del vehículo</span>
               </div>
 
               {/* Plate */}
@@ -891,7 +862,7 @@ export default function RegistroPage() {
                 error={errors.plate}
               />
               {/* Brand and Model */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field
                   id="brand"
                   label="Marca"
@@ -913,8 +884,8 @@ export default function RegistroPage() {
               </div>
 
               {/* Files */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-1">
                   <FileDropZone
                     id="carnetFile"
                     label="Carnet estudiantil / institucional"
@@ -924,13 +895,13 @@ export default function RegistroPage() {
                     onChange={setCarnetFile}
                   />
                   {errors.carnetFile && (
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                       <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
                       {errors.carnetFile}
                     </span>
                   )}
                 </div>
-                <div>
+                <div className="flex flex-col gap-1">
                   <FileDropZone
                     id="ownershipFile"
                     label="Documento de propiedad"
@@ -940,7 +911,7 @@ export default function RegistroPage() {
                     onChange={setOwnershipFile}
                   />
                   {errors.ownershipFile && (
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-error)", fontFamily: "var(--font-label)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                       <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>error</span>
                       {errors.ownershipFile}
                     </span>
@@ -949,7 +920,7 @@ export default function RegistroPage() {
               </div>
 
               {serverError && (
-                <div style={styles.serverError}>
+                <div className="bg-[var(--color-error-container)] text-[var(--color-on-error-container)] rounded-xl p-3.5 text-sm font-semibold flex items-center gap-2">
                   <span className="material-symbols-outlined">error</span>
                   {serverError}
                 </div>
@@ -1075,7 +1046,7 @@ export default function RegistroPage() {
               )}
 
               {serverError && (
-                <div style={styles.serverError}>
+                <div className="bg-[var(--color-error-container)] text-[var(--color-on-error-container)] rounded-xl p-3.5 text-sm font-semibold flex items-center gap-2">
                   <span className="material-symbols-outlined">error</span>
                   {serverError}
                 </div>
@@ -1114,220 +1085,6 @@ export default function RegistroPage() {
   );
 }
 
+
 /* ─── Styles ───────────────────────────────────────────────── */
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    display: "flex",
-    minHeight: "100vh",
-    fontFamily: "var(--font-body)",
-    background: "var(--color-background)",
-  },
-  /* ── Left panel ── */
-  leftPanel: {
-    width: "420px",
-    flexShrink: 0,
-    background: "linear-gradient(160deg, #003c8f 0%, #005bbf 55%, #1a73e8 100%)",
-    color: "#fff",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    padding: "3rem 2.5rem",
-    position: "relative",
-    overflow: "hidden",
-  },
-  leftContent: {
-    position: "relative",
-    zIndex: 1,
-  },
-  logoRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-    marginBottom: "3rem",
-  },
-  logoIcon: {
-    width: "2.5rem",
-    height: "2.5rem",
-    borderRadius: "0.625rem",
-    background: "rgba(255,255,255,0.2)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backdropFilter: "blur(4px)",
-  },
-  leftHeadline: {
-    marginBottom: "2.5rem",
-  },
-  leftH1: {
-    fontSize: "1.75rem",
-    fontWeight: 900,
-    lineHeight: 1.2,
-    margin: "0 0 0.875rem",
-    fontFamily: "var(--font-headline)",
-    letterSpacing: "-0.025em",
-  },
-  leftSubtitle: {
-    fontSize: "0.9rem",
-    lineHeight: 1.65,
-    opacity: 0.8,
-    margin: 0,
-    fontFamily: "var(--font-label)",
-  },
-  featureList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.875rem",
-  },
-  featureItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-    fontSize: "0.875rem",
-    fontFamily: "var(--font-label)",
-    opacity: 0.9,
-  },
-  circle1: {
-    position: "absolute",
-    width: "300px",
-    height: "300px",
-    borderRadius: "50%",
-    background: "rgba(255,255,255,0.07)",
-    bottom: "-80px",
-    right: "-80px",
-  },
-  circle2: {
-    position: "absolute",
-    width: "180px",
-    height: "180px",
-    borderRadius: "50%",
-    background: "rgba(255,255,255,0.05)",
-    top: "60px",
-    right: "20px",
-  },
-  /* ── Right panel ── */
-  rightPanel: {
-    flex: 1,
-    overflowY: "auto",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    padding: "3rem 2rem",
-  },
-  formContainer: {
-    width: "100%",
-    maxWidth: "560px",
-  },
-  formTitle: {
-    fontSize: "1.5rem",
-    fontWeight: 800,
-    margin: "0 0 0.375rem",
-    fontFamily: "var(--font-headline)",
-    color: "var(--color-on-surface)",
-    letterSpacing: "-0.02em",
-  },
-  formSubtitle: {
-    fontSize: "0.875rem",
-    color: "var(--color-on-surface-variant)",
-    margin: 0,
-    lineHeight: 1.6,
-    fontFamily: "var(--font-label)",
-  },
-  sectionHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    paddingBottom: "0.5rem",
-    borderBottom: "1.5px solid var(--color-outline-variant)",
-  },
-  sectionIcon: {
-    fontSize: "1.125rem",
-    color: "var(--color-primary)",
-  } as React.CSSProperties,
-  sectionLabel: {
-    fontSize: "0.8125rem",
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    color: "var(--color-on-surface-variant)",
-    fontFamily: "var(--font-label)",
-  } as React.CSSProperties,
-  serverError: {
-    background: "var(--color-error-container)",
-    color: "var(--color-on-error-container)",
-    borderRadius: "0.625rem",
-    padding: "0.875rem 1rem",
-    fontSize: "0.875rem",
-    fontFamily: "var(--font-label)",
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    fontWeight: 600,
-  },
-  btnPrimary: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.5rem",
-    width: "100%",
-    padding: "0.875rem 1.5rem",
-    background: "var(--color-primary)",
-    color: "#fff",
-    border: "none",
-    borderRadius: "0.75rem",
-    fontSize: "0.9375rem",
-    fontWeight: 700,
-    fontFamily: "var(--font-label)",
-    boxShadow: "0 4px 16px rgba(0,91,191,0.3)",
-    transition: "opacity 150ms, transform 150ms",
-  },
-  /* ── Success card ── */
-  pageCenter: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100vh",
-    background: "var(--color-background)",
-    padding: "2rem",
-  },
-  successCard: {
-    background: "var(--color-surface-container-lowest)",
-    borderRadius: "1.25rem",
-    border: "1px solid var(--color-outline-variant)",
-    padding: "2.5rem",
-    maxWidth: "440px",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    boxShadow: "0 8px 40px rgba(0,0,0,0.08)",
-  },
-  successIconWrap: {
-    width: "5rem",
-    height: "5rem",
-    borderRadius: "50%",
-    background: "var(--color-primary-fixed)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "1.25rem",
-  },
-  successMeta: {
-    marginTop: "1.25rem",
-    background: "var(--color-surface-container-low)",
-    borderRadius: "0.75rem",
-    padding: "0.875rem 1.25rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
-    width: "100%",
-  },
-  successMetaItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    fontSize: "0.875rem",
-    fontFamily: "var(--font-label)",
-    color: "var(--color-on-surface)",
-    fontWeight: 600,
-  },
-};
+// Styles are now managed via Tailwind CSS classes and CSS variables in globals.css
