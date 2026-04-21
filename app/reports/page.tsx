@@ -245,22 +245,44 @@ export default async function ReportsPage({
           </p>
           <div className="flex items-center gap-1">
             <a 
-              href={`/reports?${new URLSearchParams({ ...(params as any), page: Math.max(1, currentPage - 1).toString() }).toString()}`}
+              href={(() => {
+                const query = new URLSearchParams();
+                if (plateQuery) query.set("plate", plateQuery);
+                if (dateFromQuery) query.set("dateFrom", dateFromQuery);
+                if (dateToQuery) query.set("dateTo", dateToQuery);
+                query.set("page", Math.max(1, currentPage - 1).toString());
+                return `/reports?${query.toString()}`;
+              })()}
               className={`pagination-btn ${currentPage <= 1 ? "pointer-events-none opacity-50" : ""}`}
             >
               <span className="material-symbols-outlined text-sm">chevron_left</span>
             </a>
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <a
-                key={i}
-                href={`/reports?${new URLSearchParams({ ...(params as any), page: (i + 1).toString() }).toString()}`}
-                className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
-              >
-                {i + 1}
-              </a>
-            ))}
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const query = new URLSearchParams();
+              if (plateQuery) query.set("plate", plateQuery);
+              if (dateFromQuery) query.set("dateFrom", dateFromQuery);
+              if (dateToQuery) query.set("dateTo", dateToQuery);
+              query.set("page", (i + 1).toString());
+              
+              return (
+                <a
+                  key={i}
+                  href={`/reports?${query.toString()}`}
+                  className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+                >
+                  {i + 1}
+                </a>
+              );
+            })}
             <a 
-              href={`/reports?${new URLSearchParams({ ...(params as any), page: Math.min(totalPages, currentPage + 1).toString() }).toString()}`}
+              href={(() => {
+                const query = new URLSearchParams();
+                if (plateQuery) query.set("plate", plateQuery);
+                if (dateFromQuery) query.set("dateFrom", dateFromQuery);
+                if (dateToQuery) query.set("dateTo", dateToQuery);
+                query.set("page", Math.min(totalPages, currentPage + 1).toString());
+                return `/reports?${query.toString()}`;
+              })()}
               className={`pagination-btn ${currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
             >
               <span className="material-symbols-outlined text-sm">chevron_right</span>
