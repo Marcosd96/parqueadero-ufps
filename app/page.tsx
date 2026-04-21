@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import prisma from "@/lib/prisma";
+import PlateVerification from "@/components/PlateVerification";
 
 export default async function MonitoringPage() {
   const recentActivity = await prisma.accessLog.findMany({
@@ -176,6 +177,9 @@ export default async function MonitoringPage() {
               )}
             </div>
           </div>
+
+          {/* Plate Verification Tool for Security */}
+          <PlateVerification />
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 gap-2">

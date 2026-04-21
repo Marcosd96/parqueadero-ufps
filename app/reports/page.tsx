@@ -8,8 +8,39 @@ export const metadata: Metadata = {
 
 import prisma from "@/lib/prisma";
 
-export default async function ReportsPage() {
+export default async function ReportsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams;
+  const plateQuery = typeof params.plate === 'string' ? params.plate : undefined;
+  const dateFromQuery = typeof params.dateFrom === 'string' ? params.dateFrom : undefined;
+  const dateToQuery = typeof params.dateTo === 'string' ? params.dateTo : undefined;
+
+  const whereClause: import("@prisma/client").Prisma.AccessLogWhereInput = {};
+
+  if (plateQuery) {
+    whereClause.plate = {
+      contains: plateQuery,
+      mode: "insensitive"
+    };
+  }
+
+  if (dateFromQuery || dateToQuery) {
+    whereClause.timestamp = {};
+    if (dateFromQuery) {
+      whereClause.timestamp.gte = new Date(dateFromQuery);
+    }
+    if (dateToQuery) {
+      const toDate = new Date(dateToQuery);
+      toDate.setHours(23, 59, 59, 999);
+      whereClause.timestamp.lte = toDate;
+    }
+  }
+
   const activityLogs = await prisma.accessLog.findMany({
+    where: whereClause,
     orderBy: {
       timestamp: "desc",
     },
@@ -46,22 +77,38 @@ export default async function ReportsPage() {
           <p className="page-subtitle">Log operacional detallado para el ciclo de 24 horas.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
-          <div className="flex bg-[var(--color-surface-container-low)] rounded-lg p-1 w-full sm:w-auto">
-            <button className="flex-1 px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] rounded transition-all">
-              Últimas 24h
+          <form className="flex flex-wrap items-center gap-2 w-full sm:w-auto" method="GET" action="/reports">
+            <input
+              type="text"
+              name="plate"
+              defaultValue={plateQuery || ""}
+              placeholder="Placa..."
+              className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)]/30 rounded-lg px-3 py-1.5 text-xs uppercase text-[var(--color-on-surface)] w-28"
+            />
+            <input
+              type="date"
+              name="dateFrom"
+              defaultValue={dateFromQuery || ""}
+              className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)]/30 rounded-lg px-2 py-1.5 text-xs text-[var(--color-on-surface)]"
+            />
+            <span className="text-[var(--color-on-surface-variant)] text-xs">-</span>
+            <input
+              type="date"
+              name="dateTo"
+              defaultValue={dateToQuery || ""}
+              className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)]/30 rounded-lg px-2 py-1.5 text-xs text-[var(--color-on-surface)]"
+            />
+            <button type="submit" className="bg-[var(--color-primary)] text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:brightness-110">
+              Filtrar
             </button>
-            <button className="flex-1 px-4 py-1.5 text-xs font-semibold font-[var(--font-label)] text-[var(--color-on-surface)] bg-[var(--color-surface-container-lowest)] shadow-sm rounded transition-all">
-              Seleccionar Fecha
-            </button>
-          </div>
+            {(plateQuery || dateFromQuery || dateToQuery) && (
+              <a href="/reports" className="text-[10px] text-[var(--color-primary)] hover:underline ml-1">Limpiar</a>
+            )}
+          </form>
           <div className="flex gap-2 w-full sm:w-auto">
             <button className="btn btn-ghost flex-1 sm:flex-none justify-center">
               <span className="material-symbols-outlined text-sm">download</span>
               EXPORTAR CSV
-            </button>
-            <button className="btn btn-primary flex-1 sm:flex-none justify-center">
-              <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
-              EXPORTAR PDF
             </button>
           </div>
         </div>
