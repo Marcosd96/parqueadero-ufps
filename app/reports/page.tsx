@@ -39,13 +39,32 @@ export default async function ReportsPage({
     }
   }
 
+  const pageQuery = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
+  const currentPage = isNaN(pageQuery) || pageQuery < 1 ? 1 : pageQuery;
+  const pageSize = 10;
+
   const activityLogs = await prisma.accessLog.findMany({
     where: whereClause,
     orderBy: {
       timestamp: "desc",
     },
-    take: 50,
+    take: pageSize,
+    skip: (currentPage - 1) * pageSize,
   });
+
+  const totalFilteredLogs = await prisma.accessLog.count({ where: whereClause });
+  const totalPages = Math.ceil(totalFilteredLogs / pageSize) || 1;
+
+  const totalEntries = await prisma.accessLog.count({
+    where: { ...whereClause, status: true },
+  });
+  
+  const totalRejected = await prisma.accessLog.count({
+    where: { ...whereClause, status: false },
+  });
+
+  const totalLogs = totalEntries + totalRejected;
+  const authPct = totalLogs > 0 ? ((totalEntries / totalLogs) * 100).toFixed(1) : "0.0";
 
   const getUserTypeCls = (type: string) => {
     switch (type) {
@@ -62,9 +81,22 @@ export default async function ReportsPage({
     }
   };
 
-  const peakBars = [30, 45, 65, 100, 80, 50, 40];
+  const logsForPeak = await prisma.accessLog.findMany({
+    where: whereClause,
+    select: { timestamp: true }
+  });
+  
+  const hourlyCount = new Array(24).fill(0);
+  logsForPeak.forEach(log => {
+    hourlyCount[log.timestamp.getHours()]++;
+  });
+  
+  const maxCount = Math.max(...hourlyCount.slice(6, 13), 1);
+  const peakBars = hourlyCount.slice(6, 13).map(count => (count / maxCount) * 100);
+  const maxPeakIndex = peakBars.indexOf(Math.max(...peakBars));
+
   const complianceStats = [
-    { label: "Acceso Autorizado", value: "98.2%", pct: 98.2, barColor: "bg-[var(--color-primary)]" },
+    { label: "Acceso Autorizado", value: `${authPct}%`, pct: Number(authPct), barColor: "bg-[var(--color-primary)]" },
     { label: "Precisión de Reconocimiento de Placa", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
   ];
 
@@ -117,9 +149,9 @@ export default async function ReportsPage({
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { icon: "login", border: "border-[var(--color-primary)]", label: "Entradas Totales", value: "1,284", trend: "12%", trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]" },
-          { icon: "logout", border: "border-[var(--color-outline-variant)]", label: "Salidas Totales", value: "942", trend: "4%", trendIcon: "trending_down", trendColor: "text-[var(--color-on-surface-variant)]" },
-          { icon: "swap_horiz", border: "border-[var(--color-tertiary)]", label: "Tráfico Neto", value: "+342", badge: "PICO ACTUAL" },
+          { icon: "login", border: "border-[var(--color-primary)]", label: "Accesos Permitidos", value: totalEntries.toString(), trend: null, trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]", badge: null },
+          { icon: "block", border: "border-[var(--color-error)]", label: "Accesos Denegados", value: totalRejected.toString(), trend: null, trendIcon: "trending_down", trendColor: "text-[var(--color-error)]", badge: null },
+          { icon: "list_alt", border: "border-[var(--color-tertiary)]", label: "Registros Totales", value: totalLogs.toString(), trend: null, trendIcon: null, trendColor: null, badge: "FILTRADO" },
         ].map((card) => (
           <div key={card.label} className={`card-padded border-b-2 ${card.border} relative overflow-hidden group`}>
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -208,18 +240,31 @@ export default async function ReportsPage({
 
         {/* Pagination Footer */}
         <div className="table-footer">
-          <p className="table-footer-text">Mostrando 1 a {activityLogs.length} de {activityLogs.length} entradas</p>
+          <p className="table-footer-text">
+            Mostrando {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, totalFilteredLogs)} de {totalFilteredLogs} entradas
+          </p>
           <div className="flex items-center gap-1">
-            <button className="pagination-btn" disabled>
+            <a 
+              href={`/reports?${new URLSearchParams({ ...(params as any), page: Math.max(1, currentPage - 1).toString() }).toString()}`}
+              className={`pagination-btn ${currentPage <= 1 ? "pointer-events-none opacity-50" : ""}`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_left</span>
-            </button>
-            <button className="pagination-btn active">1</button>
-            {[2, 3].map((n) => (
-              <button key={n} className="pagination-btn">{n}</button>
+            </a>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <a
+                key={i}
+                href={`/reports?${new URLSearchParams({ ...(params as any), page: (i + 1).toString() }).toString()}`}
+                className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+              >
+                {i + 1}
+              </a>
             ))}
-            <button className="pagination-btn">
+            <a 
+              href={`/reports?${new URLSearchParams({ ...(params as any), page: Math.min(totalPages, currentPage + 1).toString() }).toString()}`}
+              className={`pagination-btn ${currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_right</span>
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -238,12 +283,12 @@ export default async function ReportsPage({
             {peakBars.map((h, i) => (
               <div
                 key={i}
-                className={`flex-1 rounded-t-sm ${i === 3 ? "bg-[var(--color-primary)] relative" : i === 4 ? "bg-[var(--color-primary)]/60" : i === 2 ? "bg-[var(--color-primary)]/40" : i === 5 ? "bg-[var(--color-primary)]/30" : "bg-[var(--color-primary)]/20"}`}
-                style={{ height: `${h}%` }}
+                className={`flex-1 rounded-t-sm ${i === maxPeakIndex ? "bg-[var(--color-primary)] relative" : i === maxPeakIndex + 1 || i === maxPeakIndex - 1 ? "bg-[var(--color-primary)]/60" : "bg-[var(--color-primary)]/20"}`}
+                style={{ height: `max(4px, ${h}%)`, transition: "height 0.3s ease-in-out" }}
               >
-                {i === 3 && (
+                {i === maxPeakIndex && h > 0 && (
                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[var(--color-on-surface)] text-[var(--color-surface)] text-[8px] px-1.5 py-0.5 rounded font-bold">
-                    08:30
+                    {String(i + 6).padStart(2, '0')}:00
                   </div>
                 )}
               </div>
