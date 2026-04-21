@@ -18,7 +18,7 @@ export default async function ReportsPage({
   const dateFromQuery = typeof params.dateFrom === 'string' ? params.dateFrom : undefined;
   const dateToQuery = typeof params.dateTo === 'string' ? params.dateTo : undefined;
 
-  const whereClause: import("@prisma/client").Prisma.AccessLogWhereInput = {};
+  const whereClause: import("../../generated/prisma/client").Prisma.AccessLogWhereInput = {};
 
   if (plateQuery) {
     whereClause.plate = {
