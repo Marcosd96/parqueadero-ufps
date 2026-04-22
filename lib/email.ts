@@ -1,34 +1,26 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-/* ─── Transporter singleton ─────────────────────────────────────────────────
-   Gmail SMTP requires an App Password (not the regular Gmail password).
-   Steps to generate one:
-     1. Go to myaccount.google.com → Security → 2-Step Verification (enable it)
-     2. Go to myaccount.google.com → Security → App Passwords
-     3. Select "Mail" + "Other (Custom name)" → name it "ParkGuard"
-     4. Copy the 16-character password into EMAIL_PASS in .env
+/* ─── Resend client singleton ───────────────────────────────────────────────
+   Resend uses HTTPS (port 443) — never blocked by Vercel or any cloud provider.
+   API key is set via RESEND_API_KEY in environment variables.
+
+   FROM address notes:
+   - Without a verified domain: use "onboarding@resend.dev" (Resend sandbox)
+   - With a verified domain:    use any address @yourdomain.com
+   Set RESEND_FROM in .env to override the default sender address.
    ─────────────────────────────────────────────────────────────────────────── */
-let _transporter: nodemailer.Transporter | null = null;
+let _resend: Resend | null = null;
 
-function getTransporter(): nodemailer.Transporter {
-  if (_transporter) return _transporter;
+function getResend(): Resend {
+  if (_resend) return _resend;
 
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-
-  if (!user || !pass) {
-    throw new Error(
-      "EMAIL_USER and EMAIL_PASS must be set in .env to send emails. " +
-        "Use a Gmail App Password (not your regular Gmail password)."
-    );
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY must be set in environment variables.");
   }
 
-  _transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: { user, pass },
-  });
-
-  return _transporter;
+  _resend = new Resend(apiKey);
+  return _resend;
 }
 
 /* ─── sendMail helper ───────────────────────────────────────────────────── */
@@ -39,11 +31,20 @@ export interface MailOptions {
 }
 
 export async function sendMail(options: MailOptions): Promise<void> {
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Campus ParkGuard UFPS" <${process.env.EMAIL_USER}>`,
+  const resend = getResend();
+
+  // Use a verified domain address if configured, otherwise fall back to Resend sandbox
+  const from =
+    process.env.RESEND_FROM ?? "Campus ParkGuard UFPS <onboarding@resend.dev>";
+
+  const { error } = await resend.emails.send({
+    from,
     to: options.to,
     subject: options.subject,
     html: options.html,
   });
+
+  if (error) {
+    throw new Error(`Resend error: ${error.message}`);
+  }
 }

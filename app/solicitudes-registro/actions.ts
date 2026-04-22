@@ -107,30 +107,36 @@ export async function updateRegistrationStatus(id: number, status: string) {
       });
     }
 
-    // --- Send email notification (non-blocking: errors don't fail the action) ---
+    // --- Send email notification ---
+    // DB update already succeeded above; email errors surface as a warning, not a failure.
+    let emailError: string | undefined;
     if (registrationData) {
       const data = registrationData;
       const isApproved = status === "APROBADO";
 
-      sendMail({
-        to: data.email,
-        subject: isApproved
-          ? "✅ Tu acceso al parqueadero UFPS fue aprobado"
-          : "❌ Tu solicitud de acceso al parqueadero UFPS no fue aprobada",
-        html: isApproved
-          ? approvedEmailHtml(data)
-          : rejectedEmailHtml(data),
-      }).catch((err) => {
-        // Log but don't fail — the status was already saved correctly
-        console.error("[sendMail] Error sending notification email:", err);
-      });
+      try {
+        await sendMail({
+          to: data.email,
+          subject: isApproved
+            ? "✅ Tu acceso al parqueadero UFPS fue aprobado"
+            : "❌ Tu solicitud de acceso al parqueadero UFPS no fue aprobada",
+          html: isApproved
+            ? approvedEmailHtml(data)
+            : rejectedEmailHtml(data),
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error("[sendMail] Error:", msg);
+        // Surface the error to the admin so they know the email didn't go out
+        emailError = `El estado fue actualizado, pero el correo no se pudo enviar: ${msg}`;
+      }
     }
 
     revalidatePath("/solicitudes-registro");
     revalidatePath("/students");
     revalidatePath("/vehicles");
 
-    return { success: true };
+    return { success: true, emailError };
   } catch (error: unknown) {
     console.error("Error updating status:", error);
     const errorMessage =
