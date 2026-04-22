@@ -7,6 +7,62 @@ import { submitRegistration, submitGuestRegistration } from "./actions";
 type UserType = "ESTUDIANTE" | "ADMINISTRATIVO" | "DOCENTE" | "";
 type FieldState = "idle" | "loading" | "found" | "not-found";
 
+/* ─── Image compression (Canvas API) ──────────────────────────
+   Phone cameras produce 8-15 MB JPEGs which exceed the server
+   action body limit when two files are uploaded together.
+   This compresses images to max 1920px / 82% JPEG quality
+   (~300-600 KB) before upload. PDFs pass through unchanged.
+   ──────────────────────────────────────────────────────────── */
+const MAX_PX = 1920;
+const QUALITY = 0.82;
+
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+  if (file.size < 512 * 1024) return file; // skip files < 500 KB
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > MAX_PX || height > MAX_PX) {
+        if (width >= height) {
+          height = Math.round((height * MAX_PX) / width);
+          width = MAX_PX;
+        } else {
+          width = Math.round((width * MAX_PX) / height);
+          height = MAX_PX;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(file); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { resolve(file); return; }
+          const compressed = new File(
+            [blob],
+            file.name.replace(/\.[^.]+$/, ".jpg"),
+            { type: "image/jpeg", lastModified: Date.now() }
+          );
+          // Only use compressed version if it's actually smaller
+          resolve(compressed.size < file.size ? compressed : file);
+        },
+        "image/jpeg",
+        QUALITY
+      );
+    };
+
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 /* ─── Plate validation ─────────────────────────────────────── */
 // Support cars (ABC123, AB1234) and motorcycles (MGO18G, FJE62A)
 const PLATE_RE = /^[A-Z]{2,3}[0-9]{2,4}[A-Z]?$/;
@@ -472,18 +528,24 @@ export default function RegistroPage() {
     }
 
     setSubmitting(true);
-    const fd = new FormData();
-    fd.append("userType", userType);
-    fd.append("email", email);
-    fd.append("institutionalCode", code);
-    fd.append("fullName", fullName);
-    fd.append("plate", plate);
-    fd.append("vehicleBrand", brand);
-    fd.append("vehicleModel", model);
-    if (carnetFile) fd.append("carnetFile", carnetFile);
-    if (ownershipFile) fd.append("ownershipFile", ownershipFile);
-
     try {
+      // Compress images before upload (handles large phone camera photos)
+      const [compressedCarnet, compressedOwnership] = await Promise.all([
+        carnetFile ? compressImage(carnetFile) : Promise.resolve(null),
+        ownershipFile ? compressImage(ownershipFile) : Promise.resolve(null),
+      ]);
+
+      const fd = new FormData();
+      fd.append("userType", userType);
+      fd.append("email", email);
+      fd.append("institutionalCode", code);
+      fd.append("fullName", fullName);
+      fd.append("plate", plate);
+      fd.append("vehicleBrand", brand);
+      fd.append("vehicleModel", model);
+      if (compressedCarnet) fd.append("carnetFile", compressedCarnet);
+      if (compressedOwnership) fd.append("ownershipFile", compressedOwnership);
+
       const result = await submitRegistration(fd);
       if (result.success) {
         setSubmitted(true);
@@ -491,7 +553,7 @@ export default function RegistroPage() {
         setServerError(result.error ?? "Error desconocido.");
       }
     } catch {
-      setServerError("No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.");
+      setServerError("No se pudo completar el envío. Verifica tu conexión e intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
@@ -515,15 +577,18 @@ export default function RegistroPage() {
     }
 
     setSubmitting(true);
-    const fd = new FormData();
-    fd.append("hostCode", hostCode);
-    fd.append("guestName", guestName);
-    fd.append("phone", guestPhone);
-    fd.append("description", guestDescription);
-    fd.append("plate", guestPlate);
-    if (hostCarnetFile) fd.append("hostCarnetFile", hostCarnetFile);
-
     try {
+      // Compress host carnet image before upload
+      const compressedCarnet = hostCarnetFile ? await compressImage(hostCarnetFile) : null;
+
+      const fd = new FormData();
+      fd.append("hostCode", hostCode);
+      fd.append("guestName", guestName);
+      fd.append("phone", guestPhone);
+      fd.append("description", guestDescription);
+      fd.append("plate", guestPlate);
+      if (compressedCarnet) fd.append("hostCarnetFile", compressedCarnet);
+
       const result = await submitGuestRegistration(fd);
       if (result.success) {
         setSubmitted(true);
@@ -531,7 +596,7 @@ export default function RegistroPage() {
         setServerError(result.error ?? "Error desconocido.");
       }
     } catch {
-      setServerError("No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.");
+      setServerError("No se pudo completar el envío. Verifica tu conexión e intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
