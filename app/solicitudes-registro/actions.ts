@@ -2,9 +2,20 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { sendMail } from "@/lib/email";
+import { approvedEmailHtml, rejectedEmailHtml } from "@/lib/email-templates";
 
 export async function updateRegistrationStatus(id: number, status: string) {
   try {
+    let registrationData: {
+      fullName: string;
+      email: string;
+      plate: string;
+      vehicleBrand?: string | null;
+      vehicleModel?: string | null;
+      institutionalCode: string;
+    } | null = null;
+
     // If approving, we need to create the permanent records
     if (status === "APROBADO") {
       await prisma.$transaction(async (tx) => {
@@ -16,6 +27,16 @@ export async function updateRegistrationStatus(id: number, status: string) {
         if (!reg) throw new Error("Solicitud no encontrada.");
         if (reg.status !== "PENDIENTE") throw new Error("La solicitud ya fue procesada.");
 
+        // Store for email notification (after transaction)
+        registrationData = {
+          fullName: reg.fullName,
+          email: reg.email,
+          plate: reg.plate,
+          vehicleBrand: reg.vehicleBrand,
+          vehicleModel: reg.vehicleModel,
+          institutionalCode: reg.institutionalCode,
+        };
+
         // 2. Split Name (Simple split: first word as firstname, rest as surname)
         const nameParts = reg.fullName.trim().split(/\s+/);
         const firstname = nameParts[0] || "Usuario";
@@ -25,7 +46,7 @@ export async function updateRegistrationStatus(id: number, status: string) {
         const student = await tx.student.upsert({
           where: { cardnumber: reg.institutionalCode },
           update: {
-            email: reg.email, // Asegurar que el correo electrónico se mantenga actualizado
+            email: reg.email,
           },
           create: {
             cardnumber: reg.institutionalCode,
@@ -61,20 +82,59 @@ export async function updateRegistrationStatus(id: number, status: string) {
         });
       });
     } else {
+      // Fetch data before updating so we can send the rejection email
+      const reg = await prisma.userRegistration.findUnique({
+        where: { id },
+        select: {
+          fullName: true,
+          email: true,
+          plate: true,
+          vehicleBrand: true,
+          vehicleModel: true,
+          institutionalCode: true,
+          status: true,
+        },
+      });
+
+      if (!reg) throw new Error("Solicitud no encontrada.");
+      if (reg.status !== "PENDIENTE") throw new Error("La solicitud ya fue procesada.");
+
+      registrationData = reg;
+
       await prisma.userRegistration.update({
         where: { id },
         data: { status },
       });
     }
 
+    // --- Send email notification (non-blocking: errors don't fail the action) ---
+    if (registrationData) {
+      const data = registrationData;
+      const isApproved = status === "APROBADO";
+
+      sendMail({
+        to: data.email,
+        subject: isApproved
+          ? "✅ Tu acceso al parqueadero UFPS fue aprobado"
+          : "❌ Tu solicitud de acceso al parqueadero UFPS no fue aprobada",
+        html: isApproved
+          ? approvedEmailHtml(data)
+          : rejectedEmailHtml(data),
+      }).catch((err) => {
+        // Log but don't fail — the status was already saved correctly
+        console.error("[sendMail] Error sending notification email:", err);
+      });
+    }
+
     revalidatePath("/solicitudes-registro");
     revalidatePath("/students");
     revalidatePath("/vehicles");
-    
+
     return { success: true };
   } catch (error: unknown) {
     console.error("Error updating status:", error);
-    const errorMessage = error instanceof Error ? error.message : "No se pudo actualizar el estado.";
+    const errorMessage =
+      error instanceof Error ? error.message : "No se pudo actualizar el estado.";
     return { error: errorMessage };
   }
 }
