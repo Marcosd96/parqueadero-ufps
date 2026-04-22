@@ -54,7 +54,7 @@ export default function LoginPage() {
               <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl flex items-center justify-center shadow-lg mb-4">
                 <span className="material-symbols-outlined text-white text-3xl">local_parking</span>
               </div>
-              <h1 className="text-3xl font-black text-[var(--color-on-surface)] tracking-tight">Campus ParkGuard</h1>
+              <h1 className="text-3xl font-black text-[var(--color-on-surface)] tracking-tight">UFPS PARKING</h1>
               <p className="text-[var(--color-on-surface-variant)] text-sm font-medium mt-1">Portal de Acceso Administrativo</p>
             </div>
 
