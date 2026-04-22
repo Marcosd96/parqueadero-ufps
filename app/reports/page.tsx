@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reportes de Entrada y Salida - Campus ParkGuard",
+  title: "Reportes de Entrada y Salida - UFPS PARKING",
   description: "Log operacional detallado para el ciclo de 24 horas",
 };
 

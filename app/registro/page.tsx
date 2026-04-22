@@ -366,6 +366,11 @@ export default function RegistroPage() {
     setCodeState("loading");
     try {
       const res = await fetch(`/api/lookup-student?code=${encodeURIComponent(code.trim())}`);
+      if (res.status === 429) {
+        setErrors(prev => ({ ...prev, code: "Demasiadas búsquedas. Espera un momento." }));
+        setCodeState("idle");
+        return;
+      }
       const data = await res.json();
       if (data) {
         setFullName(data.fullName ?? "");
@@ -395,6 +400,11 @@ export default function RegistroPage() {
     setHostCodeState("loading");
     try {
       const res = await fetch(`/api/lookup-student?code=${encodeURIComponent(hostCode.trim())}`);
+      if (res.status === 429) {
+        setErrors(prev => ({ ...prev, hostCode: "Demasiadas búsquedas. Espera un momento." }));
+        setHostCodeState("idle");
+        return;
+      }
       const data = await res.json();
       if (data) {
         setHostCodeState("found");
@@ -453,12 +463,10 @@ export default function RegistroPage() {
   /* ── Submit ────────────────────────────────────────────── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting form...");
     setServerError("");
 
     const currentErrors = validate();
     if (Object.keys(currentErrors).length > 0) {
-      console.log("Validation failed:", currentErrors);
       setErrors(currentErrors);
       return;
     }
@@ -475,13 +483,17 @@ export default function RegistroPage() {
     if (carnetFile) fd.append("carnetFile", carnetFile);
     if (ownershipFile) fd.append("ownershipFile", ownershipFile);
 
-    const result = await submitRegistration(fd);
-    setSubmitting(false);
-
-    if (result.success) {
-      setSubmitted(true);
-    } else {
-      setServerError(result.error ?? "Error desconocido.");
+    try {
+      const result = await submitRegistration(fd);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setServerError(result.error ?? "Error desconocido.");
+      }
+    } catch {
+      setServerError("No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -511,13 +523,17 @@ export default function RegistroPage() {
     fd.append("plate", guestPlate);
     if (hostCarnetFile) fd.append("hostCarnetFile", hostCarnetFile);
 
-    const result = await submitGuestRegistration(fd);
-    setSubmitting(false);
-
-    if (result.success) {
-      setSubmitted(true);
-    } else {
-      setServerError(result.error ?? "Error desconocido.");
+    try {
+      const result = await submitGuestRegistration(fd);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setServerError(result.error ?? "Error desconocido.");
+      }
+    } catch {
+      setServerError("No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -1084,7 +1100,3 @@ export default function RegistroPage() {
     </div>
   );
 }
-
-
-/* ─── Styles ───────────────────────────────────────────────── */
-// Styles are now managed via Tailwind CSS classes and CSS variables in globals.css
