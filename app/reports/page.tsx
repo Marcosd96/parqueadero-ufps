@@ -7,12 +7,20 @@ export const metadata: Metadata = {
 };
 
 import prisma from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function ReportsPage({
   searchParams
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    redirect("/");
+  }
+
   const params = await searchParams;
   const plateQuery = typeof params.plate === 'string' ? params.plate : undefined;
   const dateFromQuery = typeof params.dateFrom === 'string' ? params.dateFrom : undefined;
@@ -63,8 +71,13 @@ export default async function ReportsPage({
     where: { ...whereClause, status: false },
   });
 
+  const visitantesCount = await prisma.accessLog.count({
+    where: { ...whereClause, userType: "Visitante" }
+  });
+
   const totalLogs = totalEntries + totalRejected;
   const authPct = totalLogs > 0 ? ((totalEntries / totalLogs) * 100).toFixed(1) : "0.0";
+  const visitantesPct = totalLogs > 0 ? ((visitantesCount / totalLogs) * 100).toFixed(1) : "0.0";
 
   const getUserTypeCls = (type: string) => {
     switch (type) {
@@ -95,9 +108,9 @@ export default async function ReportsPage({
   const peakBars = hourlyCount.slice(6, 13).map(count => (count / maxCount) * 100);
   const maxPeakIndex = peakBars.indexOf(Math.max(...peakBars));
 
-  const complianceStats = [
-    { label: "Acceso Autorizado", value: `${authPct}%`, pct: Number(authPct), barColor: "bg-[var(--color-primary)]" },
-    { label: "Precisión de Reconocimiento de Placa", value: "99.5%", pct: 99.5, barColor: "bg-[var(--color-tertiary-container)]" },
+  const metricsStats = [
+    { label: "Tasa de Acceso Autorizado", value: `${authPct}%`, pct: Number(authPct), barColor: "bg-[var(--color-primary)]" },
+    { label: "Proporción de Visitantes", value: `${visitantesPct}%`, pct: Number(visitantesPct), barColor: "bg-[var(--color-tertiary)]" },
   ];
 
   return (
@@ -106,7 +119,7 @@ export default async function ReportsPage({
       <div className="page-header">
         <div>
           <h2 className="page-title">Reportes de Entrada/Salida de Vehículos</h2>
-          <p className="page-subtitle">Log operacional detallado para el ciclo de 24 horas.</p>
+          <p className="page-subtitle">Log operacional detallado para los accesos del campus.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
           <form className="flex flex-wrap items-center gap-2 w-full sm:w-auto" method="GET" action="/reports">
@@ -134,24 +147,18 @@ export default async function ReportsPage({
               Filtrar
             </button>
             {(plateQuery || dateFromQuery || dateToQuery) && (
-              <a href="/reports" className="text-[10px] text-[var(--color-primary)] hover:underline ml-1">Limpiar</a>
+              <Link href="/reports" className="text-[10px] text-[var(--color-primary)] hover:underline ml-1">Limpiar</Link>
             )}
           </form>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button className="btn btn-ghost flex-1 sm:flex-none justify-center">
-              <span className="material-symbols-outlined text-sm">download</span>
-              EXPORTAR CSV
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { icon: "login", border: "border-[var(--color-primary)]", label: "Accesos Permitidos", value: totalEntries.toString(), trend: null, trendIcon: "trending_up", trendColor: "text-[var(--color-primary)]", badge: null },
-          { icon: "block", border: "border-[var(--color-error)]", label: "Accesos Denegados", value: totalRejected.toString(), trend: null, trendIcon: "trending_down", trendColor: "text-[var(--color-error)]", badge: null },
-          { icon: "list_alt", border: "border-[var(--color-tertiary)]", label: "Registros Totales", value: totalLogs.toString(), trend: null, trendIcon: null, trendColor: null, badge: "FILTRADO" },
+          { icon: "login", border: "border-[var(--color-primary)]", label: "Accesos Permitidos", value: totalEntries.toString(), trendColor: "text-[var(--color-primary)]" },
+          { icon: "block", border: "border-[var(--color-error)]", label: "Accesos Denegados", value: totalRejected.toString(), trendColor: "text-[var(--color-error)]" },
+          { icon: "list_alt", border: "border-[var(--color-tertiary)]", label: "Registros Totales", value: totalLogs.toString(), badge: "FILTRADO" },
         ].map((card) => (
           <div key={card.label} className={`card-padded border-b-2 ${card.border} relative overflow-hidden group`}>
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -160,15 +167,6 @@ export default async function ReportsPage({
             <p className="text-[10px] font-black text-[var(--color-on-surface-variant)] uppercase tracking-widest font-[var(--font-label)]">{card.label}</p>
             <h3 className="text-4xl font-black text-[var(--color-on-surface)] mt-2 tracking-tighter">{card.value}</h3>
             <div className="flex items-center gap-2 mt-4">
-              {card.trend && (
-                <>
-                  <span className={`text-xs font-bold ${card.trendColor} flex items-center`}>
-                    <span className="material-symbols-outlined text-xs">{card.trendIcon}</span>
-                    {card.trend}
-                  </span>
-                  <span className="text-[10px] text-[var(--color-on-surface-variant)] font-medium font-[var(--font-label)]">vs ayer</span>
-                </>
-              )}
               {card.badge && (
                 <span className="badge badge-warning">{card.badge}</span>
               )}
@@ -180,22 +178,14 @@ export default async function ReportsPage({
       {/* Data Table */}
       <div className="table-wrapper">
         <div className="px-6 py-4 border-b border-[var(--color-outline-variant)]/15 flex items-center justify-between">
-          <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Log de Actividad en Tiempo Real</h4>
-          <div className="flex items-center gap-4">
-            <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
-              <span className="material-symbols-outlined">filter_list</span>
-            </button>
-            <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
-              <span className="material-symbols-outlined">more_vert</span>
-            </button>
-          </div>
+          <h4 className="font-bold text-[var(--color-on-surface)] text-sm">Registro de Actividad</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="table-base">
             <thead className="table-thead">
               <tr>
-                {["Marca de Tiempo", "Placa", "Tipo de Usuario", "Zona", "Estado", "Acción"].map((h, i) => (
-                  <th key={h} className={i === 5 ? "text-right" : ""}>{h}</th>
+                {["Marca de Tiempo", "Placa", "Tipo de Usuario", "Zona", "Estado"].map((h) => (
+                  <th key={h}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -225,73 +215,74 @@ export default async function ReportsPage({
                       </span>
                     </div>
                   </td>
-                  <td className="table-cell text-right">
-                    <button className="text-[var(--color-outline-variant)] group-hover:text-[var(--color-primary)] transition-colors">
-                      <span className="material-symbols-outlined text-sm">
-                        {row.status ? "visibility" : "warning"}
-                      </span>
-                    </button>
-                  </td>
                 </tr>
               ))}
+              {activityLogs.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="table-cell text-center py-8 text-[var(--color-on-surface-variant)]">
+                    No se encontraron registros para los filtros seleccionados.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination Footer */}
-        <div className="table-footer">
-          <p className="table-footer-text">
-            Mostrando {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, totalFilteredLogs)} de {totalFilteredLogs} entradas
-          </p>
-          <div className="flex items-center gap-1">
-            <a 
-              href={(() => {
+        {totalPages > 1 && (
+          <div className="table-footer">
+            <p className="table-footer-text">
+              Mostrando {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, totalFilteredLogs)} de {totalFilteredLogs} entradas
+            </p>
+            <div className="flex items-center gap-1">
+              <Link 
+                href={(() => {
+                  const query = new URLSearchParams();
+                  if (plateQuery) query.set("plate", plateQuery);
+                  if (dateFromQuery) query.set("dateFrom", dateFromQuery);
+                  if (dateToQuery) query.set("dateTo", dateToQuery);
+                  query.set("page", Math.max(1, currentPage - 1).toString());
+                  return `/reports?${query.toString()}`;
+                })()}
+                className={`pagination-btn ${currentPage <= 1 ? "pointer-events-none opacity-50" : ""}`}
+              >
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+              </Link>
+              {Array.from({ length: totalPages }).map((_, i) => {
                 const query = new URLSearchParams();
                 if (plateQuery) query.set("plate", plateQuery);
                 if (dateFromQuery) query.set("dateFrom", dateFromQuery);
                 if (dateToQuery) query.set("dateTo", dateToQuery);
-                query.set("page", Math.max(1, currentPage - 1).toString());
-                return `/reports?${query.toString()}`;
-              })()}
-              className={`pagination-btn ${currentPage <= 1 ? "pointer-events-none opacity-50" : ""}`}
-            >
-              <span className="material-symbols-outlined text-sm">chevron_left</span>
-            </a>
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const query = new URLSearchParams();
-              if (plateQuery) query.set("plate", plateQuery);
-              if (dateFromQuery) query.set("dateFrom", dateFromQuery);
-              if (dateToQuery) query.set("dateTo", dateToQuery);
-              query.set("page", (i + 1).toString());
-              
-              return (
-                <a
-                  key={i}
-                  href={`/reports?${query.toString()}`}
-                  className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
-                >
-                  {i + 1}
-                </a>
-              );
-            })}
-            <a 
-              href={(() => {
-                const query = new URLSearchParams();
-                if (plateQuery) query.set("plate", plateQuery);
-                if (dateFromQuery) query.set("dateFrom", dateFromQuery);
-                if (dateToQuery) query.set("dateTo", dateToQuery);
-                query.set("page", Math.min(totalPages, currentPage + 1).toString());
-                return `/reports?${query.toString()}`;
-              })()}
-              className={`pagination-btn ${currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
-            >
-              <span className="material-symbols-outlined text-sm">chevron_right</span>
-            </a>
+                query.set("page", (i + 1).toString());
+                
+                return (
+                  <Link
+                    key={i}
+                    href={`/reports?${query.toString()}`}
+                    className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+                  >
+                    {i + 1}
+                  </Link>
+                );
+              })}
+              <Link 
+                href={(() => {
+                  const query = new URLSearchParams();
+                  if (plateQuery) query.set("plate", plateQuery);
+                  if (dateFromQuery) query.set("dateFrom", dateFromQuery);
+                  if (dateToQuery) query.set("dateTo", dateToQuery);
+                  query.set("page", Math.min(totalPages, currentPage + 1).toString());
+                  return `/reports?${query.toString()}`;
+                })()}
+                className={`pagination-btn ${currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}`}
+              >
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Peak Traffic Window */}
         <div className="card-padded !p-8 relative">
@@ -299,7 +290,7 @@ export default async function ReportsPage({
             <div className="p-2 bg-[var(--color-primary)]/10 rounded-lg">
               <span className="material-symbols-outlined text-[var(--color-primary)]">insights</span>
             </div>
-            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Ventana de Tráfico Pico</h5>
+            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Actividad Matutina (6am - 12pm)</h5>
           </div>
           <div className="flex items-end gap-2 h-24 mb-6">
             {peakBars.map((h, i) => (
@@ -317,21 +308,20 @@ export default async function ReportsPage({
             ))}
           </div>
           <p className="text-xs text-[var(--color-on-surface-variant)] font-[var(--font-label)] leading-relaxed">
-            La densidad de tráfico es actualmente un{" "}
-            <span className="font-bold text-[var(--color-on-surface)]">14% mayor</span> que el promedio móvil de 7 días para este intervalo de tiempo. Se sugiere monitorear la Zona B-4 para un posible desbordamiento.
+            Representación de la densidad de accesos registrada durante las horas de la mañana, calculada según los filtros actuales.
           </p>
         </div>
 
-        {/* Compliance Summary */}
+        {/* Analytics Summary */}
         <div className="card-padded !p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-[var(--color-tertiary)]/10 rounded-lg">
-              <span className="material-symbols-outlined text-[var(--color-tertiary)]">gavel</span>
+              <span className="material-symbols-outlined text-[var(--color-tertiary)]">analytics</span>
             </div>
-            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Resumen de Cumplimiento</h5>
+            <h5 className="text-sm font-bold text-[var(--color-on-surface)]">Métricas de Accesos</h5>
           </div>
           <div className="space-y-4">
-            {complianceStats.map((stat) => (
+            {metricsStats.map((stat) => (
               <div key={stat.label}>
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-medium text-[var(--color-on-surface-variant)] font-[var(--font-label)]">{stat.label}</span>
@@ -343,16 +333,11 @@ export default async function ReportsPage({
               </div>
             ))}
             <p className="text-[10px] text-[var(--color-on-surface-variant)] mt-4 font-[var(--font-label)] italic">
-              Todos los sistemas operando dentro de los márgenes de seguridad definidos.
+              Datos basados en los registros obtenidos según los criterios de filtrado.
             </p>
           </div>
         </div>
       </div>
-
-      {/* Floating Action Button */}
-      <button className="fixed bottom-8 right-8 w-14 h-14 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
-        <span className="material-symbols-outlined">add</span>
-      </button>
     </div>
   );
 }
