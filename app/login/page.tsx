@@ -102,13 +102,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input type="checkbox" className="w-4 h-4 rounded border-[var(--color-outline-variant)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20" />
-                  <span className="text-xs font-semibold text-[var(--color-on-surface-variant)] group-hover:text-[var(--color-on-surface)] transition-colors">Recordarme</span>
-                </label>
-                <a href="#" className="text-xs font-bold text-[var(--color-primary)] hover:underline">¿Olvidó su contraseña?</a>
-              </div>
+            
 
               <button
                 type="submit"
