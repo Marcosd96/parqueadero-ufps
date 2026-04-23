@@ -16,7 +16,7 @@ function emailLayout(content: string): string {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus ParkGuard UFPS</title>
+  <title>UFPS PARKING</title>
 </head>
 <body style="margin:0;padding:0;background:#f0f4f8;font-family:'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:32px 16px;">
@@ -31,7 +31,7 @@ function emailLayout(content: string): string {
                 <tr>
                   <td>
                     <span style="display:inline-block;background:rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;font-size:22px;margin-bottom:12px;">🅿️</span>
-                    <div style="font-size:20px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">Campus ParkGuard</div>
+                    <div style="font-size:20px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">UFPS PARKING</div>
                     <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px;">UFPS — Parqueadero Universitario</div>
                   </td>
                 </tr>

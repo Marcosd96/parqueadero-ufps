@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import DashboardLayout from "@/components/DashboardLayout";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Administración de Estacionamiento",
+  title: "UFPS PARKING - Administración de Estacionamiento",
   description: "Sistema de gestión de estacionamiento y monitoreo de seguridad del campus universitario",
 };
 

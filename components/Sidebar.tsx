@@ -93,33 +93,16 @@ export default function Sidebar({ user, onClose }: SidebarProps) {
             </Link>
           );
         })}
-      </nav>
-
-      {/* Bottom */}
-      <div className="mt-auto px-3 pb-6 pt-4 space-y-0.5 border-t border-[var(--color-outline-variant)]/15">
-        {user?.role === "ADMIN" && (
-          <button className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] py-2.5 rounded-lg font-bold text-sm tracking-tight active:scale-95 transition-transform mb-3 flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-sm">lock</span>
-            Bloqueo de Emergencia
+        <div className="pt-8 mt-4 border-t border-[var(--color-outline-variant)]/10">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-[var(--color-error)] font-bold hover:bg-[var(--color-error-container)]/10 rounded-lg transition-colors group"
+          >
+            <span className="material-symbols-outlined text-[1.2rem] group-hover:scale-110 transition-transform">logout</span>
+            <span className="font-[var(--font-label)] text-sm">Cerrar Sesión</span>
           </button>
-        )}
-        
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-[var(--color-error)] font-bold hover:bg-[var(--color-error-container)]/10 rounded-lg transition-colors group"
-        >
-          <span className="material-symbols-outlined text-[1.2rem] group-hover:scale-110 transition-transform">logout</span>
-          <span className="font-[var(--font-label)] text-sm">Cerrar Sesión</span>
-        </button>
-
-        <Link
-          href="#"
-          className="flex items-center gap-3 px-3 py-2.5 text-[var(--color-on-surface-variant)] font-medium hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors"
-        >
-          <span className="material-symbols-outlined text-[1.2rem]">settings</span>
-          <span className="font-[var(--font-label)] text-sm">Configuración</span>
-        </Link>
-      </div>
+        </div>
+      </nav>
     </aside>
   );
 }

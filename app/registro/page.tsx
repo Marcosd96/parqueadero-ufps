@@ -676,7 +676,7 @@ export default function RegistroPage() {
               </span>
             </div>
             <div>
-              <div className="font-black text-lg tracking-tight">Campus ParkGuard</div>
+              <div className="font-black text-lg tracking-tight">UFPS PARKING</div>
               <div className="text-[0.7rem] opacity-70">UFPS — Parqueadero Universitario</div>
             </div>
           </div>

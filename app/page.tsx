@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Monitoreo de Seguridad",
+  title: "UFPS PARKING - Monitoreo de Seguridad",
   description: "Monitoreo de seguridad en tiempo real para las zonas de estacionamiento del campus",
 };
 

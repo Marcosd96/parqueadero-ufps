@@ -6,7 +6,7 @@ import RequestFilters from "./RequestFilters";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Solicitudes de TAG de Visitante | Campus ParkGuard",
+  title: "Solicitudes de TAG de Visitante | UFPS PARKING",
   description: "Revisar y gestionar el acceso temporal al estacionamiento para invitados del campus",
 };
 

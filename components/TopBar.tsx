@@ -24,10 +24,6 @@ export default function TopBar({ onToggleSidebar }: TopBarProps) {
             Mapa de Zonas
           </span>
         </div>
-        <div className="hidden sm:flex items-center gap-3 text-[var(--color-on-surface-variant)] font-[var(--font-label)] text-[0.875rem] hover:text-[var(--color-on-surface)] cursor-pointer transition-all">
-          <span className="material-symbols-outlined">gate</span>
-          <span className="hidden md:inline">Control de Portón</span>
-        </div>
       </div>
 
       <div className="flex items-center gap-3 md:gap-6">
@@ -40,9 +36,6 @@ export default function TopBar({ onToggleSidebar }: TopBarProps) {
           <span className="text-[var(--color-primary)] font-bold">Operativo</span>
         </div>
         <div className="flex items-center gap-3 md:gap-4 border-l border-[var(--color-outline-variant)]/30 pl-4 md:pl-6">
-          <button className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
           <div className="flex items-center gap-2">
             <img
               alt="Administrator Avatar"

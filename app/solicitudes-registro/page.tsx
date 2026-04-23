@@ -7,7 +7,7 @@ import RegistrationFilters from "./RegistrationFilters";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Solicitudes de Registro | Campus ParkGuard",
+  title: "Solicitudes de Registro | UFPS PARKING ",
   description: "Gestionar el acceso permanente de estudiantes, administrativos y docentes",
 };
 

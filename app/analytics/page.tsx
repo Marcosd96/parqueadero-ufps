@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Campus ParkGuard - Panel de Analíticas",
+  title: "UFPS PARKING - Panel de Analíticas",
   description: "Métricas de flujo y capacidad en tiempo real para el estacionamiento del campus",
 };
 

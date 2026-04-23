@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Directorio de Estudiantes - Campus ParkGuard",
+  title: "Directorio de Estudiantes - UFPS PARKING",
   description: "Gestionar estudiantes registrados para el estacionamiento del campus",
 };
 

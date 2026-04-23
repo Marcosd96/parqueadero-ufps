@@ -35,7 +35,7 @@ export async function sendMail(options: MailOptions): Promise<void> {
 
   // Use a verified domain address if configured, otherwise fall back to Resend sandbox
   const from =
-    process.env.RESEND_FROM ?? "Campus ParkGuard UFPS <onboarding@resend.dev>";
+    process.env.RESEND_FROM ?? "UFPS PARKING <onboarding@resend.dev>";
 
   const { error } = await resend.emails.send({
     from,

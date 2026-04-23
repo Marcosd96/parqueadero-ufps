@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Registro de Usuarios — Campus ParkGuard UFPS",
+  title: "Registro de Usuarios — UFPS PARKING",
   description:
     "Formulario de registro para estudiantes, docentes y administrativos que deseen solicitar acceso al parqueadero universitario de la UFPS.",
 };
