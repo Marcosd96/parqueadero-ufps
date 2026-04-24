@@ -27,7 +27,7 @@ export async function verifyPlate(plate: string) {
   const guestRequest = await prisma.accessRequest.findFirst({
     where: {
       plateNumber: plate,
-      status: "APPROVED",
+      status: "APROBADO",
       visitDate: {
         gte: today,
         lt: tomorrow,
@@ -67,4 +67,22 @@ export async function registerAccess(plate: string, granted: boolean, userType: 
 
   revalidatePath("/");
   revalidatePath("/reports");
+}
+
+export async function updateAccessRequestStatus(id: number, status: string) {
+  try {
+    await prisma.accessRequest.update({
+      where: { id },
+      data: { status }
+    });
+
+    revalidatePath("/requests");
+    revalidatePath("/analytics");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating access request status:", error);
+    return { success: false, error: "No se pudo actualizar el estado de la solicitud." };
+  }
 }

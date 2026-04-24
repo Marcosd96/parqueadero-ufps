@@ -11,7 +11,7 @@ import prisma from "@/lib/prisma";
 export default async function AnalyticsPage() {
   const totalVehicles = await prisma.vehicle.count();
   const pendingRequests = await prisma.accessRequest.count({
-    where: { status: "PENDING" },
+    where: { status: "PENDIENTE" },
   });
 
   const logs = await prisma.accessLog.findMany();

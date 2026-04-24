@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { AccessRequest, Prisma } from "@/generated/prisma/client/index.js";
 import prisma from "@/lib/prisma";
 import RequestFilters from "./RequestFilters";
+import RequestActions from "./RequestActions";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -148,14 +149,7 @@ export default async function RequestsPage({
                     </span>
                   </td>
                   <td className="table-cell text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="w-8 h-8 flex items-center justify-center bg-[var(--color-primary)] text-white rounded-lg shadow-sm hover:scale-105 active:scale-95 transition-all">
-                        <span className="material-symbols-outlined text-sm">check</span>
-                      </button>
-                      <button className="w-8 h-8 flex items-center justify-center bg-[var(--color-error-container)] text-[var(--color-on-error-container)] rounded-lg shadow-sm hover:scale-105 active:scale-95 transition-all">
-                        <span className="material-symbols-outlined text-sm">close</span>
-                      </button>
-                    </div>
+                    <RequestActions requestId={r.id} />
                   </td>
                 </tr>
               ))

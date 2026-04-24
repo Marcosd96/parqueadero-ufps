@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reportes de Entrada y Salida - UFPS PARKING",
+  title: "Historial de Entrada y Salida - UFPS PARKING",
   description: "Log operacional detallado para el ciclo de 24 horas",
 };
 
@@ -118,7 +118,7 @@ export default async function ReportsPage({
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <h2 className="page-title">Reportes de Entrada/Salida de Vehículos</h2>
+          <h2 className="page-title">Historial de Entrada/Salida de Vehículos</h2>
           <p className="page-subtitle">Log operacional detallado para los accesos del campus.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
