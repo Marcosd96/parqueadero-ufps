@@ -18,7 +18,8 @@ export async function updateRegistrationStatus(id: number, status: string) {
 
     // If approving, we need to create the permanent records
     if (status === "APROBADO") {
-      await prisma.$transaction(async (tx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await prisma.$transaction(async (tx: any) => {
         // 1. Get current registration data
         const reg = await tx.userRegistration.findUnique({
           where: { id },
