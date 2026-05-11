@@ -46,7 +46,8 @@ export default function RfidMonitor() {
       try {
         // Cache-buster: agregamos ?t= timestamp para asegurar que el navegador NUNCA use caché
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        const res = await fetch(`${backendUrl}/api/rfid/latest?t=${Date.now()}`, { cache: "no-store" });
+        const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
+        const res = await fetch(`${normalizedBackendUrl}/api/rfid/latest?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
 

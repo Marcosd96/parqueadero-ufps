@@ -422,7 +422,8 @@ export default function RegistroPage() {
     setCodeState("loading");
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const res = await fetch(`${backendUrl}/api/lookup-student?code=${encodeURIComponent(code.trim())}`);
+      const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
+      const res = await fetch(`${normalizedBackendUrl}/api/lookup-student?code=${encodeURIComponent(code.trim())}`);
       if (res.status === 429) {
         setErrors(prev => ({ ...prev, code: "Demasiadas búsquedas. Espera un momento." }));
         setCodeState("idle");
@@ -457,7 +458,8 @@ export default function RegistroPage() {
     setHostCodeState("loading");
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-      const res = await fetch(`${backendUrl}/api/lookup-student?code=${encodeURIComponent(hostCode.trim())}`);
+      const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
+      const res = await fetch(`${normalizedBackendUrl}/api/lookup-student?code=${encodeURIComponent(hostCode.trim())}`);
       if (res.status === 429) {
         setErrors(prev => ({ ...prev, hostCode: "Demasiadas búsquedas. Espera un momento." }));
         setHostCodeState("idle");
