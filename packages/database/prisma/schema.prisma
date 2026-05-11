@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Student {
+  id         Int       @id @default(autoincrement())
+  cardnumber String    @unique
+  firstname  String
+  surname    String
+  email      String?
+  emailpro   String?
+  vehicles   Vehicle[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Vehicle {
+  id           Int       @id @default(autoincrement())
+  plate        String    @unique
+  rfidTag      String?   @unique // UID del TAG RFID asignado (ej: "A3:F2:01:CC")
+  brand        String?
+  model        String
+  color        String
+  icon         String
+  department   String
+  status       String
+  registeredAt DateTime  @default(now())
+
+  ownerId      Int?
+  owner        Student?  @relation(fields: [ownerId], references: [id])
+}
+
+model AccessRequest {
+  id            Int      @id @default(autoincrement())
+  requesterName String
+  plateNumber   String
+  visitDate     DateTime @default(now())
+  reason        String   // Servirá como Descripción libre
+  status        String   @default("PENDIENTE") // PENDING, APPROVED, EXPIRED
+  
+  hostCode      String?  // Código del anfitrión
+  hostCarnetPath String? // Ruta del archivo del carnet del anfitrión
+  phone         String?  // Número de teléfono del invitado
+  
+  createdAt     DateTime @default(now())
+}
+
+model AccessLog {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+  plate     String
+  rfidTag   String?  // UID del TAG si el acceso fue por RFID
+  userType  String
+  zone      String
+  status    Boolean  // true = GRANTED, false = REJECTED
+  method    String   @default("MANUAL") // "RFID" | "MANUAL" | "PLACA"
+}
+
+model UserRegistration {
+  id                Int      @id @default(autoincrement())
+  userType          String   // ESTUDIANTE, ADMINISTRATIVO, DOCENTE
+  email             String
+  institutionalCode String
+  fullName          String
+  carnetFilePath    String
+  ownershipFilePath String
+  plate             String
+  vehicleBrand      String?
+  vehicleModel      String?
+  status            String   @default("PENDIENTE") // PENDIENTE, APROBADO, RECHAZADO
+  createdAt         DateTime @default(now())
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String?
+  email     String?
+  role      UserRole @default(CELADOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  CELADOR
+}
