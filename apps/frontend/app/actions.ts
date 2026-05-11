@@ -68,3 +68,20 @@ export async function registerAccess(plate: string, granted: boolean, userType: 
   revalidatePath("/");
   revalidatePath("/reports");
 }
+
+export async function updateAccessRequestStatus(id: number, status: string) {
+  try {
+    // Normalizamos el estado para que coincida con el esquema si es necesario
+    // Aunque el componente envía APROBADO/RECHAZADO, Prisma lo guardará tal cual.
+    await prisma.accessRequest.update({
+      where: { id },
+      data: { status }
+    });
+
+    revalidatePath("/requests");
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating access request status:", error);
+    return { success: false, error: "No se pudo actualizar el estado de la solicitud." };
+  }
+}

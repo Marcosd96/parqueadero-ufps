@@ -87,7 +87,7 @@ export default async function ReportsPage({
   });
   
   const hourlyCount = new Array(24).fill(0);
-  logsForPeak.forEach(log => {
+  logsForPeak.forEach((log: { timestamp: Date }) => {
     hourlyCount[log.timestamp.getHours()]++;
   });
   

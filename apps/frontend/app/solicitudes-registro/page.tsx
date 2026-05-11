@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import prisma from "@parqueadero/database";
-import { Prisma } from "@/generated/prisma/client/index.js";
+import { Prisma, UserRegistration } from "@/generated/prisma/client/index.js";
 import ActionButtons from "./ActionButtons";
 import RegistrationFilters from "./RegistrationFilters";
 import Link from "next/link";
@@ -111,7 +111,7 @@ export default async function RegistroRequestsPage({
                 </td>
               </tr>
             ) : (
-              registrations.map((r) => (
+              registrations.map((r: UserRegistration) => (
                 <tr key={r.id} className="table-row group">
                   <td className="table-cell">
                     <div className="flex items-center gap-3">
