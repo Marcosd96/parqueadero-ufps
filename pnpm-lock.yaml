@@ -47,6 +47,9 @@ importers:
       '@prisma/adapter-pg':
         specifier: ^7.7.0
         version: 7.7.0
+      '@swc/helpers':
+        specifier: ^0.5.15
+        version: 0.5.15
       '@types/bcryptjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -83,6 +86,9 @@ importers:
       resend:
         specifier: ^6.12.2
         version: 6.12.2
+      scheduler:
+        specifier: ^0.27.0
+        version: 0.27.0
     devDependencies:
       '@prisma/client':
         specifier: ^7.7.0

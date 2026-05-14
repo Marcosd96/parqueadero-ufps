@@ -23,7 +23,9 @@
     "pg": "^8.20.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "resend": "^6.12.2"
+    "resend": "^6.12.2",
+    "@swc/helpers": "^0.5.15",
+    "scheduler": "^0.27.0"
   },
   "devDependencies": {
     "@prisma/client": "^7.7.0",
