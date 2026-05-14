@@ -26,7 +26,7 @@ function timeAgo(ts: string): string {
   return new Date(ts).toLocaleTimeString();
 }
 
-export default function RfidMonitor() {
+export default function RfidMonitor({ zone }: { zone: string }) {
   const router = useRouter();
   const [event, setEvent] = useState<RfidEvent | null>(null);
   const [isLive, setIsLive] = useState(true);
@@ -47,7 +47,7 @@ export default function RfidMonitor() {
         // Cache-buster: agregamos ?t= timestamp para asegurar que el navegador NUNCA use caché
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
         const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
-        const res = await fetch(`${normalizedBackendUrl}/api/rfid/latest?t=${Date.now()}`, { cache: "no-store" });
+        const res = await fetch(`${normalizedBackendUrl}/api/rfid/latest?zone=${encodeURIComponent(zone)}&t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
 
@@ -73,7 +73,7 @@ export default function RfidMonitor() {
     fetchLatest();
     const intervalId = setInterval(fetchLatest, POLL_INTERVAL_MS);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [zone]);
 
   return (
     <div
@@ -82,11 +82,11 @@ export default function RfidMonitor() {
       }`}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-tertiary)] px-5 py-3 flex items-center justify-between">
+      <div className={`bg-gradient-to-r ${zone.includes("Salida") ? "from-amber-600 to-orange-400" : "from-[var(--color-primary)] to-[var(--color-tertiary)]"} px-5 py-3 flex items-center justify-between`}>
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-white text-lg">nfc</span>
           <h3 className="text-white text-xs font-black tracking-widest uppercase">
-            Monitor RFID
+            Monitor RFID - {zone.includes("Salida") ? "Salida" : "Entrada"}
           </h3>
         </div>
         <div className="flex items-center gap-2">

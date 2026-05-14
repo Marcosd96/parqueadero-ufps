@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import prisma from "@parqueadero/database";
+import { Prisma } from "@/generated/prisma/client/index.js";
 import VehicleRowActions from "./VehicleRowActions";
 import VehicleFilters from "./VehicleFilters";
 
@@ -21,7 +22,7 @@ interface PageProps {
 export default async function VehiclesPage({ searchParams }: PageProps) {
   const query = await searchParams;
   
-  const where: any = {};
+  const where: Prisma.VehicleWhereInput = {};
   
   if (query.plate) {
     where.plate = { contains: query.plate, mode: 'insensitive' };
@@ -101,7 +102,7 @@ export default async function VehiclesPage({ searchParams }: PageProps) {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((v: { id: number; plate: string; brand: string | null; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
+            {vehicles.map((v: { id: number; plate: string; rfidTag: string | null; brand: string | null; model: string; color: string; status: string; registeredAt: Date; icon: string; department: string; owner: { firstname: string, surname: string } | null }) => (
               <tr key={v.plate} className="table-row">
                 <td className="table-cell">
                   <div className="flex items-center gap-4">
@@ -115,7 +116,15 @@ export default async function VehiclesPage({ searchParams }: PageProps) {
                   </div>
                 </td>
                 <td className="table-cell">
-                  <span className="bg-[var(--color-on-surface)] text-[var(--color-surface)] px-3 py-1 rounded font-mono text-xs font-bold tracking-widest">{v.plate}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="bg-[var(--color-on-surface)] text-[var(--color-surface)] px-3 py-1 rounded font-mono text-xs font-bold tracking-widest w-fit">{v.plate}</span>
+                    {v.rfidTag && (
+                      <div className="flex items-center gap-1 text-[10px] text-[var(--color-primary)] font-bold">
+                        <span className="material-symbols-outlined text-[12px]">nfc</span>
+                        {v.rfidTag}
+                      </div>
+                    )}
+                  </div>
                 </td>
                 <td className="table-cell">
                   <p className="text-sm font-semibold text-[var(--color-on-surface)]">

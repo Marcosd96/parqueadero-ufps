@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { verifyPlate, registerAccess } from "@/app/actions";
 
-export default function PlateVerification() {
+export default function PlateVerification({ zone }: { zone: string }) {
   const [plate, setPlate] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{
@@ -35,7 +35,7 @@ export default function PlateVerification() {
         plate.toUpperCase().trim(),
         granted,
         result?.type || "Desconocido",
-        "Zona A - Principal"
+        zone
       );
       setResult(null);
       setPlate("");
@@ -49,7 +49,7 @@ export default function PlateVerification() {
   return (
     <div className="card-padded mb-6">
       <h4 className="text-[0.7rem] font-black text-[var(--color-on-surface-variant)] tracking-widest uppercase mb-4">
-        Verificación Manual de Placa
+        Verificación Manual - {zone.includes("Salida") ? "Salida" : "Entrada"}
       </h4>
       <form onSubmit={handleVerify} className="flex gap-2 mb-4">
         <input
@@ -63,7 +63,9 @@ export default function PlateVerification() {
         <button
           type="submit"
           disabled={loading || !plate.trim()}
-          className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-4 py-2 rounded-lg font-bold text-sm hover:brightness-110 disabled:opacity-50 transition-all"
+          className={`px-4 py-2 rounded-lg font-bold text-sm hover:brightness-110 disabled:opacity-50 transition-all ${
+            zone.includes("Salida") ? "bg-amber-600 text-white" : "bg-[var(--color-primary)] text-[var(--color-on-primary)]"
+          }`}
         >
           {loading && !result ? "Verificando..." : "Verificar"}
         </button>
@@ -98,12 +100,12 @@ export default function PlateVerification() {
               disabled={loading}
               className={`flex-1 py-2 rounded font-bold text-xs flex items-center justify-center gap-1 transition-all ${
                 result.status === "authorized"
-                  ? "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/90"
+                  ? (zone.includes("Salida") ? "bg-amber-600 text-white hover:bg-amber-700" : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/90")
                   : "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-primary)] hover:text-white"
               }`}
             >
-              <span className="material-symbols-outlined text-sm">login</span>
-              Permitir
+              <span className="material-symbols-outlined text-sm">{zone.includes("Salida") ? "logout" : "login"}</span>
+              {zone.includes("Salida") ? "Permitir Salida" : "Permitir Entrada"}
             </button>
             <button
               onClick={() => handleRegister(false)}
