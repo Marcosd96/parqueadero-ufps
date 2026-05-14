@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 import prisma from "@parqueadero/database";
 import TableExportButton from "@/components/TableExportButton";
 import Link from "next/link";
+import FormattedTime from "@/components/FormattedTime";
 
 export default async function ReportsPage({
   searchParams
@@ -40,12 +41,12 @@ export default async function ReportsPage({
   if (dateFromQuery || dateToQuery) {
     whereClause.timestamp = {};
     if (dateFromQuery) {
-      whereClause.timestamp.gte = new Date(dateFromQuery);
+      // Forzamos el inicio del día en la zona horaria de Colombia
+      whereClause.timestamp.gte = new Date(`${dateFromQuery}T00:00:00.000-05:00`);
     }
     if (dateToQuery) {
-      const toDate = new Date(dateToQuery);
-      toDate.setHours(23, 59, 59, 999);
-      whereClause.timestamp.lte = toDate;
+      // Forzamos el fin del día en la zona horaria de Colombia
+      whereClause.timestamp.lte = new Date(`${dateToQuery}T23:59:59.999-05:00`);
     }
   }
 
@@ -98,7 +99,16 @@ export default async function ReportsPage({
   
   const hourlyCount = new Array(24).fill(0);
   logsForPeak.forEach((log: { timestamp: Date }) => {
-    hourlyCount[log.timestamp.getHours()]++;
+    // Usamos America/Bogota ya que es la zona horaria de la UFPS
+    const bogotaHour = parseInt(new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      hour12: false,
+      timeZone: 'America/Bogota'
+    }).format(log.timestamp));
+    
+    // El formato 'numeric' de 24 horas puede devolver 24 en lugar de 0 en algunos entornos
+    const hourIdx = bogotaHour === 24 ? 0 : bogotaHour;
+    hourlyCount[hourIdx]++;
   });
   
   const maxCount = Math.max(...hourlyCount.slice(6, 13), 1);
@@ -223,8 +233,8 @@ export default async function ReportsPage({
                 <tr key={row.id} className="table-row group">
                   <td className="table-cell">
                     <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-[var(--color-on-surface)]">{new Date(row.timestamp).toLocaleTimeString()}</span>
-                      <span className="text-[10px] text-[var(--color-on-surface-variant)] font-[var(--font-label)]">{new Date(row.timestamp).toLocaleDateString()}</span>
+                      <FormattedTime date={row.timestamp} className="text-sm font-semibold text-[var(--color-on-surface)]" />
+                      <FormattedTime date={row.timestamp} showDate className="text-[10px] text-[var(--color-on-surface-variant)] font-[var(--font-label)]" />
                     </div>
                   </td>
                   <td className="table-cell">
