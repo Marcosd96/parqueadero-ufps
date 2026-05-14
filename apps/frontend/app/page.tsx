@@ -14,6 +14,12 @@ import Link from "next/link";
 import TableExportButton from "@/components/TableExportButton";
 import MonitoringQuickActions from "@/components/MonitoringQuickActions";
 
+interface Props {
+  searchParams: Promise<{
+    tab?: string;
+  }>;
+}
+
 export default async function MonitoringPage({ searchParams }: Props) {
   const { tab = "entrada" } = await searchParams;
   const isExit = tab === "salida";
@@ -125,7 +131,7 @@ export default async function MonitoringPage({ searchParams }: Props) {
                 </thead>
                 <tbody>
                   {recentActivity.length > 0 ? (
-                    recentActivity.map((row: any) => (
+                    recentActivity.map((row: { id: number; timestamp: Date; plate: string; method: string; status: boolean }) => (
                       <tr key={row.id} className="table-row">
                         <td className="table-cell font-mono text-sm text-[var(--color-on-surface-variant)]">
                           {new Date(row.timestamp).toLocaleTimeString()}
