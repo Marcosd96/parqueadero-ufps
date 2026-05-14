@@ -7,6 +7,8 @@ export const metadata: Metadata = {
 };
 
 import prisma from "@parqueadero/database";
+import TableExportButton from "@/components/TableExportButton";
+import Link from "next/link";
 
 export default async function ReportsPage({
   searchParams
@@ -17,12 +19,20 @@ export default async function ReportsPage({
   const plateQuery = typeof params.plate === 'string' ? params.plate : undefined;
   const dateFromQuery = typeof params.dateFrom === 'string' ? params.dateFrom : undefined;
   const dateToQuery = typeof params.dateTo === 'string' ? params.dateTo : undefined;
+  const zoneQuery = typeof params.zone === 'string' ? params.zone : undefined;
 
   const whereClause: import("../../generated/prisma/client").Prisma.AccessLogWhereInput = {};
 
   if (plateQuery) {
     whereClause.plate = {
       contains: plateQuery,
+      mode: "insensitive"
+    };
+  }
+
+  if (zoneQuery && zoneQuery !== "all") {
+    whereClause.zone = {
+      contains: zoneQuery,
       mode: "insensitive"
     };
   }
@@ -110,6 +120,15 @@ export default async function ReportsPage({
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-4 lg:mt-0">
           <form className="flex flex-wrap items-center gap-2 w-full sm:w-auto" method="GET" action="/reports">
+            <select
+              name="zone"
+              defaultValue={zoneQuery || "all"}
+              className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)]/30 rounded-lg px-3 py-1.5 text-xs font-bold text-[var(--color-on-surface)] w-32"
+            >
+              <option value="all">Todas las Zonas</option>
+              <option value="Entrada">Entradas</option>
+              <option value="Salida">Salidas</option>
+            </select>
             <input
               type="text"
               name="plate"
@@ -133,15 +152,15 @@ export default async function ReportsPage({
             <button type="submit" className="bg-[var(--color-primary)] text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:brightness-110">
               Filtrar
             </button>
-            {(plateQuery || dateFromQuery || dateToQuery) && (
+            {(plateQuery || dateFromQuery || dateToQuery || zoneQuery) && (
               <a href="/reports" className="text-[10px] text-[var(--color-primary)] hover:underline ml-1">Limpiar</a>
             )}
           </form>
           <div className="flex gap-2 w-full sm:w-auto">
-            <button className="btn btn-ghost flex-1 sm:flex-none justify-center">
-              <span className="material-symbols-outlined text-sm">download</span>
-              EXPORTAR CSV
-            </button>
+            <TableExportButton 
+              data={activityLogs} 
+              filename={`reporte_estacionamiento_${zoneQuery || 'total'}`} 
+            />
           </div>
         </div>
       </div>
@@ -226,7 +245,10 @@ export default async function ReportsPage({
                     </div>
                   </td>
                   <td className="table-cell text-right">
-                    <button className="text-[var(--color-outline-variant)] group-hover:text-[var(--color-primary)] transition-colors">
+                    <button 
+                      className="text-[var(--color-outline-variant)] group-hover:text-[var(--color-primary)] transition-colors"
+                      title="Ver detalles"
+                    >
                       <span className="material-symbols-outlined text-sm">
                         {row.status ? "visibility" : "warning"}
                       </span>
@@ -350,9 +372,14 @@ export default async function ReportsPage({
       </div>
 
       {/* Floating Action Button */}
-      <button className="fixed bottom-8 right-8 w-14 h-14 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
-        <span className="material-symbols-outlined">add</span>
-      </button>
+      <Link 
+        href="/"
+        title="Regresar al Monitoreo"
+        className="fixed bottom-10 right-10 w-16 h-16 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group overflow-hidden"
+      >
+        <span className="material-symbols-outlined text-3xl group-hover:rotate-12 transition-transform">monitor_heart</span>
+        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+      </Link>
     </div>
   );
 }
