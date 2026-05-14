@@ -3,12 +3,61 @@ import prisma from "@parqueadero/database";
 
 const router = Router();
 
-// POST /api/rfid
-// Llamado por el ESP32 al leer un TAG RFID
+// Estado global para cuando solo se tiene un ESP32 físico
+let globalActiveZone: "Entrada Principal" | "Salida Principal" = "Entrada Principal";
+
+// GET /api/rfid/config - Obtener configuración actual
+router.get("/config", (req, res) => {
+  res.json({ globalActiveZone });
+});
+
+// POST /api/rfid/toggle-zone - Cambiar la zona activa para el lector único
+router.post("/toggle-zone", (req, res) => {
+  const { zone } = req.body;
+  if (zone === "Salida Principal" || zone === "Entrada Principal") {
+    globalActiveZone = zone;
+    return res.json({ success: true, newZone: globalActiveZone });
+  }
+  globalActiveZone = globalActiveZone === "Entrada Principal" ? "Salida Principal" : "Entrada Principal";
+  res.json({ success: true, newZone: globalActiveZone });
+});
+
+// POST /api/rfid/entrada - Atajo para entrada
+router.post("/entrada", async (req: Request, res: Response) => {
+  req.query.zone = "Entrada Principal";
+  // Redirigir a la lógica principal (podríamos extraerla a una función, pero para mantenerlo simple re-inyectamos la zona)
+  return handleRfidLogic(req, res);
+});
+
+// POST /api/rfid/salida - Atajo para salida
+router.post("/salida", async (req: Request, res: Response) => {
+  req.query.zone = "Salida Principal";
+  return handleRfidLogic(req, res);
+});
+
+// POST /api/rfid - Lógica principal (mantenida por compatibilidad)
 router.post("/", async (req: Request, res: Response) => {
+  return handleRfidLogic(req, res);
+});
+
+async function handleRfidLogic(req: Request, res: Response) {
   try {
-    const { uid, zone } = req.body;
-    const activeZone = zone || "Entrada Principal";
+    const { uid } = req.body;
+    // Prioridad: 1. Zona forzada en query, 2. Zona en body, 3. Zona en query original, 4. Estado global del sistema
+    const zone = req.query.zone || req.body.zone;
+    
+    let activeZone: string = globalActiveZone; 
+    
+    // Si viene una zona específica, la normalizamos y usamos esa
+    if (zone && typeof zone === "string") {
+      if (zone.toLowerCase().includes("salida")) {
+        activeZone = "Salida Principal";
+      } else if (zone.toLowerCase().includes("entrada")) {
+        activeZone = "Entrada Principal";
+      } else {
+        activeZone = zone; 
+      }
+    }
 
     if (!uid || typeof uid !== "string") {
       return res.status(400).json({ granted: false, reason: "UID inválido o ausente." });
@@ -23,8 +72,7 @@ router.post("/", async (req: Request, res: Response) => {
     });
 
     if (!vehicle) {
-      // Registrar intento fallido en el log
-      await prisma.accessLog.create({
+      const logEntry = await prisma.accessLog.create({
         data: {
           plate: "UNKNOWN",
           rfidTag: normalizedUid,
@@ -35,7 +83,11 @@ router.post("/", async (req: Request, res: Response) => {
         },
       });
 
-      return res.json({ granted: false, reason: "TAG RFID no registrado en el sistema." });
+      return res.json({ 
+        granted: false, 
+        reason: "TAG RFID no registrado en el sistema.",
+        debug: { activeZone, logId: logEntry.id }
+      });
     }
 
     const isActive =
@@ -50,7 +102,7 @@ router.post("/", async (req: Request, res: Response) => {
       : isVisitor ? "Invitado Externo" : "Propietario Genérico";
 
     // Registrar el acceso en el log
-    await prisma.accessLog.create({
+    const logEntry = await prisma.accessLog.create({
       data: {
         plate: vehicle.plate,
         rfidTag: normalizedUid,
@@ -68,6 +120,7 @@ router.post("/", async (req: Request, res: Response) => {
         ownerName,
         status: vehicle.status,
         reason: `Vehículo con estado: ${vehicle.status}`,
+        debug: { activeZone, logId: logEntry.id }
       });
     }
 
@@ -80,12 +133,17 @@ router.post("/", async (req: Request, res: Response) => {
       vehicleColor: vehicle.color,
       department: vehicle.department,
       status: vehicle.status,
+      debug: {
+        activeZone,
+        logId: logEntry.id,
+        receivedZone: zone || "NONE"
+      }
     });
   } catch (error) {
     console.error("[RFID API] Error:", error);
-    return res.status(500).json({ granted: false, reason: "Error interno del servidor." });
+    return res.status(500).json({ granted: false, reason: "Error interno del servidor.", error: String(error) });
   }
-});
+}
 
 // GET /api/rfid/latest
 // Usado por el frontend con polling para mostrar el último evento RFID
@@ -93,9 +151,18 @@ router.get("/latest", async (req: Request, res: Response) => {
   try {
     const { zone } = req.query;
     
+    let zoneFilter = zone as string;
+    if (zoneFilter) {
+      if (zoneFilter.toLowerCase().includes("salida")) zoneFilter = "Salida Principal";
+      else if (zoneFilter.toLowerCase().includes("entrada")) zoneFilter = "Entrada Principal";
+    }
+
     const whereClause: any = { method: "RFID" };
-    if (zone) {
-      whereClause.zone = zone as string;
+    if (zoneFilter) {
+      whereClause.zone = {
+        contains: zoneFilter,
+        mode: "insensitive",
+      };
     }
 
     const latestLog = await prisma.accessLog.findFirst({

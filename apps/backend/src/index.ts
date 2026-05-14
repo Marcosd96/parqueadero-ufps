@@ -17,15 +17,7 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Permitir peticiones sin origen (como Postman o el ESP32)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: true, // Permitir cualquier origen en desarrollo
   credentials: true
 }));
 app.use(express.json());
