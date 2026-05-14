@@ -44,6 +44,15 @@ export default async function RequestsPage({
     }),
   ]);
 
+  // Obtener los TAGs RFID asociados a estas placas
+  const plates = requests.map(r => r.plateNumber);
+  const vehiclesForTags = await prisma.vehicle.findMany({
+    where: { plate: { in: plates } },
+    select: { plate: true, rfidTag: true }
+  });
+
+  const tagMap = Object.fromEntries(vehiclesForTags.map(v => [v.plate, v.rfidTag]));
+
   const totalPages = Math.ceil(totalFilteredCount / ITEMS_PER_PAGE) || 1;
 
   const getInitials = (name: string) => {
@@ -97,26 +106,36 @@ export default async function RequestsPage({
                 </td>
               </tr>
             ) : (
-              requests.map((r: AccessRequest) => (
-                <tr key={r.id} className="table-row group">
-                  <td className="table-cell">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-on-primary-fixed-variant)] font-bold text-xs">
-                        {getInitials(r.requesterName)}
-                      </div>
-                      <div>
-                        <div className="font-bold text-[var(--color-on-surface)] font-[var(--font-label)] text-sm">{r.requesterName}</div>
-                        <div className="text-[10px] text-[var(--color-on-surface-variant)] uppercase font-bold tracking-tighter opacity-60">
-                          {new Date(r.visitDate).toLocaleDateString()}
+              requests.map((r: AccessRequest) => {
+                const rfidTag = tagMap[r.plateNumber];
+                return (
+                  <tr key={r.id} className="table-row group">
+                    <td className="table-cell">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-on-primary-fixed-variant)] font-bold text-xs">
+                          {getInitials(r.requesterName)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-[var(--color-on-surface)] font-[var(--font-label)] text-sm">{r.requesterName}</div>
+                          <div className="text-[10px] text-[var(--color-on-surface-variant)] uppercase font-bold tracking-tighter opacity-60">
+                            {new Date(r.visitDate).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="table-cell">
-                    <span className="px-2 py-1 bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] font-mono text-sm rounded border border-[var(--color-outline-variant)]/20">
-                      {r.plateNumber}
-                    </span>
-                  </td>
+                    </td>
+                    <td className="table-cell">
+                      <div className="flex flex-col gap-1">
+                        <span className="px-2 py-1 bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] font-mono text-sm rounded border border-[var(--color-outline-variant)]/20 w-fit">
+                          {r.plateNumber}
+                        </span>
+                        {rfidTag && (
+                          <div className="flex items-center gap-1 text-[10px] text-[var(--color-primary)] font-bold">
+                            <span className="material-symbols-outlined text-[12px]">nfc</span>
+                            {rfidTag}
+                          </div>
+                        )}
+                      </div>
+                    </td>
                   <td className="table-cell text-sm">
                     {r.hostCode ? (
                       <div className="flex flex-col">
@@ -149,13 +168,12 @@ export default async function RequestsPage({
                     </span>
                   </td>
                   <td className="table-cell text-right">
-                    {r.status === "PENDIENTE" && (
-                      <RequestActions requestId={r.id} />
-                    )}
+                    <RequestActions requestId={r.id} currentStatus={r.status} />
                   </td>
                 </tr>
-              ))
-            )}
+              )
+            })
+          )}
           </tbody>
         </table>
 
