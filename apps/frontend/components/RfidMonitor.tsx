@@ -34,11 +34,6 @@ export default function RfidMonitor({ zone }: { zone: string }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isNew, setIsNew] = useState(false);
   const lastIdRef = useRef<number | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Sincroniza el ref con el estado para el closure del setInterval
   useEffect(() => {
@@ -174,8 +169,8 @@ export default function RfidMonitor({ zone }: { zone: string }) {
                 <p className="font-mono text-lg font-black text-[var(--color-on-surface)]">
                   {event.plate === "UNKNOWN" ? "???" : event.plate}
                 </p>
-                <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]">
-                  {mounted ? timeAgo(event.timestamp) : "--:--"}
+                <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]" suppressHydrationWarning>
+                  {timeAgo(event.timestamp)}
                 </p>
               </div>
             </div>
@@ -222,8 +217,8 @@ export default function RfidMonitor({ zone }: { zone: string }) {
 
         {/* Footer */}
         {lastUpdated && (
-          <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]/60 text-right mt-3 font-mono">
-            Sync: {mounted ? lastUpdated.toLocaleTimeString() : "--:--:--"}
+          <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]/60 text-right mt-3 font-mono" suppressHydrationWarning>
+            Sync: {lastUpdated.toLocaleTimeString()}
           </p>
         )}
       </div>
