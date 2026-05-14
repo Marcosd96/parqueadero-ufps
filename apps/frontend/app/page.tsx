@@ -13,6 +13,7 @@ import GateConsole from "@/components/GateConsole";
 import Link from "next/link";
 import TableExportButton from "@/components/TableExportButton";
 import MonitoringQuickActions from "@/components/MonitoringQuickActions";
+import FormattedTime from "@/components/FormattedTime";
 
 interface Props {
   searchParams: Promise<{
@@ -25,9 +26,14 @@ export default async function MonitoringPage({ searchParams }: Props) {
   const isExit = tab === "salida";
   const activeZone = isExit ? "Salida Principal" : "Entrada Principal";
 
-  // Calculate start of today
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  // Calculate start of today in Colombia timezone (UTC-5)
+  const bogotaDateString = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+  const todayStart = new Date(`${bogotaDateString}T00:00:00.000-05:00`);
 
   // Fetch real statistics for today in this zone
   const [recentActivity, totalToday, totalRejected] = await Promise.all([
@@ -134,7 +140,7 @@ export default async function MonitoringPage({ searchParams }: Props) {
                     recentActivity.map((row: { id: number; timestamp: Date; plate: string; method: string; status: boolean }) => (
                       <tr key={row.id} className="table-row">
                         <td className="table-cell font-mono text-sm text-[var(--color-on-surface-variant)]">
-                          {new Date(row.timestamp).toLocaleTimeString()}
+                          <FormattedTime date={row.timestamp} />
                         </td>
                         <td className="table-cell font-bold text-[var(--color-on-surface)]">{row.plate}</td>
                         <td className="table-cell">
