@@ -7,7 +7,8 @@ const router = Router();
 // Llamado por el ESP32 al leer un TAG RFID
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { uid } = req.body;
+    const { uid, zone } = req.body;
+    const activeZone = zone || "Entrada Principal";
 
     if (!uid || typeof uid !== "string") {
       return res.status(400).json({ granted: false, reason: "UID inválido o ausente." });
@@ -28,7 +29,7 @@ router.post("/", async (req: Request, res: Response) => {
           plate: "UNKNOWN",
           rfidTag: normalizedUid,
           userType: "Desconocido",
-          zone: "Portón Principal",
+          zone: activeZone,
           status: false,
           method: "RFID",
         },
@@ -42,17 +43,19 @@ router.post("/", async (req: Request, res: Response) => {
       vehicle.status === "ACTIVO" ||
       vehicle.status === "Activo";
 
+    const isVisitor = vehicle.department === "Visitante Temporal";
+
     const ownerName = vehicle.owner
       ? `${vehicle.owner.firstname} ${vehicle.owner.surname}`
-      : "Propietario Genérico";
+      : isVisitor ? "Invitado Externo" : "Propietario Genérico";
 
     // Registrar el acceso en el log
     await prisma.accessLog.create({
       data: {
         plate: vehicle.plate,
         rfidTag: normalizedUid,
-        userType: "Estudiante/Personal",
-        zone: "Portón Principal",
+        userType: isVisitor ? "Visitante" : "Estudiante/Personal",
+        zone: activeZone,
         status: isActive,
         method: "RFID",
       },
@@ -83,12 +86,20 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(500).json({ granted: false, reason: "Error interno del servidor." });
   }
 });
+
 // GET /api/rfid/latest
 // Usado por el frontend con polling para mostrar el último evento RFID
 router.get("/latest", async (req: Request, res: Response) => {
   try {
+    const { zone } = req.query;
+    
+    const whereClause: any = { method: "RFID" };
+    if (zone) {
+      whereClause.zone = zone as string;
+    }
+
     const latestLog = await prisma.accessLog.findFirst({
-      where: { method: "RFID" },
+      where: whereClause,
       orderBy: { timestamp: "desc" },
     });
 
