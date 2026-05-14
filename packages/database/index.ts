@@ -2,6 +2,11 @@ export * from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import * as path from "path";
+import * as dotenv from "dotenv";
+
+// Load .env from monorepo root (needed when running outside of Next.js context)
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);

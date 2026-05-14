@@ -11,6 +11,7 @@ const navItems = [
   { href: "/solicitudes-registro", label: "Solicitudes de Registro", icon: "person_add" },
   { href: "/students", label: "Directorio de Estudiantes", icon: "school" },
   { href: "/reports", label: "Reportes", icon: "assessment" },
+  { href: "/database", label: "Base de Datos", icon: "database" },
 ];
 
 interface SidebarProps {

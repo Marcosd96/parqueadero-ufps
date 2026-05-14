@@ -421,3 +421,13 @@ body {
 }
 
 } /* end @layer components */
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.group:hover .group-hover\:spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
