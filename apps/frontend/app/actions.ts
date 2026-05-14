@@ -69,19 +69,50 @@ export async function registerAccess(plate: string, granted: boolean, userType: 
   revalidatePath("/reports");
 }
 
-export async function updateAccessRequestStatus(id: number, status: string) {
+export async function updateAccessRequestStatus(id: number, status: string, rfidTag?: string) {
   try {
-    // Normalizamos el estado para que coincida con el esquema si es necesario
-    // Aunque el componente envía APROBADO/RECHAZADO, Prisma lo guardará tal cual.
+    const request = await prisma.accessRequest.findUnique({ where: { id } });
+    if (!request) return { success: false, error: "Solicitud no encontrada." };
+
     await prisma.accessRequest.update({
       where: { id },
       data: { status }
     });
 
+    // Si se aprueba y se proporciona un TAG RFID, creamos un registro de vehículo temporal
+    if ((status === "APROBADO" || status === "APPROVED") && rfidTag) {
+      const normalizedTag = rfidTag.trim().toUpperCase();
+      
+      // Upsert para manejar si el visitante ya tiene un registro previo
+      await prisma.vehicle.upsert({
+        where: { plate: request.plateNumber },
+        update: {
+          rfidTag: normalizedTag,
+          status: "Activo",
+          department: "Visitante Temporal",
+          brand: "VISITANTE",
+          model: "TEMPORAL",
+          color: "Gris",
+          icon: "directions_car"
+        },
+        create: {
+          plate: request.plateNumber,
+          rfidTag: normalizedTag,
+          status: "Activo",
+          department: "Visitante Temporal",
+          brand: "VISITANTE",
+          model: "TEMPORAL",
+          color: "Gris",
+          icon: "directions_car"
+        }
+      });
+    }
+
     revalidatePath("/requests");
+    revalidatePath("/vehicles");
     return { success: true };
   } catch (error) {
     console.error("Error updating access request status:", error);
-    return { success: false, error: "No se pudo actualizar el estado de la solicitud." };
+    return { success: false, error: "No se pudo actualizar el estado de la solicitud o asignar el TAG." };
   }
 }
