@@ -9,6 +9,21 @@ interface GateConsoleProps {
 
 export default function GateConsole({ zone, lastPlate }: GateConsoleProps) {
   const [pulse, setPulse] = useState(false);
+  const [time, setTime] = useState<string>("--:--:--");
+
+  useEffect(() => {
+    const update = () => {
+      setTime(new Date().toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: false 
+      }));
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (lastPlate) {
@@ -37,8 +52,8 @@ export default function GateConsole({ zone, lastPlate }: GateConsoleProps) {
         </div>
         <div className="text-right">
           <div className="text-[0.6rem] font-black tracking-widest text-white/40 mb-1">NODE_ID: {isExit ? "GATE-OUT-02" : "GATE-IN-01"}</div>
-          <div className="text-2xl font-mono font-bold text-white/90 tabular-nums">
-            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          <div className="text-2xl font-mono font-bold text-white/90 tabular-nums" suppressHydrationWarning>
+            {time}
           </div>
         </div>
       </div>

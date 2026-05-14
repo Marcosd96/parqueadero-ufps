@@ -34,6 +34,11 @@ export default function RfidMonitor({ zone }: { zone: string }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isNew, setIsNew] = useState(false);
   const lastIdRef = useRef<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sincroniza el ref con el estado para el closure del setInterval
   useEffect(() => {
@@ -45,10 +50,21 @@ export default function RfidMonitor({ zone }: { zone: string }) {
       if (!isLiveRef.current) return;
       try {
         // Cache-buster: agregamos ?t= timestamp para asegurar que el navegador NUNCA use caché
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
         const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
-        const res = await fetch(`${normalizedBackendUrl}/api/rfid/latest?zone=${encodeURIComponent(zone)}&t=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) return;
+        const finalUrl = `${normalizedBackendUrl}/api/rfid/latest?zone=${encodeURIComponent(zone)}&t=${Date.now()}`;
+        
+        console.log(`[RfidMonitor] Polling ${zone}:`, finalUrl);
+        
+        const res = await fetch(finalUrl, { 
+          cache: "no-store",
+          headers: { "Accept": "application/json" }
+        });
+        
+        if (!res.ok) {
+          console.error(`[RfidMonitor] HTTP Error ${res.status} for ${zone}`);
+          return;
+        }
         const data = await res.json();
 
         if (data.event) {
@@ -97,6 +113,21 @@ export default function RfidMonitor({ zone }: { zone: string }) {
             </span>
           )}
           <button
+            onClick={async () => {
+              const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+              const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
+              await fetch(`${normalizedBackendUrl}/api/rfid?zone=${encodeURIComponent(zone)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ uid: "TEST-RFID-" + Math.floor(Math.random() * 1000) })
+              });
+            }}
+            className="text-white/70 hover:text-white transition-colors"
+            title="Simular lectura en esta zona"
+          >
+            <span className="material-symbols-outlined text-base">sensors</span>
+          </button>
+          <button
             onClick={() => setIsLive((p) => !p)}
             className="text-white/70 hover:text-white transition-colors"
             title={isLive ? "Pausar polling" : "Reanudar polling"}
@@ -144,7 +175,7 @@ export default function RfidMonitor({ zone }: { zone: string }) {
                   {event.plate === "UNKNOWN" ? "???" : event.plate}
                 </p>
                 <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]">
-                  {timeAgo(event.timestamp)}
+                  {mounted ? timeAgo(event.timestamp) : "--:--"}
                 </p>
               </div>
             </div>
@@ -192,7 +223,7 @@ export default function RfidMonitor({ zone }: { zone: string }) {
         {/* Footer */}
         {lastUpdated && (
           <p className="text-[0.6rem] text-[var(--color-on-surface-variant)]/60 text-right mt-3 font-mono">
-            Sync: {lastUpdated.toLocaleTimeString()}
+            Sync: {mounted ? lastUpdated.toLocaleTimeString() : "--:--:--"}
           </p>
         )}
       </div>
