@@ -37,8 +37,38 @@ export async function verifyPlate(plate: string, zone?: string) {
   });
 
   if (vehicle) {
-    if (vehicle.status === "ACTIVO" || vehicle.status === "Activo") {
-      return { status: "authorized", type: "Estudiante/Personal", ownerName: vehicle.owner ? `${vehicle.owner.firstname} ${vehicle.owner.surname}` : "Desconocido" };
+    if (vehicle.status.toLowerCase().includes("activo")) {
+      let carnetUrl = null;
+      if (vehicle.owner) {
+        const reg = await prisma.userRegistration.findFirst({
+          where: {
+            OR: [
+              { institutionalCode: vehicle.owner.cardnumber },
+              { plate: vehicle.plate }
+            ],
+            status: "APROBADO"
+          },
+          orderBy: { createdAt: "desc" }
+        });
+        if (reg) {
+          carnetUrl = reg.carnetFilePath;
+        }
+      }
+      if (!carnetUrl) {
+        const reg = await prisma.userRegistration.findFirst({
+          where: { plate: vehicle.plate },
+          orderBy: { createdAt: "desc" }
+        });
+        if (reg) {
+          carnetUrl = reg.carnetFilePath;
+        }
+      }
+      return { 
+        status: "authorized", 
+        type: "Estudiante/Personal", 
+        ownerName: vehicle.owner ? `${vehicle.owner.firstname} ${vehicle.owner.surname}` : "Desconocido",
+        carnetUrl
+      };
     } else {
       return { status: "unauthorized", reason: `Vehículo con estado: ${vehicle.status}` };
     }
@@ -62,7 +92,12 @@ export async function verifyPlate(plate: string, zone?: string) {
   });
 
   if (guestRequest) {
-    return { status: "authorized", type: "Visitante", ownerName: guestRequest.requesterName };
+    return { 
+      status: "authorized", 
+      type: "Visitante", 
+      ownerName: guestRequest.requesterName, 
+      carnetUrl: guestRequest.hostCarnetPath 
+    };
   }
 
   // Also check UserRegistration in case they are approved but not yet in Vehicle? 
@@ -75,7 +110,12 @@ export async function verifyPlate(plate: string, zone?: string) {
   });
 
   if (registration) {
-    return { status: "authorized", type: registration.userType, ownerName: registration.fullName };
+    return { 
+      status: "authorized", 
+      type: registration.userType, 
+      ownerName: registration.fullName, 
+      carnetUrl: registration.carnetFilePath 
+    };
   }
 
   return { status: "unauthorized", reason: "Vehículo no registrado o sin autorización vigente." };
