@@ -17,11 +17,25 @@ export default function RequestActions({ requestId, currentStatus }: { requestId
 
     const finalStatus = status === "UPDATE_TAG" ? currentStatus : status;
 
+    let reason: string | undefined;
+    if (finalStatus === "RECHAZADO") {
+      const input = window.prompt("Motivo del rechazo:");
+      if (input === null) return; // User cancelled
+      if (!input.trim()) {
+        alert("Debes proporcionar un motivo.");
+        return;
+      }
+      reason = input.trim();
+    }
+
     startTransition(async () => {
-      const result = await updateAccessRequestStatus(requestId, finalStatus, rfidTag);
+      const result = await updateAccessRequestStatus(requestId, finalStatus, rfidTag, reason);
       if (result.success) {
         setShowTagInput(false);
         setRfidTag("");
+        if (result.emailError) {
+          alert(`⚠️ ${result.emailError}`);
+        }
       } else {
         alert(result.error);
       }

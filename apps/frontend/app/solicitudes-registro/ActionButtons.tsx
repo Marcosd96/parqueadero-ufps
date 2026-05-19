@@ -7,8 +7,19 @@ export default function ActionButtons({ id }: { id: number }) {
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleAction = async (status: "APROBADO" | "RECHAZADO") => {
+    let reason: string | undefined;
+    if (status === "RECHAZADO") {
+      const input = window.prompt("Motivo del rechazo:");
+      if (input === null) return; // User cancelled
+      if (!input.trim()) {
+        alert("Debes proporcionar un motivo.");
+        return;
+      }
+      reason = input.trim();
+    }
+
     setLoading(status);
-    const result = await updateRegistrationStatus(id, status);
+    const result = await updateRegistrationStatus(id, status, reason);
 
     if (result.error) {
       alert(`Error: ${result.error}`);
