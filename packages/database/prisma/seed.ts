@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client/index.js";
+import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import fs from "fs";
@@ -119,6 +119,25 @@ async function main() {
   });
 
   console.log("Usuarios sembrados con éxito.");
+
+  // 7. Sembrar UserRegistration de prueba para visualizar carnet
+  console.log("Sembrando UserRegistration para pruebas...");
+  await prisma.userRegistration.create({
+    data: {
+      userType: "ESTUDIANTE",
+      email: "estudiante.prueba@ufps.edu.co",
+      institutionalCode: "1151620",
+      fullName: "JUAN PEREZ CONTRERAS",
+      carnetFilePath: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400", // Sleek profile placeholder for ID card
+      ownershipFilePath: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+      plate: "PRK-8821",
+      vehicleBrand: "Tesla",
+      vehicleModel: "Model 3",
+      status: "APROBADO"
+    }
+  });
+  console.log("UserRegistration creado con éxito.");
+
   console.log("Seed completado con éxito.");
 }
 
