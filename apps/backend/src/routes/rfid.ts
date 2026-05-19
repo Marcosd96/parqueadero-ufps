@@ -258,6 +258,63 @@ router.get("/latest", async (req: Request, res: Response) => {
           })
         : null;
 
+    let carnetUrl = null;
+    if (vehicle) {
+      let reg = null;
+      if (vehicle.owner) {
+        reg = await prisma.userRegistration.findFirst({
+          where: {
+            OR: [
+              { institutionalCode: vehicle.owner.cardnumber },
+              { plate: vehicle.plate }
+            ],
+            status: "APROBADO"
+          },
+          orderBy: { createdAt: "desc" }
+        });
+      }
+      if (!reg) {
+        reg = await prisma.userRegistration.findFirst({
+          where: { plate: vehicle.plate },
+          orderBy: { createdAt: "desc" }
+        });
+      }
+      if (reg) {
+        carnetUrl = reg.carnetFilePath;
+      }
+    }
+
+    if (!carnetUrl && latestLog.plate !== "UNKNOWN") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const guestRequest = await prisma.accessRequest.findFirst({
+        where: {
+          plateNumber: latestLog.plate,
+          status: "APPROVED",
+          visitDate: {
+            gte: today,
+            lt: tomorrow,
+          },
+        },
+      });
+      if (guestRequest) {
+        carnetUrl = guestRequest.hostCarnetPath;
+      }
+    }
+
+    if (!carnetUrl && latestLog.plate !== "UNKNOWN") {
+      const reg = await prisma.userRegistration.findFirst({
+        where: { plate: latestLog.plate, status: "APROBADO" },
+        orderBy: { createdAt: "desc" }
+      });
+      if (reg) {
+        carnetUrl = reg.carnetFilePath;
+      }
+    }
+
     return res.json({
       event: {
         id: latestLog.id,
@@ -273,6 +330,7 @@ router.get("/latest", async (req: Request, res: Response) => {
         vehicleColor: vehicle?.color ?? null,
         department: vehicle?.department ?? null,
         vehicleStatus: vehicle?.status ?? null,
+        carnetUrl,
       },
     });
   } catch (error) {
