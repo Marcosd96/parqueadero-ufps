@@ -19,7 +19,7 @@ export default function PlateVerification({ zone }: { zone: string }) {
     setLoading(true);
     setResult(null);
     try {
-      const res = await verifyPlate(plate.toUpperCase().trim());
+      const res = await verifyPlate(plate.toUpperCase().trim(), zone);
       setResult(res);
     } catch (error) {
       console.error(error);
@@ -39,8 +39,9 @@ export default function PlateVerification({ zone }: { zone: string }) {
       );
       setResult(null);
       setPlate("");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      alert(error.message || "Error al registrar acceso");
     } finally {
       setLoading(false);
     }

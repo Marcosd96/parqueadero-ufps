@@ -3,7 +3,33 @@
 import prisma from "@parqueadero/database";
 import { revalidatePath } from "next/cache";
 
-export async function verifyPlate(plate: string) {
+export async function verifyPlate(plate: string, zone?: string) {
+  // Verificación de doble entrada/salida
+  if (zone) {
+    const lastAccess = await prisma.accessLog.findFirst({
+      where: { plate, status: true },
+      orderBy: { timestamp: "desc" }
+    });
+    
+    if (lastAccess) {
+      const isEntering = zone.toLowerCase().includes("entrada");
+      const wasEntering = lastAccess.zone.toLowerCase().includes("entrada");
+      
+      if (isEntering && wasEntering) {
+        return { status: "unauthorized", reason: "El vehículo ya se encuentra dentro del parqueadero." };
+      }
+      
+      const isExiting = zone.toLowerCase().includes("salida");
+      const wasExiting = lastAccess.zone.toLowerCase().includes("salida");
+      
+      if (isExiting && wasExiting) {
+         return { status: "unauthorized", reason: "El vehículo no se encuentra dentro del parqueadero." };
+      }
+    } else if (zone.toLowerCase().includes("salida")) {
+      return { status: "unauthorized", reason: "El vehículo no se encuentra dentro del parqueadero (sin registro previo)." };
+    }
+  }
+
   // First, check for registered members
   const vehicle = await prisma.vehicle.findUnique({
     where: { plate },
@@ -56,6 +82,31 @@ export async function verifyPlate(plate: string) {
 }
 
 export async function registerAccess(plate: string, granted: boolean, userType: string, zone: string) {
+  if (granted) {
+    const lastAccess = await prisma.accessLog.findFirst({
+      where: { plate, status: true },
+      orderBy: { timestamp: "desc" }
+    });
+
+    if (lastAccess) {
+      const isEntering = zone.toLowerCase().includes("entrada");
+      const wasEntering = lastAccess.zone.toLowerCase().includes("entrada");
+      
+      if (isEntering && wasEntering) {
+        throw new Error("El vehículo ya se encuentra dentro del parqueadero.");
+      }
+      
+      const isExiting = zone.toLowerCase().includes("salida");
+      const wasExiting = lastAccess.zone.toLowerCase().includes("salida");
+      
+      if (isExiting && wasExiting) {
+        throw new Error("El vehículo no se encuentra dentro del parqueadero.");
+      }
+    } else if (zone.toLowerCase().includes("salida")) {
+      throw new Error("El vehículo no se encuentra dentro del parqueadero (sin registro previo).");
+    }
+  }
+
   await prisma.accessLog.create({
     data: {
       plate,
@@ -69,7 +120,10 @@ export async function registerAccess(plate: string, granted: boolean, userType: 
   revalidatePath("/reports");
 }
 
-export async function updateAccessRequestStatus(id: number, status: string, rfidTag?: string) {
+import { sendMail } from "@/lib/email";
+import { guestRejectedEmailHtml } from "@/lib/email-templates";
+
+export async function updateAccessRequestStatus(id: number, status: string, rfidTag?: string, rejectionReason?: string) {
   try {
     const request = await prisma.accessRequest.findUnique({ where: { id } });
     if (!request) return { success: false, error: "Solicitud no encontrada." };
@@ -108,9 +162,40 @@ export async function updateAccessRequestStatus(id: number, status: string, rfid
       });
     }
 
+    let emailError: string | undefined;
+
+    // Send email to host if rejected
+    if (status === "RECHAZADO" && request.hostCode) {
+      const host = await prisma.student.findUnique({
+        where: { cardnumber: request.hostCode }
+      });
+      
+      if (host) {
+        const ufpsEmail = host.email?.endsWith("@ufps.edu.co") ? host.email : (host.emailpro?.endsWith("@ufps.edu.co") ? host.emailpro : host.email ?? host.emailpro);
+        
+        if (ufpsEmail) {
+          try {
+            await sendMail({
+              to: ufpsEmail,
+              subject: "❌ Solicitud de visitante rechazada",
+              html: guestRejectedEmailHtml({
+                guestName: request.requesterName,
+                hostName: `${host.firstname} ${host.surname}`.trim(),
+                plate: request.plateNumber,
+                rejectionReason
+              })
+            });
+          } catch (err) {
+            console.error("[sendMail] Error sending guest rejection:", err);
+            emailError = "Estado actualizado, pero hubo un error enviando el correo al anfitrión.";
+          }
+        }
+      }
+    }
+
     revalidatePath("/requests");
     revalidatePath("/vehicles");
-    return { success: true };
+    return { success: true, emailError };
   } catch (error) {
     console.error("Error updating access request status:", error);
     return { success: false, error: "No se pudo actualizar el estado de la solicitud o asignar el TAG." };
