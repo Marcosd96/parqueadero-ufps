@@ -421,7 +421,7 @@ export default function RegistroPage() {
 
     setCodeState("loading");
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
       const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
       const res = await fetch(`${normalizedBackendUrl}/api/lookup-student?code=${encodeURIComponent(code.trim())}`);
       if (res.status === 429) {
@@ -457,7 +457,7 @@ export default function RegistroPage() {
     if (!hostCode.trim()) return;
     setHostCodeState("loading");
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
       const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
       const res = await fetch(`${normalizedBackendUrl}/api/lookup-student?code=${encodeURIComponent(hostCode.trim())}`);
       if (res.status === 429) {
