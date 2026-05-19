@@ -6,6 +6,14 @@ interface RegistrationData {
   vehicleBrand?: string | null;
   vehicleModel?: string | null;
   institutionalCode: string;
+  rejectionReason?: string;
+}
+
+export interface GuestRegistrationData {
+  guestName: string;
+  hostName: string;
+  plate: string;
+  rejectionReason?: string;
 }
 
 /* ─── Shared layout wrapper ─────────────────────────────────────────────── */
@@ -146,15 +154,69 @@ export function rejectedEmailHtml(data: RegistrationData): string {
       </table>
     </div>
 
+    ${data.rejectionReason ? `
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:4px;padding:14px 16px;margin-bottom:20px;">
+      <p style="margin:0;font-size:14px;color:#92400e;line-height:1.5;">
+        <strong>Motivo del rechazo:</strong> ${data.rejectionReason}
+      </p>
+    </div>
+    ` : `
     <p style="margin:0 0 20px;font-size:14px;color:#6b7280;line-height:1.6;">
       Los motivos más comunes de rechazo son: documentos ilegibles, placa inválida o información
       inconsistente. Puedes corregir los datos y enviar una nueva solicitud.
     </p>
+    `}
 
     <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:4px;padding:14px 16px;">
       <p style="margin:0;font-size:13px;color:#92400e;line-height:1.5;">
         ⚠️ Si crees que esto es un error, contacta directamente a la oficina de parqueadero o
         visita la portería principal con tu documentación.
+      </p>
+    </div>
+  `);
+}
+
+/* ─── Guest Rejected template ────────────────────────────────────────────── */
+export function guestRejectedEmailHtml(data: GuestRegistrationData): string {
+  return emailLayout(`
+    <!-- Status badge -->
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:inline-block;background:#fee2e2;border-radius:50%;width:64px;height:64px;line-height:64px;font-size:32px;text-align:center;margin-bottom:12px;">❌</div>
+      <h1 style="margin:0;font-size:22px;font-weight:900;color:#991b1b;letter-spacing:-0.5px;">Solicitud de invitado no aprobada</h1>
+    </div>
+
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.6;">
+      Hola <strong>${data.hostName}</strong>, lamentamos informarte que la solicitud de acceso para tu invitado <strong>${data.guestName}</strong> ha sido <strong style="color:#dc2626;">rechazada</strong> por el equipo administrativo.
+    </p>
+
+    <!-- Request summary -->
+    <div style="background:#fff1f2;border:1.5px solid #fecaca;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
+      <p style="margin:0 0 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#f87171;">Solicitud presentada</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:4px 0;">
+            <span style="font-size:13px;color:#6b7280;">Invitado</span><br/>
+            <strong style="font-size:15px;color:#111827;">${data.guestName}</strong>
+          </td>
+          <td style="padding:4px 0;">
+            <span style="font-size:13px;color:#6b7280;">Placa</span><br/>
+            <strong style="font-size:16px;color:#111827;font-family:monospace;letter-spacing:1px;">${data.plate}</strong>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    ${data.rejectionReason ? `
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:4px;padding:14px 16px;margin-bottom:20px;">
+      <p style="margin:0;font-size:14px;color:#92400e;line-height:1.5;">
+        <strong>Motivo del rechazo:</strong> ${data.rejectionReason}
+      </p>
+    </div>
+    ` : ""}
+
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:4px;padding:14px 16px;">
+      <p style="margin:0;font-size:13px;color:#92400e;line-height:1.5;">
+        ⚠️ Comunícale esta decisión a tu invitado. Si crees que esto es un error, contacta a la administración.
       </p>
     </div>
   `);

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { sendMail } from "@/lib/email";
 import { approvedEmailHtml, rejectedEmailHtml } from "@/lib/email-templates";
 
-export async function updateRegistrationStatus(id: number, status: string) {
+export async function updateRegistrationStatus(id: number, status: string, rejectionReason?: string) {
   try {
     let registrationData: {
       fullName: string;
@@ -14,6 +14,7 @@ export async function updateRegistrationStatus(id: number, status: string) {
       vehicleBrand?: string | null;
       vehicleModel?: string | null;
       institutionalCode: string;
+      rejectionReason?: string;
     } | null = null;
 
     // If approving, we need to create the permanent records
@@ -100,7 +101,10 @@ export async function updateRegistrationStatus(id: number, status: string) {
       if (!reg) throw new Error("Solicitud no encontrada.");
       if (reg.status !== "PENDIENTE") throw new Error("La solicitud ya fue procesada.");
 
-      registrationData = reg;
+      registrationData = {
+        ...reg,
+        rejectionReason
+      };
 
       await prisma.userRegistration.update({
         where: { id },
