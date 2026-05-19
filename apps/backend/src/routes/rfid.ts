@@ -101,6 +101,81 @@ async function handleRfidLogic(req: Request, res: Response) {
       ? `${vehicle.owner.firstname} ${vehicle.owner.surname}`
       : isVisitor ? "Invitado Externo" : "Propietario Genérico";
 
+    // Verificación de doble entrada/salida
+    const lastAccess = await prisma.accessLog.findFirst({
+      where: { rfidTag: normalizedUid, status: true },
+      orderBy: { timestamp: "desc" }
+    });
+
+    if (lastAccess) {
+      const isEntering = activeZone.toLowerCase().includes("entrada");
+      const wasEntering = lastAccess.zone.toLowerCase().includes("entrada");
+      
+      if (isEntering && wasEntering) {
+        const logEntry = await prisma.accessLog.create({
+          data: {
+            plate: vehicle.plate,
+            rfidTag: normalizedUid,
+            userType: isVisitor ? "Visitante" : "Estudiante/Personal",
+            zone: activeZone,
+            status: false,
+            method: "RFID",
+          },
+        });
+        return res.json({
+          granted: false,
+          plate: vehicle.plate,
+          ownerName,
+          status: vehicle.status,
+          reason: "El vehículo ya se encuentra dentro del parqueadero.",
+          debug: { activeZone, logId: logEntry.id }
+        });
+      }
+      
+      const isExiting = activeZone.toLowerCase().includes("salida");
+      const wasExiting = lastAccess.zone.toLowerCase().includes("salida");
+      
+      if (isExiting && wasExiting) {
+        const logEntry = await prisma.accessLog.create({
+          data: {
+            plate: vehicle.plate,
+            rfidTag: normalizedUid,
+            userType: isVisitor ? "Visitante" : "Estudiante/Personal",
+            zone: activeZone,
+            status: false,
+            method: "RFID",
+          },
+        });
+        return res.json({
+          granted: false,
+          plate: vehicle.plate,
+          ownerName,
+          status: vehicle.status,
+          reason: "El vehículo no se encuentra dentro del parqueadero.",
+          debug: { activeZone, logId: logEntry.id }
+        });
+      }
+    } else if (activeZone.toLowerCase().includes("salida")) {
+      const logEntry = await prisma.accessLog.create({
+        data: {
+          plate: vehicle.plate,
+          rfidTag: normalizedUid,
+          userType: isVisitor ? "Visitante" : "Estudiante/Personal",
+          zone: activeZone,
+          status: false,
+          method: "RFID",
+        },
+      });
+      return res.json({
+        granted: false,
+        plate: vehicle.plate,
+        ownerName,
+        status: vehicle.status,
+        reason: "El vehículo no se encuentra dentro del parqueadero (sin registro previo).",
+        debug: { activeZone, logId: logEntry.id }
+      });
+    }
+
     // Registrar el acceso en el log
     const logEntry = await prisma.accessLog.create({
       data: {
